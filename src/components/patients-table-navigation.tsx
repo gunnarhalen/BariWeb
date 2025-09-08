@@ -221,6 +221,11 @@ export function PatientsTableNavigation({
     },
     {
       accessorKey: "status",
+      filterFn: (row, columnId, filterValue) => {
+        const status = row.getValue(columnId) as string;
+        if (!filterValue) return true;
+        return status === filterValue;
+      },
       header: ({ column }) => {
         return (
           <Button
@@ -335,13 +340,6 @@ export function PatientsTableNavigation({
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-    filterFns: {
-      statusFilter: (row, columnId, filterValue) => {
-        const status = row.getValue(columnId) as string;
-        if (!filterValue) return true;
-        return status === filterValue;
-      },
-    },
   });
 
   return (
