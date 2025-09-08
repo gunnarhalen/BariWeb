@@ -60,7 +60,7 @@ import {
 } from "@/components/ui/table";
 
 export const patientSchema = z.object({
-  id: z.number(),
+  id: z.string(), // Mudado de number para string
   name: z.string(),
   email: z.string(),
   age: z.number(),
@@ -289,10 +289,18 @@ const columns: ColumnDef<z.infer<typeof patientSchema>>[] = [
   },
   {
     id: "actions",
-    cell: () => {
+    cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0"
+            onClick={(e) => {
+              e.stopPropagation(); // Evitar conflito com o onClick da linha
+              router.push(`/patients/${row.original.id}`);
+            }}
+          >
             <IconUser className="h-4 w-4" />
             <span className="sr-only">Ver detalhes do paciente</span>
           </Button>
@@ -304,7 +312,12 @@ const columns: ColumnDef<z.infer<typeof patientSchema>>[] = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation(); // Evitar conflito com o onClick da linha
+                  router.push(`/patients/${row.original.id}`);
+                }}
+              >
                 <IconUser className="mr-2 h-4 w-4" />
                 Ver Detalhes
               </DropdownMenuItem>

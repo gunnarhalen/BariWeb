@@ -71,7 +71,7 @@ export default function PatientsPage() {
       };
 
       return {
-        id: parseInt(patient.id) || index + 1,
+        id: patient.id, // Usar o ID original do Firebase (string)
         name: patient.fullName,
         email: patient.email,
         age: 30, // Valor padrão, pode ser calculado se tiver data de nascimento
