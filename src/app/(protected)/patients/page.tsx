@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { getNutritionistPatients } from "@/services/nutritionistService";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,7 @@ import {
 import type { Patient } from "@/types";
 
 export default function PatientsPage() {
+  const router = useRouter();
   const { user } = useAuth();
   const [patients, setPatients] = useState<Patient[]>([]);
   const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]);
@@ -353,7 +355,11 @@ export default function PatientsPage() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Button variant="outline" size="sm">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => router.push(`/patients/${patient.id}`)}
+                        >
                           <IconEye className="w-4 h-4 mr-1" />
                           Ver Detalhes
                         </Button>
