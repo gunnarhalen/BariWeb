@@ -13,6 +13,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SiteHeader } from "@/components/site-header";
 import { DateRangeSelector } from "@/components/ui/date-range-selector";
 import { BarChartComponent } from "@/components/ui/bar-chart";
 import {
@@ -256,310 +257,335 @@ export default function PatientDetailsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header compacto */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => router.back()}
-            className="flex items-center gap-2"
-          >
-            <IconArrowLeft className="w-4 h-4" />
-            Voltar
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold">{patientProfile.fullName}</h1>
-            <p className="text-muted-foreground text-sm">
-              Detalhes do paciente
-            </p>
+    <>
+      <SiteHeader />
+      <div className="flex flex-1 flex-col">
+        <div className="@container/main flex flex-1 flex-col gap-2">
+          <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-4 lg:px-6">
+              <div className="flex items-center gap-4">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => router.back()}
+                  className="flex items-center gap-2"
+                >
+                  <IconArrowLeft className="w-4 h-4" />
+                  Voltar
+                </Button>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
+                  <IconEdit className="w-4 h-4" />
+                  Editar
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
+                  <IconNotes className="w-4 h-4" />
+                  Notas
+                </Button>
+              </div>
+            </div>
+
+            {/* Cards principais - Layout horizontal compacto */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 px-4 lg:px-6">
+              {/* Dados Pessoais */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <IconUser className="w-4 h-4" />
+                    Dados Pessoais
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <IconUser className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-lg font-semibold truncate">
+                        {patientProfile.fullName}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Nome Completo
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <IconMail className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium truncate">
+                        {patientProfile.email}
+                      </p>
+                      <p className="text-xs text-muted-foreground">Email</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <IconCalendar className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium">
+                        {calculateAge(patientProfile.birthDate)} anos
+                      </p>
+                      <p className="text-xs text-muted-foreground">Idade</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <IconWeight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium">
+                        {patientProfile.weight} kg
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Peso Atual
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <IconRuler className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium">
+                        {patientProfile.height} cm
+                      </p>
+                      <p className="text-xs text-muted-foreground">Altura</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <IconTarget className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium">
+                        {calculateBMI(
+                          patientProfile.weight,
+                          patientProfile.height
+                        )}
+                      </p>
+                      <p className="text-xs text-muted-foreground">IMC</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Metas Diárias */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <IconTarget className="w-4 h-4" />
+                    Metas Diárias
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="p-2 bg-blue-50 dark:bg-blue-950 rounded-md">
+                      <p className="text-lg font-bold text-blue-700 dark:text-blue-300">
+                        {patientProfile.goals.dailyKcal}
+                      </p>
+                      <p className="text-xs text-blue-600 dark:text-blue-400">
+                        Calorias
+                      </p>
+                    </div>
+                    <div className="p-2 bg-green-50 dark:bg-green-950 rounded-md">
+                      <p className="text-lg font-bold text-green-700 dark:text-green-300">
+                        {patientProfile.goals.protein}g
+                      </p>
+                      <p className="text-xs text-green-600 dark:text-green-400">
+                        Proteínas
+                      </p>
+                    </div>
+                    <div className="p-2 bg-yellow-50 dark:bg-yellow-950 rounded-md">
+                      <p className="text-lg font-bold text-yellow-700 dark:text-yellow-300">
+                        {patientProfile.goals.carb}g
+                      </p>
+                      <p className="text-xs text-yellow-600 dark:text-yellow-400">
+                        Carboidratos
+                      </p>
+                    </div>
+                    <div className="p-2 bg-red-50 dark:bg-red-950 rounded-md">
+                      <p className="text-lg font-bold text-red-700 dark:text-red-300">
+                        {patientProfile.goals.fat}g
+                      </p>
+                      <p className="text-xs text-red-600 dark:text-red-400">
+                        Gorduras
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Status */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2 text-base">
+                      <IconTrendingUp className="w-4 h-4" />
+                      Status
+                    </CardTitle>
+                    {getStatusBadge()}
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <IconCalendar className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium">{getLastMealText()}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Última Refeição
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <IconTarget className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium capitalize">
+                        {patientProfile.goal.replace("_", " ")}
+                      </p>
+                      <p className="text-xs text-muted-foreground">Objetivo</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <IconUser className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium capitalize">
+                        {patientProfile.dietType}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Tipo de Dieta
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <IconTrendingUp className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium capitalize">
+                        {patientProfile.activityLevel}
+                      </p>
+                      <p className="text-xs text-muted-foreground">Atividade</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Restrições Alimentares - Compacto */}
+            {(patientProfile.intolerances.length > 0 ||
+              patientProfile.allergies.length > 0) && (
+              <Card className="px-4 lg:px-6">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <IconAlertTriangle className="w-4 h-4" />
+                    Restrições Alimentares
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {patientProfile.intolerances.map((intolerance, index) => (
+                      <Badge
+                        key={index}
+                        variant="secondary"
+                        className="text-xs"
+                      >
+                        {intolerance}
+                      </Badge>
+                    ))}
+                    {patientProfile.allergies.map((allergy, index) => (
+                      <Badge
+                        key={index}
+                        variant="destructive"
+                        className="text-xs"
+                      >
+                        {allergy}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Gráficos de Acompanhamento */}
+            <div className="px-4 lg:px-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="flex items-center gap-2 text-lg font-semibold">
+                  <IconChartBar className="w-5 h-5" />
+                  Acompanhamento Nutricional
+                </h2>
+                <DateRangeSelector
+                  selectedRange={dateRange}
+                  onRangeChange={setDateRange}
+                />
+              </div>
+              {chartData ? (
+                <div className="space-y-4">
+                  {/* Primeira linha: Refeições e Calorias */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <BarChartComponent
+                      title="Refeições por Dia"
+                      data={
+                        chartData.meals as unknown as Array<
+                          Record<string, string | number>
+                        >
+                      }
+                      dataKey="meals"
+                      color="#3b82f6"
+                    />
+                    <BarChartComponent
+                      title="Calorias Diárias"
+                      data={
+                        chartData.calories as unknown as Array<
+                          Record<string, string | number>
+                        >
+                      }
+                      dataKey="value"
+                      color="#3b82f6"
+                    />
+                  </div>
+
+                  {/* Segunda linha: Proteína, Carboidratos e Gorduras */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                    <BarChartComponent
+                      title="Proteína"
+                      data={
+                        chartData.protein as unknown as Array<
+                          Record<string, string | number>
+                        >
+                      }
+                      dataKey="value"
+                      color="#10b981"
+                    />
+                    <BarChartComponent
+                      title="Carboidratos"
+                      data={
+                        chartData.carb as unknown as Array<
+                          Record<string, string | number>
+                        >
+                      }
+                      dataKey="value"
+                      color="#f59e0b"
+                    />
+                    <BarChartComponent
+                      title="Gorduras"
+                      data={
+                        chartData.fat as unknown as Array<
+                          Record<string, string | number>
+                        >
+                      }
+                      dataKey="value"
+                      color="#ef4444"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-64">
+                  <Spinner size="lg" />
+                </div>
+              )}
+            </div>
           </div>
         </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="flex items-center gap-2"
-          >
-            <IconEdit className="w-4 h-4" />
-            Editar
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="flex items-center gap-2"
-          >
-            <IconNotes className="w-4 h-4" />
-            Notas
-          </Button>
-        </div>
       </div>
-
-      {/* Cards principais - Layout horizontal compacto */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Dados Pessoais */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <IconUser className="w-4 h-4" />
-              Dados Pessoais
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center gap-3">
-              <IconMail className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-              <div className="min-w-0">
-                <p className="text-sm font-medium truncate">
-                  {patientProfile.email}
-                </p>
-                <p className="text-xs text-muted-foreground">Email</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <IconCalendar className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-              <div className="min-w-0">
-                <p className="text-sm font-medium">
-                  {calculateAge(patientProfile.birthDate)} anos
-                </p>
-                <p className="text-xs text-muted-foreground">Idade</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <IconWeight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-              <div className="min-w-0">
-                <p className="text-sm font-medium">
-                  {patientProfile.weight} kg
-                </p>
-                <p className="text-xs text-muted-foreground">Peso Atual</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <IconRuler className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-              <div className="min-w-0">
-                <p className="text-sm font-medium">
-                  {patientProfile.height} cm
-                </p>
-                <p className="text-xs text-muted-foreground">Altura</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <IconTarget className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-              <div className="min-w-0">
-                <p className="text-sm font-medium">
-                  {calculateBMI(patientProfile.weight, patientProfile.height)}
-                </p>
-                <p className="text-xs text-muted-foreground">IMC</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Metas Diárias */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <IconTarget className="w-4 h-4" />
-              Metas Diárias
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-2">
-              <div className="p-2 bg-blue-50 dark:bg-blue-950 rounded-md">
-                <p className="text-lg font-bold text-blue-700 dark:text-blue-300">
-                  {patientProfile.goals.dailyKcal}
-                </p>
-                <p className="text-xs text-blue-600 dark:text-blue-400">
-                  Calorias
-                </p>
-              </div>
-              <div className="p-2 bg-green-50 dark:bg-green-950 rounded-md">
-                <p className="text-lg font-bold text-green-700 dark:text-green-300">
-                  {patientProfile.goals.protein}g
-                </p>
-                <p className="text-xs text-green-600 dark:text-green-400">
-                  Proteínas
-                </p>
-              </div>
-              <div className="p-2 bg-yellow-50 dark:bg-yellow-950 rounded-md">
-                <p className="text-lg font-bold text-yellow-700 dark:text-yellow-300">
-                  {patientProfile.goals.carb}g
-                </p>
-                <p className="text-xs text-yellow-600 dark:text-yellow-400">
-                  Carboidratos
-                </p>
-              </div>
-              <div className="p-2 bg-red-50 dark:bg-red-950 rounded-md">
-                <p className="text-lg font-bold text-red-700 dark:text-red-300">
-                  {patientProfile.goals.fat}g
-                </p>
-                <p className="text-xs text-red-600 dark:text-red-400">
-                  Gorduras
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Status */}
-        <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <IconTrendingUp className="w-4 h-4" />
-                Status
-              </CardTitle>
-              {getStatusBadge()}
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center gap-3">
-              <IconCalendar className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-              <div className="min-w-0">
-                <p className="text-sm font-medium">{getLastMealText()}</p>
-                <p className="text-xs text-muted-foreground">Última Refeição</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <IconTarget className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-              <div className="min-w-0">
-                <p className="text-sm font-medium capitalize">
-                  {patientProfile.goal.replace("_", " ")}
-                </p>
-                <p className="text-xs text-muted-foreground">Objetivo</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <IconUser className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-              <div className="min-w-0">
-                <p className="text-sm font-medium capitalize">
-                  {patientProfile.dietType}
-                </p>
-                <p className="text-xs text-muted-foreground">Tipo de Dieta</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <IconTrendingUp className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-              <div className="min-w-0">
-                <p className="text-sm font-medium capitalize">
-                  {patientProfile.activityLevel}
-                </p>
-                <p className="text-xs text-muted-foreground">Atividade</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Restrições Alimentares - Compacto */}
-      {(patientProfile.intolerances.length > 0 ||
-        patientProfile.allergies.length > 0) && (
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <IconAlertTriangle className="w-4 h-4" />
-              Restrições Alimentares
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2">
-              {patientProfile.intolerances.map((intolerance, index) => (
-                <Badge key={index} variant="secondary" className="text-xs">
-                  {intolerance}
-                </Badge>
-              ))}
-              {patientProfile.allergies.map((allergy, index) => (
-                <Badge key={index} variant="destructive" className="text-xs">
-                  {allergy}
-                </Badge>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Gráficos de Acompanhamento */}
-      <Card>
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <IconChartBar className="w-4 h-4" />
-              Acompanhamento Nutricional
-            </CardTitle>
-            <DateRangeSelector
-              selectedRange={dateRange}
-              onRangeChange={setDateRange}
-            />
-          </div>
-        </CardHeader>
-        <CardContent>
-          {chartData ? (
-            <div className="space-y-4">
-              {/* Primeira linha: Refeições e Calorias */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <BarChartComponent
-                  title="Refeições por Dia"
-                  data={
-                    chartData.meals as unknown as Array<
-                      Record<string, string | number>
-                    >
-                  }
-                  dataKey="meals"
-                  color="#3b82f6"
-                />
-                <BarChartComponent
-                  title="Calorias Diárias"
-                  data={
-                    chartData.calories as unknown as Array<
-                      Record<string, string | number>
-                    >
-                  }
-                  dataKey="value"
-                  color="#3b82f6"
-                />
-              </div>
-
-              {/* Segunda linha: Proteína, Carboidratos e Gorduras */}
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                <BarChartComponent
-                  title="Proteína"
-                  data={
-                    chartData.protein as unknown as Array<
-                      Record<string, string | number>
-                    >
-                  }
-                  dataKey="value"
-                  color="#10b981"
-                />
-                <BarChartComponent
-                  title="Carboidratos"
-                  data={
-                    chartData.carb as unknown as Array<
-                      Record<string, string | number>
-                    >
-                  }
-                  dataKey="value"
-                  color="#f59e0b"
-                />
-                <BarChartComponent
-                  title="Gorduras"
-                  data={
-                    chartData.fat as unknown as Array<
-                      Record<string, string | number>
-                    >
-                  }
-                  dataKey="value"
-                  color="#ef4444"
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="flex items-center justify-center h-64">
-              <Spinner size="lg" />
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+    </>
   );
 }

@@ -89,7 +89,6 @@ export default function ReportsPage() {
             {/* Header */}
             <div className="flex justify-between items-center px-4 lg:px-6">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Relatórios</h1>
                 <p className="text-gray-600">
                   Análises e insights sobre seus pacientes
                 </p>

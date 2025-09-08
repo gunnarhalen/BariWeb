@@ -181,9 +181,6 @@ export default function RequestsPage() {
             {/* Header */}
             <div className="flex items-center justify-between px-4 lg:px-6">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">
-                  Solicitações
-                </h1>
                 <p className="text-gray-600 mt-2">
                   Gerencie as solicitações de pacientes que querem se associar a
                   você

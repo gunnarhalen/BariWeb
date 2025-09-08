@@ -142,8 +142,7 @@ export default function PatientsPage() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-4 lg:px-6">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Pacientes</h1>
-                <p className="text-gray-600 mt-1">
+                <p className="text-gray-600">
                   Gerencie e acompanhe todos os seus pacientes
                 </p>
               </div>
