@@ -54,14 +54,7 @@ export const ChartCard: React.FC<ChartCardProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             {icon}
-            <CardTitle className="text-base">
-              {title}
-              {showGoal && (
-                <span className="text-sm font-normal text-muted-foreground ml-2">
-                  (Meta: {goal} {unit})
-                </span>
-              )}
-            </CardTitle>
+            <CardTitle className="text-base">{title}</CardTitle>
           </div>
           {showGoal && (
             <Badge variant="secondary" className="text-xs">
@@ -133,16 +126,6 @@ export const ChartCard: React.FC<ChartCardProps> = ({
                   />
                 }
               />
-              {showGoal && (
-                <ReferenceLine
-                  y={Number(goal)}
-                  stroke={goalColor}
-                  strokeDasharray="5 5"
-                  strokeWidth={2}
-                  label="Meta"
-                  isFront={true}
-                />
-              )}
               <Area
                 dataKey={dataKey}
                 type="monotone"
@@ -150,6 +133,16 @@ export const ChartCard: React.FC<ChartCardProps> = ({
                 stroke={color}
                 strokeWidth={2}
               />
+              {showGoal && (
+                <ReferenceLine
+                  y={Number(goal)}
+                  stroke={goalColor}
+                  strokeDasharray="8 8"
+                  strokeWidth={1}
+                  label="Meta"
+                  isFront={true}
+                />
+              )}
             </AreaChart>
           ) : (
             <div className="flex items-center justify-center h-[200px] text-muted-foreground">
