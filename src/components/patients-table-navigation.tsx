@@ -72,231 +72,235 @@ export const patientSchema = z.object({
   lastMeal: z.string(),
 });
 
-const columns: ColumnDef<z.infer<typeof patientSchema>>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Selecionar todos"
-        />
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Selecionar linha"
-        />
-      </div>
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-8 px-2 lg:px-3"
-        >
-          Nome
-          <IconChevronDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div className="flex items-center gap-2">
-        <div className="flex size-8 items-center justify-center rounded-full bg-muted">
-          <IconUser className="size-4" />
-        </div>
-        <div className="grid flex-1 text-left text-sm leading-tight">
-          <span className="truncate font-semibold">{row.getValue("name")}</span>
-          <span className="truncate text-xs text-muted-foreground">
-            {row.getValue("email")}
-          </span>
-        </div>
-      </div>
-    ),
-  },
-  {
-    accessorKey: "age",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-8 px-2 lg:px-3"
-        >
-          Idade
-          <IconChevronDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div className="text-sm tabular-nums">{row.getValue("age")} anos</div>
-    ),
-  },
-  {
-    accessorKey: "weight",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-8 px-2 lg:px-3"
-        >
-          Peso
-          <IconChevronDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div className="text-sm tabular-nums">{row.getValue("weight")} kg</div>
-    ),
-  },
-  {
-    accessorKey: "bmi",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-8 px-2 lg:px-3"
-        >
-          IMC
-          <IconChevronDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const bmi = row.getValue("bmi") as number;
-      const getBMIColor = (bmi: number) => {
-        if (bmi < 18.5) return "bg-blue-100 text-blue-800";
-        if (bmi < 25) return "bg-green-100 text-green-800";
-        if (bmi < 30) return "bg-yellow-100 text-yellow-800";
-        return "bg-red-100 text-red-800";
-      };
-      return (
-        <Badge variant="outline" className={getBMIColor(bmi)}>
-          {bmi.toFixed(1)}
-        </Badge>
-      );
-    },
-  },
-  {
-    accessorKey: "goal",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-8 px-2 lg:px-3"
-        >
-          Meta
-          <IconChevronDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => <div className="text-sm">{row.getValue("goal")}</div>,
-  },
-  {
-    accessorKey: "status",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-8 px-2 lg:px-3"
-        >
-          Status
-          <IconChevronDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const status = row.getValue("status") as string;
-      const isActive = status === "Ativo";
-      return (
-        <div className="flex items-center gap-2">
-          <div
-            className={`size-2 rounded-full ${
-              isActive ? "bg-green-500" : "bg-yellow-500"
-            }`}
-          />
-          <span className="text-sm">{status}</span>
-        </div>
-      );
-    },
-    filterFn: "statusFilter",
-  },
-  {
-    accessorKey: "lastMeal",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-8 px-2 lg:px-3"
-        >
-          Última Refeição
-          <IconChevronDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div className="text-sm">{row.getValue("lastMeal")}</div>
-    ),
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => {
-      return (
-        <div className="flex items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                <IconDotsVertical className="h-4 w-4" />
-                <span className="sr-only">Abrir menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                onClick={(e) => {
-                  e.stopPropagation(); // Evitar conflito com o onClick da linha
-                  router.push(`/patients/${row.original.id}`);
-                }}
-              >
-                <IconUser className="mr-2 h-4 w-4" />
-                Ver Detalhes
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <IconPlus className="mr-2 h-4 w-4" />
-                Adicionar Refeição
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      );
-    },
-  },
-];
-
 export function PatientsTableNavigation({
   data: initialData,
 }: {
   data: z.infer<typeof patientSchema>[];
 }) {
   const router = useRouter();
+
+  const columns: ColumnDef<z.infer<typeof patientSchema>>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <div className="flex items-center justify-center">
+          <Checkbox
+            checked={
+              table.getIsAllPageRowsSelected() ||
+              (table.getIsSomePageRowsSelected() && "indeterminate")
+            }
+            onCheckedChange={(value) =>
+              table.toggleAllPageRowsSelected(!!value)
+            }
+            aria-label="Selecionar todos"
+          />
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="flex items-center justify-center">
+          <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            aria-label="Selecionar linha"
+          />
+        </div>
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "name",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-8 !px-0 justify-start"
+          >
+            Nome
+            <IconChevronDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="flex items-center gap-2">
+          <div className="flex size-8 items-center justify-center rounded-full bg-muted">
+            <IconUser className="size-4" />
+          </div>
+          <div className="grid flex-1 text-left text-sm leading-tight">
+            <span className="truncate font-semibold">
+              {row.getValue("name")}
+            </span>
+            <span className="truncate text-xs text-muted-foreground">
+              {row.getValue("email")}
+            </span>
+          </div>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "age",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-8 !px-0 justify-start"
+          >
+            Idade
+            <IconChevronDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="text-sm tabular-nums">{row.getValue("age")} anos</div>
+      ),
+    },
+    {
+      accessorKey: "weight",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-8 !px-0 justify-start"
+          >
+            Peso
+            <IconChevronDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="text-sm tabular-nums">{row.getValue("weight")} kg</div>
+      ),
+    },
+    {
+      accessorKey: "bmi",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-8 !px-0 justify-start"
+          >
+            IMC
+            <IconChevronDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        const bmi = row.getValue("bmi") as number;
+        const getBMIColor = (bmi: number) => {
+          if (bmi < 18.5) return "bg-blue-100 text-blue-800";
+          if (bmi < 25) return "bg-green-100 text-green-800";
+          if (bmi < 30) return "bg-yellow-100 text-yellow-800";
+          return "bg-red-100 text-red-800";
+        };
+        return (
+          <Badge variant="outline" className={getBMIColor(bmi)}>
+            {bmi.toFixed(1)}
+          </Badge>
+        );
+      },
+    },
+    {
+      accessorKey: "goal",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-8 !px-0 justify-start"
+          >
+            Meta
+            <IconChevronDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => <div className="text-sm">{row.getValue("goal")}</div>,
+    },
+    {
+      accessorKey: "status",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-8 !px-0 justify-start"
+          >
+            Status
+            <IconChevronDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        const status = row.getValue("status") as string;
+        const isActive = status === "Ativo";
+        return (
+          <div className="flex items-center gap-2">
+            <div
+              className={`size-2 rounded-full ${
+                isActive ? "bg-green-500" : "bg-yellow-500"
+              }`}
+            />
+            <span className="text-sm">{status}</span>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "lastMeal",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-8 !px-0 justify-start"
+          >
+            Última Refeição
+            <IconChevronDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="text-sm">{row.getValue("lastMeal")}</div>
+      ),
+    },
+    {
+      id: "actions",
+      cell: ({ row }) => {
+        return (
+          <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                  <IconDotsVertical className="h-4 w-4" />
+                  <span className="sr-only">Abrir menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation(); // Evitar conflito com o onClick da linha
+                    router.push(`/patients/${row.original.id}`);
+                  }}
+                >
+                  <IconUser className="mr-2 h-4 w-4" />
+                  Ver Detalhes
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <IconPlus className="mr-2 h-4 w-4" />
+                  Adicionar Refeição
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        );
+      },
+    },
+  ];
+
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
