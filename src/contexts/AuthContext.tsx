@@ -80,7 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = async () => {
     try {
       await signOut(auth);
-      router.push("/");
+      // Não fazer redirecionamento manual aqui - deixar o ProtectedRoute gerenciar
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
     }

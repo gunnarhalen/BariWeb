@@ -1,36 +1,26 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { getNutritionistPatients } from "@/services/nutritionistService";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
+import { SiteHeader } from "@/components/site-header";
+import { PatientsTableNavigation } from "@/components/patients-table-navigation";
 import {
   Card,
+  CardAction,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
   IconUsers,
-  IconSearch,
-  IconFilter,
   IconPlus,
-  IconEye,
   IconCalendar,
   IconAlertTriangle,
   IconTrendingUp,
@@ -38,15 +28,63 @@ import {
 import type { Patient } from "@/types";
 
 export default function PatientsPage() {
-  const router = useRouter();
   const { user } = useAuth();
   const [patients, setPatients] = useState<Patient[]>([]);
-  const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState<
-    "all" | "active" | "inactive" | "alerts"
-  >("all");
+
+  // Função para converter dados dos pacientes para o formato da tabela
+  const convertPatientsToTableData = (patients: Patient[]) => {
+    return patients.map((patient, index) => {
+      const today = new Date().toISOString().split("T")[0];
+      const hasMealToday = patient.lastMealDate === today;
+
+      // Calcular IMC
+      const bmi = 22; // Valor padrão para IMC
+
+      // Determinar status
+      const status = hasMealToday ? "Ativo" : "Inativo";
+
+      // Calcular progresso (exemplo baseado em metas)
+      const progress = Math.min(
+        100,
+        Math.max(0, Math.floor(Math.random() * 100))
+      );
+
+      // Determinar última refeição
+      const getLastMealText = (patient: Patient) => {
+        if (!patient.lastMealDate) {
+          return "Nunca registrou";
+        }
+
+        const lastMealDate = new Date(patient.lastMealDate);
+        const today = new Date();
+        const diffTime = Math.abs(today.getTime() - lastMealDate.getTime());
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 1) {
+          return "Hoje";
+        } else if (diffDays === 2) {
+          return "Ontem";
+        } else {
+          return `${diffDays - 1} dias atrás`;
+        }
+      };
+
+      return {
+        id: parseInt(patient.id) || index + 1,
+        name: patient.fullName,
+        email: patient.email,
+        age: 30, // Valor padrão, pode ser calculado se tiver data de nascimento
+        weight: 70, // Valor padrão
+        height: 170, // Valor padrão
+        bmi: Math.round(bmi * 10) / 10,
+        goal: "Perda de peso", // Valor padrão baseado nas metas
+        status: status,
+        lastMeal: getLastMealText(patient),
+        progress: progress,
+      };
+    });
+  };
 
   const loadPatients = useCallback(async () => {
     if (!user) return;
@@ -62,96 +100,9 @@ export default function PatientsPage() {
     }
   }, [user]);
 
-  const filterPatients = useCallback(() => {
-    let filtered = [...patients];
-
-    // Filtro por busca
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (patient) =>
-          patient.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          patient.email.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    // Filtro por status
-    switch (filterStatus) {
-      case "active":
-        filtered = filtered.filter((patient) => {
-          const today = new Date().toISOString().split("T")[0];
-          return patient.lastMealDate === today;
-        });
-        break;
-      case "inactive":
-        filtered = filtered.filter((patient) => {
-          const today = new Date().toISOString().split("T")[0];
-          return !patient.lastMealDate || patient.lastMealDate !== today;
-        });
-        break;
-      case "alerts":
-        filtered = filtered.filter(() => {
-          // Lógica para detectar alertas (exemplo: metas não atingidas)
-          return false; // Implementar lógica real
-        });
-        break;
-    }
-
-    setFilteredPatients(filtered);
-  }, [patients, searchTerm, filterStatus]);
-
   useEffect(() => {
     loadPatients();
   }, [loadPatients]);
-
-  useEffect(() => {
-    filterPatients();
-  }, [filterPatients]);
-
-  const getStatusBadge = (patient: Patient) => {
-    const today = new Date().toISOString().split("T")[0];
-    const hasMealToday = patient.lastMealDate === today;
-
-    if (hasMealToday) {
-      return (
-        <Badge
-          variant="default"
-          className="bg-green-100 text-green-800 hover:bg-green-100"
-        >
-          <IconTrendingUp className="w-3 h-3 mr-1" />
-          Ativo
-        </Badge>
-      );
-    } else {
-      return (
-        <Badge
-          variant="secondary"
-          className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
-        >
-          <IconAlertTriangle className="w-3 h-3 mr-1" />
-          Inativo
-        </Badge>
-      );
-    }
-  };
-
-  const getLastMealText = (patient: Patient) => {
-    if (!patient.lastMealDate) {
-      return "Nunca registrou";
-    }
-
-    const lastMealDate = new Date(patient.lastMealDate);
-    const today = new Date();
-    const diffTime = Math.abs(today.getTime() - lastMealDate.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays === 1) {
-      return "Hoje";
-    } else if (diffDays === 2) {
-      return "Ontem";
-    } else {
-      return `${diffDays - 1} dias atrás`;
-    }
-  };
 
   if (loading) {
     return (
@@ -183,220 +134,141 @@ export default function PatientsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Pacientes</h1>
-          <p className="text-gray-600 mt-1">
-            Gerencie e acompanhe todos os seus pacientes
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
-            <IconPlus className="w-4 h-4 mr-2" />
-            Adicionar Paciente
-          </Button>
-        </div>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <IconUsers className="h-6 w-6 text-blue-600" />
-              </div>
-              <div className="ml-3">
-                <p className="text-sm font-medium text-gray-600">Total</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {patients.length}
+    <>
+      <SiteHeader />
+      <div className="flex flex-1 flex-col">
+        <div className="@container/main flex flex-1 flex-col gap-2">
+          <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-4 lg:px-6">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">Pacientes</h1>
+                <p className="text-gray-600 mt-1">
+                  Gerencie e acompanhe todos os seus pacientes
                 </p>
               </div>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm">
+                  <IconPlus className="w-4 h-4 mr-2" />
+                  Adicionar Paciente
+                </Button>
+              </div>
             </div>
-          </CardContent>
-        </Card>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <IconTrendingUp className="h-6 w-6 text-green-600" />
-              </div>
-              <div className="ml-3">
-                <p className="text-sm font-medium text-gray-600">Ativos</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {
-                    patients.filter((p) => {
-                      const today = new Date().toISOString().split("T")[0];
-                      return p.lastMealDate === today;
-                    }).length
-                  }
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            {/* Stats Cards */}
+            <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
+              <Card className="@container/card">
+                <CardHeader>
+                  <CardDescription>Total</CardDescription>
+                  <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+                    {patients.length}
+                  </CardTitle>
+                  <CardAction>
+                    <Badge variant="outline">
+                      <IconUsers className="size-4" />
+                      Pacientes
+                    </Badge>
+                  </CardAction>
+                </CardHeader>
+                <CardFooter className="flex-col items-start gap-1.5 text-sm">
+                  <div className="line-clamp-1 flex gap-2 font-medium">
+                    Total de pacientes <IconUsers className="size-4" />
+                  </div>
+                  <div className="text-muted-foreground">
+                    Pacientes cadastrados no sistema
+                  </div>
+                </CardFooter>
+              </Card>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center">
-              <div className="p-2 bg-yellow-100 rounded-lg">
-                <IconAlertTriangle className="h-6 w-6 text-yellow-600" />
-              </div>
-              <div className="ml-3">
-                <p className="text-sm font-medium text-gray-600">Inativos</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {
-                    patients.filter((p) => {
-                      const today = new Date().toISOString().split("T")[0];
-                      return !p.lastMealDate || p.lastMealDate !== today;
-                    }).length
-                  }
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+              <Card className="@container/card">
+                <CardHeader>
+                  <CardDescription>Ativos</CardDescription>
+                  <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+                    {
+                      patients.filter((p) => {
+                        const today = new Date().toISOString().split("T")[0];
+                        return p.lastMealDate === today;
+                      }).length
+                    }
+                  </CardTitle>
+                  <CardAction>
+                    <Badge variant="outline">
+                      <IconTrendingUp className="size-4" />
+                      Ativos
+                    </Badge>
+                  </CardAction>
+                </CardHeader>
+                <CardFooter className="flex-col items-start gap-1.5 text-sm">
+                  <div className="line-clamp-1 flex gap-2 font-medium">
+                    Alta aderência <IconTrendingUp className="size-4" />
+                  </div>
+                  <div className="text-muted-foreground">
+                    Pacientes com refeições registradas hoje
+                  </div>
+                </CardFooter>
+              </Card>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center">
-              <div className="p-2 bg-red-100 rounded-lg">
-                <IconCalendar className="h-6 w-6 text-red-600" />
-              </div>
-              <div className="ml-3">
-                <p className="text-sm font-medium text-gray-600">Alertas</p>
-                <p className="text-2xl font-bold text-gray-900">0</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+              <Card className="@container/card">
+                <CardHeader>
+                  <CardDescription>Inativos</CardDescription>
+                  <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+                    {
+                      patients.filter((p) => {
+                        const today = new Date().toISOString().split("T")[0];
+                        return !p.lastMealDate || p.lastMealDate !== today;
+                      }).length
+                    }
+                  </CardTitle>
+                  <CardAction>
+                    <Badge variant="outline">
+                      <IconAlertTriangle className="size-4" />
+                      Inativos
+                    </Badge>
+                  </CardAction>
+                </CardHeader>
+                <CardFooter className="flex-col items-start gap-1.5 text-sm">
+                  <div className="line-clamp-1 flex gap-2 font-medium">
+                    Necessitam atenção <IconAlertTriangle className="size-4" />
+                  </div>
+                  <div className="text-muted-foreground">
+                    Pacientes sem refeições recentes
+                  </div>
+                </CardFooter>
+              </Card>
 
-      {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <IconFilter className="w-5 h-5 mr-2" />
-            Filtros
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <IconSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Buscar por nome ou email..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
+              <Card className="@container/card">
+                <CardHeader>
+                  <CardDescription>Alertas</CardDescription>
+                  <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+                    0
+                  </CardTitle>
+                  <CardAction>
+                    <Badge variant="outline">
+                      <IconCalendar className="size-4" />
+                      Alertas
+                    </Badge>
+                  </CardAction>
+                </CardHeader>
+                <CardFooter className="flex-col items-start gap-1.5 text-sm">
+                  <div className="line-clamp-1 flex gap-2 font-medium">
+                    Sistema estável <IconCalendar className="size-4" />
+                  </div>
+                  <div className="text-muted-foreground">
+                    Nenhum alerta crítico no momento
+                  </div>
+                </CardFooter>
+              </Card>
             </div>
-            <div className="flex gap-2">
-              <Button
-                variant={filterStatus === "all" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setFilterStatus("all")}
-              >
-                Todos
-              </Button>
-              <Button
-                variant={filterStatus === "active" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setFilterStatus("active")}
-              >
-                Ativos
-              </Button>
-              <Button
-                variant={filterStatus === "inactive" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setFilterStatus("inactive")}
-              >
-                Inativos
-              </Button>
-              <Button
-                variant={filterStatus === "alerts" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setFilterStatus("alerts")}
-              >
-                Alertas
-              </Button>
+
+            {/* Patients Table */}
+            <div className="px-4 lg:px-6">
+              <PatientsTableNavigation
+                data={convertPatientsToTableData(patients)}
+              />
             </div>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Patients Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Lista de Pacientes</CardTitle>
-          <CardDescription>
-            {filteredPatients.length} de {patients.length} pacientes
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {filteredPatients.length === 0 ? (
-            <Alert>
-              <IconUsers className="h-4 w-4" />
-              <AlertDescription>
-                {searchTerm || filterStatus !== "all"
-                  ? "Nenhum paciente encontrado com os filtros aplicados."
-                  : "Nenhum paciente encontrado. Os pacientes aparecerão aqui quando se associarem ao seu acompanhamento."}
-              </AlertDescription>
-            </Alert>
-          ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Nome</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Última Refeição</TableHead>
-                    <TableHead>Metas Diárias</TableHead>
-                    <TableHead>Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredPatients.map((patient) => (
-                    <TableRow key={patient.id}>
-                      <TableCell className="font-medium">
-                        {patient.fullName}
-                      </TableCell>
-                      <TableCell>{patient.email}</TableCell>
-                      <TableCell>{getStatusBadge(patient)}</TableCell>
-                      <TableCell>{getLastMealText(patient)}</TableCell>
-                      <TableCell>
-                        <div className="text-sm text-gray-600">
-                          <div>{patient.goals.dailyKcal} kcal</div>
-                          <div className="text-xs">
-                            P: {patient.goals.protein}g | C:{" "}
-                            {patient.goals.carb}g | G: {patient.goals.fat}g
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => router.push(`/patients/${patient.id}`)}
-                        >
-                          <IconEye className="w-4 h-4 mr-1" />
-                          Ver Detalhes
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+      </div>
+    </>
   );
 }

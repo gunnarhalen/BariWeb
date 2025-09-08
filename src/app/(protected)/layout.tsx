@@ -1,6 +1,7 @@
 "use client";
 
-import Layout from "@/components/Layout";
+import { AppSidebar } from "@/components/app-sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default function ProtectedLayout({
@@ -10,7 +11,17 @@ export default function ProtectedLayout({
 }) {
   return (
     <ProtectedRoute>
-      <Layout>{children}</Layout>
+      <SidebarProvider
+        style={
+          {
+            "--sidebar-width": "calc(var(--spacing) * 72)",
+            "--header-height": "calc(var(--spacing) * 12)",
+          } as React.CSSProperties
+        }
+      >
+        <AppSidebar variant="inset" />
+        <SidebarInset>{children}</SidebarInset>
+      </SidebarProvider>
     </ProtectedRoute>
   );
 }

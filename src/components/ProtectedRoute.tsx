@@ -17,10 +17,10 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     if (!loading) {
       if (!user) {
         // Se não estiver logado, redirecionar para login
-        router.push("/login");
+        router.replace("/login");
       } else if (!isNutritionist) {
         // Se estiver logado mas não for nutricionista, redirecionar para unauthorized
-        router.push("/unauthorized");
+        router.replace("/unauthorized");
       }
     }
   }, [user, isNutritionist, loading, router]);
