@@ -144,7 +144,15 @@ export const getPatientMealData = async (
         const dateDocSnapshot = doc;
 
         if (dateDocSnapshot.exists()) {
-          const dateData = dateDocSnapshot.data() as any;
+          const dateData = dateDocSnapshot.data() as {
+            totals?: {
+              kcal?: number;
+              protein?: number;
+              carb?: number;
+              fat?: number;
+            };
+            meals?: unknown[];
+          };
 
           // Extrair dados dos totals
           const totals = dateData.totals || {};

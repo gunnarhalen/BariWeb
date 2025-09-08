@@ -1,12 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import * as React from "react";
 import {
   IconChartBar,
   IconDashboard,
   IconHelp,
-  IconInnerShadowTop,
   IconReport,
   IconSearch,
   IconSettings,

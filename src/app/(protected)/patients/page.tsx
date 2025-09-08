@@ -34,7 +34,7 @@ export default function PatientsPage() {
 
   // Função para converter dados dos pacientes para o formato da tabela
   const convertPatientsToTableData = (patients: Patient[]) => {
-    return patients.map((patient, index) => {
+    return patients.map((patient) => {
       const today = new Date().toISOString().split("T")[0];
 
       // Determinar status baseado na última refeição

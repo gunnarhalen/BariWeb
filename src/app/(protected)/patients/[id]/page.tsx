@@ -13,13 +13,11 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SiteHeader } from "@/components/site-header";
 import { DateRangeSelector } from "@/components/ui/date-range-selector";
 import {
   generateNutrientData,
   generateMealsData,
-  getPatientGoals,
   convertRealDataToChartData,
   convertRealDataToMealsData,
   type ChartDataPoint,
@@ -27,8 +25,6 @@ import {
 } from "@/lib/chart-data";
 import {
   IconArrowLeft,
-  IconUser,
-  IconMail,
   IconCalendar,
   IconWeight,
   IconRuler,
