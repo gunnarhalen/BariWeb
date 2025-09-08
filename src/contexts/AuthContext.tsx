@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   User,
   signInWithEmailAndPassword,
@@ -24,6 +25,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isNutritionistUser, setIsNutritionistUser] = useState(false);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -33,6 +35,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Verificar se é nutricionista
         const isNutri = await isNutritionist(user.uid);
         setIsNutritionistUser(isNutri);
+
+        // Se o usuário está logado mas não é nutricionista, redirecionar
+        if (!isNutri) {
+          router.push("/unauthorized");
+        }
       } else {
         setIsNutritionistUser(false);
       }
@@ -41,7 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [router]);
 
   const signIn = async (email: string, password: string): Promise<boolean> => {
     try {
@@ -55,11 +62,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const isNutri = await isNutritionist(userCredential.user.uid);
 
       if (!isNutri) {
-        // Se não for nutricionista, fazer logout
+        // Se não for nutricionista, fazer logout e redirecionar
         await signOut(auth);
+        router.push("/unauthorized");
         return false;
       }
 
+      // Se for nutricionista, redirecionar para o dashboard
+      router.push("/dashboard");
       return true;
     } catch (error) {
       console.error("Erro ao fazer login:", error);
@@ -70,6 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = async () => {
     try {
       await signOut(auth);
+      router.push("/");
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
     }

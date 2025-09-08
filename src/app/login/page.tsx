@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { IconBrandTabler } from "@tabler/icons-react";
+import Logo from "@/components/Logo";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -48,7 +48,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <IconBrandTabler className="h-12 w-12 text-blue-600" />
+            <Logo width={120} height={30} />
           </div>
           <CardTitle className="text-2xl font-bold">Bari Web</CardTitle>
           <CardDescription>

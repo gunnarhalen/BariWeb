@@ -225,14 +225,27 @@ export const getNutritionistPatients = async (
   }
 };
 
+// Interface para o perfil do paciente
+interface PatientProfile {
+  id: string;
+  fullName?: string;
+  email?: string;
+  age?: number;
+  gender?: string;
+  goals?: any;
+  [key: string]: any;
+}
+
 // Obter perfil completo do paciente
-export const getPatientProfile = async (patientId: string) => {
+export const getPatientProfile = async (
+  patientId: string
+): Promise<PatientProfile | null> => {
   try {
     const patientRef = doc(db, "users", patientId, "profile", "data");
     const patientDoc = await getDoc(patientRef);
 
     if (patientDoc.exists()) {
-      return { id: patientDoc.id, ...patientDoc.data() };
+      return { id: patientDoc.id, ...patientDoc.data() } as PatientProfile;
     }
 
     return null;
@@ -281,5 +294,44 @@ export const isNutritionist = async (userId: string): Promise<boolean> => {
   } catch (error) {
     console.error("Erro ao verificar se é nutricionista:", error);
     return false;
+  }
+};
+
+// Buscar solicitações do nutricionista
+export const getNutritionistRequests = async (nutritionistId: string) => {
+  try {
+    const requestsRef = collection(db, "nutritionist_requests");
+    const requestsQuery = query(
+      requestsRef,
+      where("nutritionistId", "==", nutritionistId),
+      orderBy("createdAt", "desc")
+    );
+
+    const requestsSnapshot = await getDocs(requestsQuery);
+    const requests = [];
+
+    for (const doc of requestsSnapshot.docs) {
+      const requestData = doc.data() as NutritionistRequest;
+      const patientProfile = await getPatientProfile(requestData.userId);
+
+      requests.push({
+        ...requestData,
+        id: doc.id,
+        patientProfile: patientProfile
+          ? {
+              fullName: patientProfile.fullName || "Nome não disponível",
+              email: patientProfile.email || "Email não disponível",
+              age: patientProfile.age,
+              gender: patientProfile.gender,
+              goals: patientProfile.goals,
+            }
+          : null,
+      });
+    }
+
+    return requests;
+  } catch (error) {
+    console.error("Erro ao buscar solicitações:", error);
+    return [];
   }
 };

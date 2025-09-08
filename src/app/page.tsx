@@ -11,8 +11,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import Logo from "@/components/Logo";
 import {
-  IconBrandTabler,
   IconUsers,
   IconChartBar,
   IconShield,
@@ -91,8 +91,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center">
-              <IconBrandTabler className="h-8 w-8 text-blue-600 mr-3" />
-              <h1 className="text-2xl font-bold text-gray-900">Bari Web</h1>
+              <Logo width={120} height={30} />
             </div>
             <Button
               onClick={() => router.push("/login")}
@@ -213,8 +212,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center mb-4 md:mb-0">
-              <IconBrandTabler className="h-8 w-8 text-blue-400 mr-3" />
-              <h3 className="text-2xl font-bold">Bari Web</h3>
+              <Logo width={120} height={30} className="text-white" />
             </div>
             <div className="text-center md:text-right">
               <p className="text-gray-400 mb-2">

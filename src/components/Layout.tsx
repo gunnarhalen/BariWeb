@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
+import Logo from "@/components/Logo";
 import {
   IconDashboard,
   IconUsers,
+  IconUserPlus,
   IconChartBar,
   IconSettings,
   IconLogout,
@@ -24,6 +26,7 @@ export default function Layout({ children }: LayoutProps) {
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: IconDashboard },
     { name: "Pacientes", href: "/patients", icon: IconUsers },
+    { name: "Solicitações", href: "/requests", icon: IconUserPlus },
     { name: "Relatórios", href: "/reports", icon: IconChartBar },
     { name: "Configurações", href: "/settings", icon: IconSettings },
   ];
@@ -43,7 +46,7 @@ export default function Layout({ children }: LayoutProps) {
           />
           <div className="fixed inset-y-0 left-0 flex w-64 flex-col bg-white">
             <div className="flex h-16 items-center justify-between px-4">
-              <h1 className="text-xl font-bold text-gray-900">Bari Web</h1>
+              <Logo width={100} height={25} />
               <Button
                 variant="ghost"
                 size="sm"
@@ -87,9 +90,9 @@ export default function Layout({ children }: LayoutProps) {
       {/* Sidebar Desktop */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
         <div className="flex flex-col flex-grow bg-white border-r border-gray-200">
-          <div className="flex h-16 items-center px-4">
-            <h1 className="text-xl font-bold text-gray-900">Bari Web</h1>
-          </div>
+            <div className="flex h-16 items-center px-4">
+              <Logo width={100} height={25} />
+            </div>
           <nav className="flex-1 px-4 py-4">
             <ul className="space-y-2">
               {navigation.map((item) => (
@@ -133,7 +136,7 @@ export default function Layout({ children }: LayoutProps) {
             >
               <IconMenu2 className="h-5 w-5" />
             </Button>
-            <h1 className="text-lg font-semibold text-gray-900">Bari Web</h1>
+            <Logo width={100} height={25} />
             <div className="w-9" /> {/* Spacer */}
           </div>
         </div>
