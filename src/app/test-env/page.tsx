@@ -44,7 +44,7 @@ export default function TestEnv() {
         {JSON.stringify(
           Object.keys(process.env)
             .filter((key) => key.startsWith("NEXT_PUBLIC_"))
-            .reduce((acc, key) => {
+            .reduce((acc: Record<string, string>, key) => {
               acc[key] = process.env[key] ? "***presente***" : "ausente";
               return acc;
             }, {}),
