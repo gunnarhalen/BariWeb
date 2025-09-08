@@ -1388,18 +1388,6 @@
     postcss "^8.4.41"
     tailwindcss "4.1.13"
 
-"@tanstack/query-core@5.87.1":
-  version "5.87.1"
-  resolved "https://registry.npmjs.org/@tanstack/query-core/-/query-core-5.87.1.tgz"
-  integrity sha512-HOFHVvhOCprrWvtccSzc7+RNqpnLlZ5R6lTmngb8aq7b4rc2/jDT0w+vLdQ4lD9bNtQ+/A4GsFXy030Gk4ollA==
-
-"@tanstack/react-query@^5.87.1":
-  version "5.87.1"
-  resolved "https://registry.npmjs.org/@tanstack/react-query/-/react-query-5.87.1.tgz"
-  integrity sha512-YKauf8jfMowgAqcxj96AHs+Ux3m3bWT1oSVKamaRPXSnW2HqSznnTCEkAVqctF1e/W9R/mPcyzzINIgpOH94qg==
-  dependencies:
-    "@tanstack/query-core" "5.87.1"
-
 "@tybys/wasm-util@^0.10.0":
   version "0.10.0"
   resolved "https://registry.yarnpkg.com/@tybys/wasm-util/-/wasm-util-0.10.0.tgz#2fd3cd754b94b378734ce17058d0507c45c88369"
@@ -3618,11 +3606,6 @@ react-dom@19.1.0:
   dependencies:
     scheduler "^0.26.0"
 
-react-hook-form@^7.62.0:
-  version "7.62.0"
-  resolved "https://registry.npmjs.org/react-hook-form/-/react-hook-form-7.62.0.tgz"
-  integrity sha512-7KWFejc98xqG/F4bAxpL41NB3o1nnvQO1RWZT3TqRZYL8RryQETGfEdVnJN2fy1crCiBLLjkRBVK05j24FxJGA==
-
 react-is@^16.13.1:
   version "16.13.1"
   resolved "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz"
@@ -4425,8 +4408,3 @@ yocto-queue@^0.1.0:
   version "0.1.0"
   resolved "https://registry.npmjs.org/yocto-queue/-/yocto-queue-0.1.0.tgz"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
-
-zod@^4.1.5:
-  version "4.1.5"
-  resolved "https://registry.npmjs.org/zod/-/zod-4.1.5.tgz"
-  integrity sha512-rcUUZqlLJgBC33IT3PNMgsCq6TzLQEG/Ei/KTCU0PedSWRMAXoOUN+4t/0H+Q8bdnLPdqUYnvboJT0bn/229qg==
