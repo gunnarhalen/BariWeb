@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/select";
 import {
   IconDownload,
-  IconCalendar,
   IconChartBar,
   IconUsers,
   IconTrendingUp,
@@ -69,7 +68,6 @@ const mockData = {
 };
 
 export default function ReportsPage() {
-  const { user } = useAuth();
   const [selectedPeriod, setSelectedPeriod] = useState("6months");
   const [selectedReport, setSelectedReport] = useState("overview");
 

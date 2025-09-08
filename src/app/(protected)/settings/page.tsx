@@ -23,13 +23,9 @@ import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import {
   IconUser,
-  IconMail,
-  IconPhone,
-  IconMapPin,
   IconShield,
   IconBell,
   IconPalette,
-  IconDatabase,
   IconLogout,
   IconDeviceFloppy,
 } from "@tabler/icons-react";
@@ -71,7 +67,7 @@ export default function SettingsPage() {
       // Simular salvamento
       await new Promise((resolve) => setTimeout(resolve, 1000));
       alert("Configurações salvas com sucesso!");
-    } catch (error) {
+    } catch {
       alert("Erro ao salvar configurações");
     } finally {
       setIsLoading(false);

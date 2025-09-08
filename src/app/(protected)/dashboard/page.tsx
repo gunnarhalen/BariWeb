@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 import { getNutritionistPatients } from "@/services/nutritionistService";
 import {
@@ -200,7 +201,7 @@ function DashboardContent() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <a
+            <Link
               href="/patients"
               className="flex items-center p-4 border rounded-lg hover:bg-gray-50 transition-colors"
             >
@@ -213,9 +214,9 @@ function DashboardContent() {
                   Gerenciar lista completa
                 </p>
               </div>
-            </a>
+            </Link>
 
-            <a
+            <Link
               href="/reports"
               className="flex items-center p-4 border rounded-lg hover:bg-gray-50 transition-colors"
             >
@@ -226,9 +227,9 @@ function DashboardContent() {
                   Exportar dados dos pacientes
                 </p>
               </div>
-            </a>
+            </Link>
 
-            <a
+            <Link
               href="/settings"
               className="flex items-center p-4 border rounded-lg hover:bg-gray-50 transition-colors"
             >
@@ -237,7 +238,7 @@ function DashboardContent() {
                 <p className="font-medium text-gray-900">Configurações</p>
                 <p className="text-sm text-gray-600">Personalizar sua conta</p>
               </div>
-            </a>
+            </Link>
           </div>
         </CardContent>
       </Card>

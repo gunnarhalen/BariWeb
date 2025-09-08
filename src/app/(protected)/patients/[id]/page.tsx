@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -16,7 +15,6 @@ import {
   IconArrowLeft,
   IconUser,
   IconMail,
-  IconPhone,
   IconCalendar,
   IconWeight,
   IconRuler,
@@ -27,7 +25,7 @@ import {
   IconNotes,
   IconChartBar,
 } from "@tabler/icons-react";
-import type { Patient, UserProfile } from "@/types";
+import type { UserProfile } from "@/types";
 
 export default function PatientDetailsPage() {
   const params = useParams();
@@ -84,8 +82,8 @@ export default function PatientDetailsPage() {
           isNutritionist: profileData.isNutritionist || false,
           cfnCrn: profileData.cfnCrn || "",
           associatedNutritionistId: profileData.associatedNutritionistId || "",
-          createdAt: profileData.createdAt as any,
-          updatedAt: profileData.updatedAt as any,
+          createdAt: profileData.createdAt as unknown,
+          updatedAt: profileData.updatedAt as unknown,
         };
 
         setPatientProfile(userProfile);
