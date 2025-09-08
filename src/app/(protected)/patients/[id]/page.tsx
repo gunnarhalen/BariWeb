@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import {
   getPatientProfile,
   getLastMealDate,
+  getPatientMealData,
 } from "@/services/nutritionistService";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,11 +16,12 @@ import { Spinner } from "@/components/ui/spinner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SiteHeader } from "@/components/site-header";
 import { DateRangeSelector } from "@/components/ui/date-range-selector";
-import { BarChartComponent } from "@/components/ui/bar-chart";
 import {
   generateNutrientData,
   generateMealsData,
   getPatientGoals,
+  convertRealDataToChartData,
+  convertRealDataToMealsData,
   type ChartDataPoint,
   type MealsDataPoint,
 } from "@/lib/chart-data";
@@ -39,6 +41,7 @@ import {
   IconFlag,
   IconLeaf,
 } from "@tabler/icons-react";
+import { ChartCard } from "@/components/chart-card";
 import type { UserProfile } from "@/types";
 import type { Timestamp } from "firebase/firestore";
 
@@ -134,21 +137,45 @@ export default function PatientDetailsPage() {
     loadPatientData();
   }, [user, patientId]);
 
-  // Gerar dados dos gráficos quando o range de datas mudar
+  // Buscar dados reais dos gráficos quando o range de datas mudar
   useEffect(() => {
-    if (patientProfile) {
-      const goals = getPatientGoals();
-      const days = parseInt(dateRange);
+    const fetchRealChartData = async () => {
+      if (patientProfile && patientId) {
+        const days = parseInt(dateRange);
 
-      setChartData({
-        calories: generateNutrientData(days, goals.dailyKcal),
-        protein: generateNutrientData(days, goals.protein),
-        carb: generateNutrientData(days, goals.carb),
-        fat: generateNutrientData(days, goals.fat),
-        meals: generateMealsData(days),
-      });
-    }
-  }, [patientProfile, dateRange]);
+        try {
+          // Buscar dados reais das refeições
+          const realMealData = await getPatientMealData(patientId, days);
+
+          // Converter para formato dos gráficos
+          const chartDataConverted = {
+            calories: convertRealDataToChartData(realMealData, "kcal"),
+            protein: convertRealDataToChartData(realMealData, "protein"),
+            carb: convertRealDataToChartData(realMealData, "carb"),
+            fat: convertRealDataToChartData(realMealData, "fat"),
+            meals: convertRealDataToMealsData(realMealData),
+          };
+
+          setChartData(chartDataConverted);
+        } catch (error) {
+          console.error("Erro ao buscar dados reais dos gráficos:", error);
+          // Fallback para dados mockados em caso de erro
+          setChartData({
+            calories: generateNutrientData(
+              days,
+              patientProfile.goals.dailyKcal
+            ),
+            protein: generateNutrientData(days, patientProfile.goals.protein),
+            carb: generateNutrientData(days, patientProfile.goals.carb),
+            fat: generateNutrientData(days, patientProfile.goals.fat),
+            meals: generateMealsData(days),
+          });
+        }
+      }
+    };
+
+    fetchRealChartData();
+  }, [patientProfile, dateRange, patientId]);
 
   const getStatusBadge = () => {
     const today = new Date().toISOString().split("T")[0];
@@ -373,54 +400,6 @@ export default function PatientDetailsPage() {
               </div>
             </div>
 
-            {/* Metas Diárias - Horizontal compacto */}
-            <div className="px-4 lg:px-6">
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2 text-base">
-                    <IconTarget className="w-4 h-4" />
-                    Metas Diárias
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                    <div className="p-3 bg-blue-50 dark:bg-blue-950 rounded-lg">
-                      <p className="text-xl font-bold text-blue-700 dark:text-blue-300">
-                        {patientProfile.goals.dailyKcal}
-                      </p>
-                      <p className="text-xs text-blue-600 dark:text-blue-400">
-                        Calorias
-                      </p>
-                    </div>
-                    <div className="p-3 bg-green-50 dark:bg-green-950 rounded-lg">
-                      <p className="text-xl font-bold text-green-700 dark:text-green-300">
-                        {patientProfile.goals.protein}g
-                      </p>
-                      <p className="text-xs text-green-600 dark:text-green-400">
-                        Proteínas
-                      </p>
-                    </div>
-                    <div className="p-3 bg-yellow-50 dark:bg-yellow-950 rounded-lg">
-                      <p className="text-xl font-bold text-yellow-700 dark:text-yellow-300">
-                        {patientProfile.goals.carb}g
-                      </p>
-                      <p className="text-xs text-yellow-600 dark:text-yellow-400">
-                        Carboidratos
-                      </p>
-                    </div>
-                    <div className="p-3 bg-red-50 dark:bg-red-950 rounded-lg">
-                      <p className="text-xl font-bold text-red-700 dark:text-red-300">
-                        {patientProfile.goals.fat}g
-                      </p>
-                      <p className="text-xs text-red-600 dark:text-red-400">
-                        Gorduras
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
             {/* Restrições Alimentares - Horizontal compacto */}
             {(patientProfile.intolerances.length > 0 ||
               patientProfile.allergies.length > 0) && (
@@ -470,59 +449,58 @@ export default function PatientDetailsPage() {
                 <div className="space-y-4">
                   {/* Primeira linha: Refeições e Calorias */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <BarChartComponent
+                    {/* Gráfico de Refeições */}
+                    <ChartCard
                       title="Refeições por Dia"
-                      data={
-                        chartData.meals as unknown as Array<
-                          Record<string, string | number>
-                        >
-                      }
+                      data={chartData.meals || []}
+                      goal={0}
+                      color="#3b82f6"
+                      gradientId="fillMeals"
                       dataKey="meals"
-                      color="#3b82f6"
+                      showGoal={false}
                     />
-                    <BarChartComponent
+
+                    {/* Gráfico de Calorias */}
+                    <ChartCard
                       title="Calorias Diárias"
-                      data={
-                        chartData.calories as unknown as Array<
-                          Record<string, string | number>
-                        >
-                      }
-                      dataKey="value"
+                      data={chartData.calories || []}
+                      goal={patientProfile.goals.dailyKcal}
                       color="#3b82f6"
+                      gradientId="fillCalories"
+                      unit="kcal"
                     />
                   </div>
 
                   {/* Segunda linha: Proteína, Carboidratos e Gorduras */}
                   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                    <BarChartComponent
+                    {/* Gráfico de Proteína */}
+                    <ChartCard
                       title="Proteína"
-                      data={
-                        chartData.protein as unknown as Array<
-                          Record<string, string | number>
-                        >
-                      }
-                      dataKey="value"
+                      data={chartData.protein || []}
+                      goal={patientProfile.goals.protein}
                       color="#10b981"
+                      gradientId="fillProtein"
+                      unit="g"
                     />
-                    <BarChartComponent
+
+                    {/* Gráfico de Carboidratos */}
+                    <ChartCard
                       title="Carboidratos"
-                      data={
-                        chartData.carb as unknown as Array<
-                          Record<string, string | number>
-                        >
-                      }
-                      dataKey="value"
+                      data={chartData.carb || []}
+                      goal={patientProfile.goals.carb}
                       color="#f59e0b"
+                      gradientId="fillCarb"
+                      unit="g"
                     />
-                    <BarChartComponent
+
+                    {/* Gráfico de Gorduras */}
+                    <ChartCard
                       title="Gorduras"
-                      data={
-                        chartData.fat as unknown as Array<
-                          Record<string, string | number>
-                        >
-                      }
-                      dataKey="value"
+                      data={chartData.fat || []}
+                      goal={patientProfile.goals.fat}
                       color="#ef4444"
+                      gradientId="fillFat"
+                      unit="g"
                     />
                   </div>
                 </div>

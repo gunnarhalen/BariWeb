@@ -17,6 +17,48 @@ export interface PatientGoals {
   fat: number;
 }
 
+// Funções para gerar dados mockados dos gráficos
+
+import { DailyMealData } from "@/services/nutritionistService";
+
+export interface ChartDataPoint {
+  date: string;
+  value: number;
+}
+
+export interface MealsDataPoint {
+  date: string;
+  meals: number;
+}
+
+export interface PatientGoals {
+  dailyKcal: number;
+  protein: number;
+  carb: number;
+  fat: number;
+}
+
+// Converter dados reais de refeições para formato dos gráficos
+export function convertRealDataToChartData(
+  realData: DailyMealData[],
+  nutrientType: "kcal" | "protein" | "carb" | "fat"
+): ChartDataPoint[] {
+  return realData.map((day) => ({
+    date: day.date,
+    value: day[nutrientType],
+  }));
+}
+
+// Converter dados reais para gráfico de refeições
+export function convertRealDataToMealsData(
+  realData: DailyMealData[]
+): MealsDataPoint[] {
+  return realData.map((day) => ({
+    date: day.date,
+    meals: day.mealsCount,
+  }));
+}
+
 // Gerar dados para gráficos de nutrientes
 export function generateNutrientData(
   days: number,

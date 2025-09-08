@@ -65,6 +65,120 @@ export const calculateAge = (birthDate: string): number => {
   }
 };
 
+// Interface para dados de refeições por dia
+export interface DailyMealData {
+  date: string;
+  kcal: number;
+  protein: number;
+  carb: number;
+  fat: number;
+  mealsCount: number;
+}
+
+// Buscar dados reais de refeições do paciente por período
+export const getPatientMealData = async (
+  patientId: string,
+  days: number = 7
+): Promise<DailyMealData[]> => {
+  try {
+    console.log(
+      `Buscando dados de refeições para paciente ${patientId} nos últimos ${days} dias`
+    );
+
+    const mealsRef = collection(db, "users", patientId, "meals");
+    const allDocsSnapshot = await getDocs(mealsRef);
+
+    console.log(
+      `Encontrados ${allDocsSnapshot.docs.length} documentos na coleção meals`
+    );
+
+    if (allDocsSnapshot.empty) {
+      console.log("Nenhum documento encontrado na coleção meals");
+      return [];
+    }
+
+    // Criar array com todos os dias do período solicitado
+    const allDays: DailyMealData[] = [];
+    const today = new Date();
+
+    for (let i = days - 1; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      const dateKey = date.toISOString().split("T")[0];
+
+      allDays.push({
+        date: dateKey,
+        kcal: 0,
+        protein: 0,
+        carb: 0,
+        fat: 0,
+        mealsCount: 0,
+      });
+    }
+
+    // Criar mapa para facilitar a busca dos dados existentes
+    const existingDataMap = new Map<string, DailyMealData>();
+
+    // Processar cada documento de data
+    for (const doc of allDocsSnapshot.docs) {
+      const docId = doc.id;
+
+      // Pular documentos que não são datas
+      if (docId === "data" || !/^\d{4}-\d{2}-\d{2}$/.test(docId)) {
+        continue;
+      }
+
+      try {
+        const docDate = new Date(docId);
+
+        // Verificar se a data está dentro do período solicitado
+        const daysDiff = Math.floor(
+          (today.getTime() - docDate.getTime()) / (1000 * 60 * 60 * 24)
+        );
+
+        if (daysDiff >= days) {
+          continue;
+        }
+
+        // Buscar dados do documento da data
+        const dateDocSnapshot = doc;
+
+        if (dateDocSnapshot.exists()) {
+          const dateData = dateDocSnapshot.data() as any;
+
+          // Extrair dados dos totals
+          const totals = dateData.totals || {};
+          const meals = dateData.meals || [];
+
+          const dateKey = docDate.toISOString().split("T")[0]; // Formato YYYY-MM-DD para recharts
+
+          existingDataMap.set(dateKey, {
+            date: dateKey,
+            kcal: Math.max(0, totals.kcal || 0),
+            protein: Math.max(0, totals.protein || 0),
+            carb: Math.max(0, totals.carb || 0),
+            fat: Math.max(0, totals.fat || 0),
+            mealsCount: Math.max(0, Array.isArray(meals) ? meals.length : 0),
+          });
+        }
+      } catch (error) {
+        console.error(`Erro ao processar documento ${docId}:`, error);
+      }
+    }
+
+    // Mesclar dados existentes com todos os dias do período
+    const result = allDays.map((day) => {
+      const existingData = existingDataMap.get(day.date);
+      return existingData || day; // Usa dados existentes ou mantém zeros
+    });
+
+    return result;
+  } catch (error) {
+    console.error("Erro ao buscar dados de refeições do paciente:", error);
+    return [];
+  }
+};
+
 // Função auxiliar para obter a data da última refeição
 export const getLastMealDate = async (
   patientId: string
