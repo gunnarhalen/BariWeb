@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { getNutritionistPatients } from "@/services/nutritionistService";
 import { Button } from "@/components/ui/button";
@@ -29,7 +29,6 @@ import {
   IconCalendar,
   IconAlertTriangle,
   IconTrendingUp,
-  IconTrendingDown,
 } from "@tabler/icons-react";
 import type { Patient } from "@/types";
 
@@ -43,15 +42,7 @@ export default function PatientsPage() {
     "all" | "active" | "inactive" | "alerts"
   >("all");
 
-  useEffect(() => {
-    loadPatients();
-  }, [user]);
-
-  useEffect(() => {
-    filterPatients();
-  }, [patients, searchTerm, filterStatus]);
-
-  const loadPatients = async () => {
+  const loadPatients = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -63,9 +54,9 @@ export default function PatientsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
-  const filterPatients = () => {
+  const filterPatients = useCallback(() => {
     let filtered = [...patients];
 
     // Filtro por busca
@@ -92,7 +83,7 @@ export default function PatientsPage() {
         });
         break;
       case "alerts":
-        filtered = filtered.filter((patient) => {
+        filtered = filtered.filter(() => {
           // Lógica para detectar alertas (exemplo: metas não atingidas)
           return false; // Implementar lógica real
         });
@@ -100,7 +91,15 @@ export default function PatientsPage() {
     }
 
     setFilteredPatients(filtered);
-  };
+  }, [patients, searchTerm, filterStatus]);
+
+  useEffect(() => {
+    loadPatients();
+  }, [loadPatients]);
+
+  useEffect(() => {
+    filterPatients();
+  }, [filterPatients]);
 
   const getStatusBadge = (patient: Patient) => {
     const today = new Date().toISOString().split("T")[0];

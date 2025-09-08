@@ -6,7 +6,11 @@ interface LogoProps {
   className?: string;
 }
 
-export default function Logo({ width = 120, height = 30, className = "" }: LogoProps) {
+export default function Logo({
+  width = 120,
+  height = 30,
+  className = "",
+}: LogoProps) {
   return (
     <Image
       src="/bari_logo.svg"

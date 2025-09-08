@@ -36,7 +36,7 @@ export default function LoginPage() {
       } else {
         setError("Apenas nutricionistas podem acessar esta área");
       }
-    } catch (error) {
+    } catch {
       setError("Erro ao fazer login. Verifique suas credenciais.");
     } finally {
       setLoading(false);

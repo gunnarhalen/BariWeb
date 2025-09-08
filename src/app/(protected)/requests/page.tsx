@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   getNutritionistRequests,
@@ -8,13 +8,7 @@ import {
   rejectNutritionistRequest,
 } from "@/services/nutritionistService";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   IconUserPlus,
@@ -30,13 +24,13 @@ interface RequestWithProfile {
   nutritionistId: string;
   userId: string;
   status: "pending" | "accepted" | "rejected";
-  createdAt: any;
+  createdAt: Date | { seconds: number; nanoseconds: number } | string;
   patientProfile: {
     fullName: string;
     email: string;
     age?: number;
     gender?: string;
-    goals?: any;
+    goals?: unknown;
   } | null;
 }
 
@@ -46,13 +40,7 @@ export default function RequestsPage() {
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (user) {
-      loadRequests();
-    }
-  }, [user]);
-
-  const loadRequests = async () => {
+  const loadRequests = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -64,7 +52,13 @@ export default function RequestsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      loadRequests();
+    }
+  }, [user, loadRequests]);
 
   const handleAccept = async (requestId: string) => {
     try {
@@ -128,17 +122,19 @@ export default function RequestsPage() {
     }
   };
 
-  const formatDate = (timestamp: any) => {
+  const formatDate = (
+    timestamp: Date | { seconds: number; nanoseconds: number } | string
+  ) => {
     if (!timestamp) return "Data não disponível";
 
     try {
       let date: Date;
-      if (timestamp.toDate) {
-        date = timestamp.toDate();
-      } else if (timestamp.seconds) {
-        date = new Date(timestamp.seconds * 1000);
+      if (typeof timestamp === "object" && "toDate" in timestamp) {
+        date = (timestamp as { toDate: () => Date }).toDate();
+      } else if (typeof timestamp === "object" && "seconds" in timestamp) {
+        date = new Date((timestamp as { seconds: number }).seconds * 1000);
       } else {
-        date = new Date(timestamp);
+        date = new Date(timestamp as string);
       }
 
       return date.toLocaleDateString("pt-BR", {
@@ -149,6 +145,7 @@ export default function RequestsPage() {
         minute: "2-digit",
       });
     } catch (error) {
+      console.error("Erro ao formatar data:", error);
       return "Data inválida";
     }
   };

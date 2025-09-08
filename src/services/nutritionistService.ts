@@ -9,7 +9,6 @@ import {
   updateDoc,
   Timestamp,
   orderBy,
-  limit,
 } from "firebase/firestore";
 
 // Interfaces
@@ -72,7 +71,7 @@ export const getLastMealDate = async (
             latestDate = docDate;
             latestDateDoc = doc;
           }
-        } catch (e) {
+        } catch {
           // Erro ao parsear data, ignorar este documento
         }
       }
@@ -82,7 +81,6 @@ export const getLastMealDate = async (
       return undefined;
     }
 
-    const dateDocId = latestDateDoc.id;
     const dateDocData = latestDateDoc.data();
 
     // Verificar se tem campo 'meals' com array de refeições
@@ -118,7 +116,7 @@ export const getLastMealDate = async (
             latestMealDate = mealDate;
             latestMeal = meal;
           }
-        } catch (error) {
+        } catch {
           // Erro ao processar data da refeição, ignorar esta refeição
         }
       }
@@ -141,13 +139,13 @@ export const getLastMealDate = async (
 
         const lastMealDate = date.toISOString().split("T")[0];
         return lastMealDate;
-      } catch (error) {
+      } catch {
         return undefined;
       }
     }
 
     return undefined;
-  } catch (error) {
+  } catch {
     return undefined;
   }
 };
@@ -232,8 +230,8 @@ interface PatientProfile {
   email?: string;
   age?: number;
   gender?: string;
-  goals?: any;
-  [key: string]: any;
+  goals?: unknown;
+  [key: string]: unknown;
 }
 
 // Obter perfil completo do paciente

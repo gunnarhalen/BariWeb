@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { getNutritionistPatients } from "@/services/nutritionistService";
 import {
@@ -32,16 +32,12 @@ function DashboardContent() {
   });
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (user) {
-      loadDashboardData();
-    }
-  }, [user]);
+  const loadDashboardData = useCallback(async () => {
+    if (!user) return;
 
-  const loadDashboardData = async () => {
     try {
       setLoading(true);
-      const patientsData = await getNutritionistPatients(user!.uid);
+      const patientsData = await getNutritionistPatients(user.uid);
       setPatients(patientsData);
 
       // Calcular estatísticas
@@ -50,7 +46,7 @@ function DashboardContent() {
         (patient) => !patient.lastMealDate || patient.lastMealDate !== today
       ).length;
 
-      const patientsWithAlerts = patientsData.filter((patient) => {
+      const patientsWithAlerts = patientsData.filter(() => {
         // Lógica para detectar alertas (exemplo: metas não atingidas)
         return false; // Implementar lógica real
       }).length;
@@ -67,7 +63,13 @@ function DashboardContent() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      loadDashboardData();
+    }
+  }, [user, loadDashboardData]);
 
   const statCards = [
     {
