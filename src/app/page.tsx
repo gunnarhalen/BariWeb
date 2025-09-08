@@ -88,7 +88,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center">
@@ -148,7 +148,7 @@ export default function LandingPage() {
             {features.map((feature, index) => (
               <Card
                 key={index}
-                className="text-center hover:shadow-lg transition-shadow"
+                className="text-center hover:bg-gray-50 transition-colors"
               >
                 <CardHeader>
                   <div className="mx-auto mb-4 p-3 bg-blue-100 rounded-full w-fit">
@@ -188,7 +188,7 @@ export default function LandingPage() {
                 ))}
               </ul>
             </div>
-            <div className="bg-white rounded-lg shadow-lg p-8">
+            <div className="bg-white rounded-lg p-8">
               <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
                 Pronto para começar?
               </h3>
