@@ -119,4 +119,18 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Remover outline dos gráficos */
+  .recharts-wrapper:focus,
+  .recharts-wrapper:focus-visible,
+  .recharts-wrapper:focus-within {
+    outline: none !important;
+  }
+
+  /* Remover outline dos cards dos gráficos */
+  [data-slot="card"]:focus,
+  [data-slot="card"]:focus-visible,
+  [data-slot="card"]:focus-within {
+    outline: none !important;
+  }
 }

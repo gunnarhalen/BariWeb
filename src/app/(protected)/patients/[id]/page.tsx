@@ -13,6 +13,15 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DateRangeSelector } from "@/components/ui/date-range-selector";
+import { BarChartComponent } from "@/components/ui/bar-chart";
+import {
+  generateNutrientData,
+  generateMealsData,
+  getPatientGoals,
+  type ChartDataPoint,
+  type MealsDataPoint,
+} from "@/lib/chart-data";
 import {
   IconArrowLeft,
   IconUser,
@@ -42,6 +51,14 @@ export default function PatientDetailsPage() {
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [dateRange, setDateRange] = useState<"7" | "15" | "30">("7");
+  const [chartData, setChartData] = useState<{
+    calories: ChartDataPoint[];
+    protein: ChartDataPoint[];
+    carb: ChartDataPoint[];
+    fat: ChartDataPoint[];
+    meals: MealsDataPoint[];
+  } | null>(null);
 
   const patientId = params.id as string;
 
@@ -113,6 +130,22 @@ export default function PatientDetailsPage() {
 
     loadPatientData();
   }, [user, patientId]);
+
+  // Gerar dados dos gráficos quando o range de datas mudar
+  useEffect(() => {
+    if (patientProfile) {
+      const goals = getPatientGoals();
+      const days = parseInt(dateRange);
+
+      setChartData({
+        calories: generateNutrientData(days, goals.dailyKcal),
+        protein: generateNutrientData(days, goals.protein),
+        carb: generateNutrientData(days, goals.carb),
+        fat: generateNutrientData(days, goals.fat),
+        meals: generateMealsData(days),
+      });
+    }
+  }, [patientProfile, dateRange]);
 
   const getStatusBadge = () => {
     const today = new Date().toISOString().split("T")[0];
@@ -224,278 +257,309 @@ export default function PatientDetailsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      {/* Header compacto */}
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button onClick={() => router.back()} variant="outline" size="sm">
-            <IconArrowLeft className="w-4 h-4 mr-2" />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.back()}
+            className="flex items-center gap-2"
+          >
+            <IconArrowLeft className="w-4 h-4" />
             Voltar
           </Button>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
-              {patientProfile.fullName}
-            </h1>
-            <p className="text-gray-600 mt-1">
-              Detalhes e acompanhamento do paciente
+            <h1 className="text-2xl font-bold">{patientProfile.fullName}</h1>
+            <p className="text-muted-foreground text-sm">
+              Detalhes do paciente
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          {getStatusBadge()}
-          <Button variant="outline" size="sm">
-            <IconEdit className="w-4 h-4 mr-2" />
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-2"
+          >
+            <IconEdit className="w-4 h-4" />
             Editar
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-2"
+          >
+            <IconNotes className="w-4 h-4" />
+            Notas
           </Button>
         </div>
       </div>
 
-      {/* Informações Básicas */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Cards principais - Layout horizontal compacto */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Dados Pessoais */}
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <IconUser className="w-5 h-5 mr-2" />
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <IconUser className="w-4 h-4" />
               Dados Pessoais
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3">
             <div className="flex items-center gap-3">
-              <IconMail className="w-4 h-4 text-gray-400" />
-              <div>
-                <p className="text-sm font-medium">{patientProfile.email}</p>
-                <p className="text-xs text-gray-500">Email</p>
+              <IconMail className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+              <div className="min-w-0">
+                <p className="text-sm font-medium truncate">
+                  {patientProfile.email}
+                </p>
+                <p className="text-xs text-muted-foreground">Email</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <IconCalendar className="w-4 h-4 text-gray-400" />
-              <div>
+              <IconCalendar className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+              <div className="min-w-0">
                 <p className="text-sm font-medium">
                   {calculateAge(patientProfile.birthDate)} anos
                 </p>
-                <p className="text-xs text-gray-500">Idade</p>
+                <p className="text-xs text-muted-foreground">Idade</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <IconWeight className="w-4 h-4 text-gray-400" />
-              <div>
+              <IconWeight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+              <div className="min-w-0">
                 <p className="text-sm font-medium">
                   {patientProfile.weight} kg
                 </p>
-                <p className="text-xs text-gray-500">Peso atual</p>
+                <p className="text-xs text-muted-foreground">Peso Atual</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <IconRuler className="w-4 h-4 text-gray-400" />
-              <div>
+              <IconRuler className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+              <div className="min-w-0">
                 <p className="text-sm font-medium">
                   {patientProfile.height} cm
                 </p>
-                <p className="text-xs text-gray-500">Altura</p>
+                <p className="text-xs text-muted-foreground">Altura</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <IconTarget className="w-4 h-4 text-gray-400" />
-              <div>
+              <IconTarget className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+              <div className="min-w-0">
                 <p className="text-sm font-medium">
-                  IMC:{" "}
                   {calculateBMI(patientProfile.weight, patientProfile.height)}
                 </p>
-                <p className="text-xs text-gray-500">
-                  Índice de Massa Corporal
-                </p>
+                <p className="text-xs text-muted-foreground">IMC</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Metas Nutricionais */}
+        {/* Metas Diárias */}
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <IconTarget className="w-5 h-5 mr-2" />
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <IconTarget className="w-4 h-4" />
               Metas Diárias
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-blue-900">
-                  Calorias
-                </span>
-                <span className="text-lg font-bold text-blue-900">
+          <CardContent>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="p-2 bg-blue-50 dark:bg-blue-950 rounded-md">
+                <p className="text-lg font-bold text-blue-700 dark:text-blue-300">
                   {patientProfile.goals.dailyKcal}
-                </span>
+                </p>
+                <p className="text-xs text-blue-600 dark:text-blue-400">
+                  Calorias
+                </p>
               </div>
-              <p className="text-xs text-blue-700 mt-1">kcal/dia</p>
-            </div>
-            <div className="bg-green-50 p-4 rounded-lg">
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-green-900">
-                  Proteínas
-                </span>
-                <span className="text-lg font-bold text-green-900">
+              <div className="p-2 bg-green-50 dark:bg-green-950 rounded-md">
+                <p className="text-lg font-bold text-green-700 dark:text-green-300">
                   {patientProfile.goals.protein}g
-                </span>
+                </p>
+                <p className="text-xs text-green-600 dark:text-green-400">
+                  Proteínas
+                </p>
               </div>
-              <p className="text-xs text-green-700 mt-1">gramas/dia</p>
-            </div>
-            <div className="bg-yellow-50 p-4 rounded-lg">
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-yellow-900">
-                  Carboidratos
-                </span>
-                <span className="text-lg font-bold text-yellow-900">
+              <div className="p-2 bg-yellow-50 dark:bg-yellow-950 rounded-md">
+                <p className="text-lg font-bold text-yellow-700 dark:text-yellow-300">
                   {patientProfile.goals.carb}g
-                </span>
+                </p>
+                <p className="text-xs text-yellow-600 dark:text-yellow-400">
+                  Carboidratos
+                </p>
               </div>
-              <p className="text-xs text-yellow-700 mt-1">gramas/dia</p>
-            </div>
-            <div className="bg-red-50 p-4 rounded-lg">
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-red-900">
-                  Gorduras
-                </span>
-                <span className="text-lg font-bold text-red-900">
+              <div className="p-2 bg-red-50 dark:bg-red-950 rounded-md">
+                <p className="text-lg font-bold text-red-700 dark:text-red-300">
                   {patientProfile.goals.fat}g
-                </span>
+                </p>
+                <p className="text-xs text-red-600 dark:text-red-400">
+                  Gorduras
+                </p>
               </div>
-              <p className="text-xs text-red-700 mt-1">gramas/dia</p>
             </div>
           </CardContent>
         </Card>
 
-        {/* Status e Atividade */}
+        {/* Status */}
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <IconTrendingUp className="w-5 h-5 mr-2" />
-              Status
-            </CardTitle>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <IconTrendingUp className="w-4 h-4" />
+                Status
+              </CardTitle>
+              {getStatusBadge()}
+            </div>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="text-center">{getStatusBadge()}</div>
-            <div className="space-y-3">
-              <div>
-                <p className="text-sm font-medium text-gray-900">
-                  Última Refeição
-                </p>
-                <p className="text-sm text-gray-600">{getLastMealText()}</p>
+          <CardContent className="space-y-3">
+            <div className="flex items-center gap-3">
+              <IconCalendar className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+              <div className="min-w-0">
+                <p className="text-sm font-medium">{getLastMealText()}</p>
+                <p className="text-xs text-muted-foreground">Última Refeição</p>
               </div>
-              <div>
-                <p className="text-sm font-medium text-gray-900">Objetivo</p>
-                <p className="text-sm text-gray-600 capitalize">
+            </div>
+            <div className="flex items-center gap-3">
+              <IconTarget className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+              <div className="min-w-0">
+                <p className="text-sm font-medium capitalize">
                   {patientProfile.goal.replace("_", " ")}
                 </p>
+                <p className="text-xs text-muted-foreground">Objetivo</p>
               </div>
-              <div>
-                <p className="text-sm font-medium text-gray-900">
-                  Tipo de Dieta
-                </p>
-                <p className="text-sm text-gray-600 capitalize">
+            </div>
+            <div className="flex items-center gap-3">
+              <IconUser className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+              <div className="min-w-0">
+                <p className="text-sm font-medium capitalize">
                   {patientProfile.dietType}
                 </p>
+                <p className="text-xs text-muted-foreground">Tipo de Dieta</p>
               </div>
-              <div>
-                <p className="text-sm font-medium text-gray-900">
-                  Nível de Atividade
-                </p>
-                <p className="text-sm text-gray-600 capitalize">
+            </div>
+            <div className="flex items-center gap-3">
+              <IconTrendingUp className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+              <div className="min-w-0">
+                <p className="text-sm font-medium capitalize">
                   {patientProfile.activityLevel}
                 </p>
+                <p className="text-xs text-muted-foreground">Atividade</p>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Informações Adicionais */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Restrições Alimentares */}
+      {/* Restrições Alimentares - Compacto */}
+      {(patientProfile.intolerances.length > 0 ||
+        patientProfile.allergies.length > 0) && (
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <IconAlertTriangle className="w-5 h-5 mr-2" />
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <IconAlertTriangle className="w-4 h-4" />
               Restrições Alimentares
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {patientProfile.intolerances.length > 0 ||
-            patientProfile.allergies.length > 0 ? (
-              <div className="space-y-3">
-                {patientProfile.intolerances.length > 0 && (
-                  <div>
-                    <p className="text-sm font-medium text-gray-900 mb-2">
-                      Intolerâncias:
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {patientProfile.intolerances.map((intolerance, index) => (
-                        <Badge
-                          key={index}
-                          variant="secondary"
-                          className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
-                        >
-                          {intolerance}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {patientProfile.allergies.length > 0 && (
-                  <div>
-                    <p className="text-sm font-medium text-gray-900 mb-2">
-                      Alergias:
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {patientProfile.allergies.map((allergy, index) => (
-                        <Badge
-                          key={index}
-                          variant="destructive"
-                          className="bg-red-100 text-red-800 hover:bg-red-100"
-                        >
-                          {allergy}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <p className="text-sm text-gray-500">
-                Nenhuma restrição alimentar registrada
-              </p>
-            )}
+            <div className="flex flex-wrap gap-2">
+              {patientProfile.intolerances.map((intolerance, index) => (
+                <Badge key={index} variant="secondary" className="text-xs">
+                  {intolerance}
+                </Badge>
+              ))}
+              {patientProfile.allergies.map((allergy, index) => (
+                <Badge key={index} variant="destructive" className="text-xs">
+                  {allergy}
+                </Badge>
+              ))}
+            </div>
           </CardContent>
         </Card>
+      )}
 
-        {/* Ações Rápidas */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <IconNotes className="w-5 h-5 mr-2" />
-              Ações Rápidas
+      {/* Gráficos de Acompanhamento */}
+      <Card>
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <IconChartBar className="w-4 h-4" />
+              Acompanhamento Nutricional
             </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Button className="w-full justify-start" variant="outline">
-              <IconChartBar className="w-4 h-4 mr-2" />
-              Ver Relatório de Progresso
-            </Button>
-            <Button className="w-full justify-start" variant="outline">
-              <IconNotes className="w-4 h-4 mr-2" />
-              Adicionar Nota
-            </Button>
-            <Button className="w-full justify-start" variant="outline">
-              <IconEdit className="w-4 h-4 mr-2" />
-              Editar Metas
-            </Button>
-            <Button className="w-full justify-start" variant="outline">
-              <IconCalendar className="w-4 h-4 mr-2" />
-              Agendar Consulta
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+            <DateRangeSelector
+              selectedRange={dateRange}
+              onRangeChange={setDateRange}
+            />
+          </div>
+        </CardHeader>
+        <CardContent>
+          {chartData ? (
+            <div className="space-y-4">
+              {/* Primeira linha: Refeições e Calorias */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <BarChartComponent
+                  title="Refeições por Dia"
+                  data={
+                    chartData.meals as unknown as Array<
+                      Record<string, string | number>
+                    >
+                  }
+                  dataKey="meals"
+                  color="#3b82f6"
+                />
+                <BarChartComponent
+                  title="Calorias Diárias"
+                  data={
+                    chartData.calories as unknown as Array<
+                      Record<string, string | number>
+                    >
+                  }
+                  dataKey="value"
+                  color="#3b82f6"
+                />
+              </div>
+
+              {/* Segunda linha: Proteína, Carboidratos e Gorduras */}
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                <BarChartComponent
+                  title="Proteína"
+                  data={
+                    chartData.protein as unknown as Array<
+                      Record<string, string | number>
+                    >
+                  }
+                  dataKey="value"
+                  color="#10b981"
+                />
+                <BarChartComponent
+                  title="Carboidratos"
+                  data={
+                    chartData.carb as unknown as Array<
+                      Record<string, string | number>
+                    >
+                  }
+                  dataKey="value"
+                  color="#f59e0b"
+                />
+                <BarChartComponent
+                  title="Gorduras"
+                  data={
+                    chartData.fat as unknown as Array<
+                      Record<string, string | number>
+                    >
+                  }
+                  dataKey="value"
+                  color="#ef4444"
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center h-64">
+              <Spinner size="lg" />
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
