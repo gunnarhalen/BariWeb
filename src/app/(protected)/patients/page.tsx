@@ -36,19 +36,26 @@ export default function PatientsPage() {
   const convertPatientsToTableData = (patients: Patient[]) => {
     return patients.map((patient, index) => {
       const today = new Date().toISOString().split("T")[0];
-      const hasMealToday = patient.lastMealDate === today;
 
-      // Calcular IMC
-      const bmi = 22; // Valor padrão para IMC
+      // Determinar status baseado na última refeição
+      let status = "Inativo";
+      if (patient.lastMealDate) {
+        if (patient.lastMealDate === today) {
+          status = "Ativo";
+        } else {
+          // Verificar se foi nos últimos 2 dias para considerar "Ativo"
+          const lastMealDate = new Date(patient.lastMealDate);
+          const todayDate = new Date(today);
+          const diffTime = Math.abs(
+            todayDate.getTime() - lastMealDate.getTime()
+          );
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-      // Determinar status
-      const status = hasMealToday ? "Ativo" : "Inativo";
-
-      // Calcular progresso (exemplo baseado em metas)
-      const progress = Math.min(
-        100,
-        Math.max(0, Math.floor(Math.random() * 100))
-      );
+          if (diffDays <= 2) {
+            status = "Ativo";
+          }
+        }
+      }
 
       // Determinar última refeição
       const getLastMealText = (patient: Patient) => {
@@ -74,14 +81,18 @@ export default function PatientsPage() {
         id: patient.id, // Usar o ID original do Firebase (string)
         name: patient.fullName,
         email: patient.email,
-        age: 30, // Valor padrão, pode ser calculado se tiver data de nascimento
-        weight: 70, // Valor padrão
-        height: 170, // Valor padrão
-        bmi: Math.round(bmi * 10) / 10,
+        age: patient.age || 0, // Usar idade calculada ou 0 se não disponível
+        weight: patient.weight || 0, // Usar peso real ou 0 se não disponível
+        height: patient.height || 0, // Usar altura real ou 0 se não disponível
+        bmi:
+          patient.weight && patient.height
+            ? Math.round(
+                (patient.weight / Math.pow(patient.height / 100, 2)) * 10
+              ) / 10
+            : 0,
         goal: "Perda de peso", // Valor padrão baseado nas metas
         status: status,
         lastMeal: getLastMealText(patient),
-        progress: progress,
       };
     });
   };
@@ -185,8 +196,24 @@ export default function PatientsPage() {
                   <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
                     {
                       patients.filter((p) => {
-                        const today = new Date().toISOString().split("T")[0];
-                        return p.lastMealDate === today;
+                        if (!p.lastMealDate) return false;
+                        if (
+                          p.lastMealDate ===
+                          new Date().toISOString().split("T")[0]
+                        )
+                          return true;
+
+                        // Verificar se foi nos últimos 2 dias
+                        const lastMealDate = new Date(p.lastMealDate);
+                        const todayDate = new Date();
+                        const diffTime = Math.abs(
+                          todayDate.getTime() - lastMealDate.getTime()
+                        );
+                        const diffDays = Math.ceil(
+                          diffTime / (1000 * 60 * 60 * 24)
+                        );
+
+                        return diffDays <= 2;
                       }).length
                     }
                   </CardTitle>
@@ -213,8 +240,19 @@ export default function PatientsPage() {
                   <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
                     {
                       patients.filter((p) => {
-                        const today = new Date().toISOString().split("T")[0];
-                        return !p.lastMealDate || p.lastMealDate !== today;
+                        if (!p.lastMealDate) return true;
+
+                        // Verificar se foi há mais de 2 dias
+                        const lastMealDate = new Date(p.lastMealDate);
+                        const todayDate = new Date();
+                        const diffTime = Math.abs(
+                          todayDate.getTime() - lastMealDate.getTime()
+                        );
+                        const diffDays = Math.ceil(
+                          diffTime / (1000 * 60 * 60 * 24)
+                        );
+
+                        return diffDays > 2;
                       }).length
                     }
                   </CardTitle>

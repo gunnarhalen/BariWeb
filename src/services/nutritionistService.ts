@@ -22,6 +22,10 @@ export interface Patient {
   id: string;
   fullName: string;
   email: string;
+  birthDate?: string;
+  age?: number;
+  weight?: number;
+  height?: number;
   lastMealDate?: string;
   goals: {
     dailyKcal: number;
@@ -39,6 +43,27 @@ export interface NutritionistRequest {
   status: "pending" | "accepted" | "rejected";
   createdAt: Timestamp;
 }
+
+// Função auxiliar para calcular idade a partir da data de nascimento
+export const calculateAge = (birthDate: string): number => {
+  try {
+    const birth = new Date(birthDate);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birth.getDate())
+    ) {
+      age--;
+    }
+
+    return age;
+  } catch {
+    return 0;
+  }
+};
 
 // Função auxiliar para obter a data da última refeição
 export const getLastMealDate = async (
@@ -197,10 +222,19 @@ export const getNutritionistPatients = async (
           // Buscar a última refeição do paciente usando a função auxiliar
           const lastMealDate = await getLastMealDate(patientId);
 
+          // Calcular idade a partir da data de nascimento
+          const calculatedAge = patientData.birthDate
+            ? calculateAge(patientData.birthDate)
+            : undefined;
+
           patients.push({
             id: patientId,
             fullName: patientData.fullName || "",
             email: patientData.email || "",
+            birthDate: patientData.birthDate,
+            age: calculatedAge,
+            weight: patientData.weight,
+            height: patientData.height,
             lastMealDate,
             goals: patientData.goals || {
               dailyKcal: 2000,

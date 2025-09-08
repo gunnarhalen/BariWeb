@@ -59,6 +59,10 @@ export interface Patient {
   id: string;
   fullName: string;
   email: string;
+  birthDate?: string;
+  age?: number;
+  weight?: number;
+  height?: number;
   lastMealDate?: string;
   goals: {
     dailyKcal: number;

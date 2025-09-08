@@ -70,7 +70,6 @@ export const patientSchema = z.object({
   goal: z.string(),
   status: z.string(),
   lastMeal: z.string(),
-  progress: z.number(),
 });
 
 const columns: ColumnDef<z.infer<typeof patientSchema>>[] = [
@@ -237,6 +236,7 @@ const columns: ColumnDef<z.infer<typeof patientSchema>>[] = [
         </div>
       );
     },
+    filterFn: "statusFilter",
   },
   {
     accessorKey: "lastMeal",
@@ -257,53 +257,10 @@ const columns: ColumnDef<z.infer<typeof patientSchema>>[] = [
     ),
   },
   {
-    accessorKey: "progress",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-8 px-2 lg:px-3"
-        >
-          Progresso
-          <IconChevronDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const progress = row.getValue("progress") as number;
-      return (
-        <div className="flex items-center gap-2">
-          <div className="flex w-16 items-center gap-1">
-            <div className="flex-1 rounded-full bg-muted">
-              <div
-                className="h-1.5 rounded-full bg-primary"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-            <span className="text-xs tabular-nums">{progress}%</span>
-          </div>
-        </div>
-      );
-    },
-  },
-  {
     id: "actions",
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 w-8 p-0"
-            onClick={(e) => {
-              e.stopPropagation(); // Evitar conflito com o onClick da linha
-              router.push(`/patients/${row.original.id}`);
-            }}
-          >
-            <IconUser className="h-4 w-4" />
-            <span className="sr-only">Ver detalhes do paciente</span>
-          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
@@ -374,6 +331,13 @@ export function PatientsTableNavigation({
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+    filterFns: {
+      statusFilter: (row, columnId, filterValue) => {
+        const status = row.getValue(columnId) as string;
+        if (!filterValue) return true;
+        return status === filterValue;
+      },
+    },
   });
 
   return (
@@ -397,11 +361,10 @@ export function PatientsTableNavigation({
               value={
                 (table.getColumn("status")?.getFilterValue() as string) ?? ""
               }
-              onValueChange={(value) =>
-                table
-                  .getColumn("status")
-                  ?.setFilterValue(value === "all" ? "" : value)
-              }
+              onValueChange={(value) => {
+                const filterValue = value === "all" ? "" : value;
+                table.getColumn("status")?.setFilterValue(filterValue);
+              }}
             >
               <SelectTrigger className="h-8 w-[120px]">
                 <SelectValue placeholder="Todos" />
