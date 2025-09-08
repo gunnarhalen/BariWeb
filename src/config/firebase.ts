@@ -12,6 +12,12 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
+// Debug: Listar variáveis disponíveis (sem expor valores)
+const availableVars = Object.keys(process.env).filter((key) =>
+  key.startsWith("NEXT_PUBLIC_")
+);
+console.log("🔍 Variáveis NEXT_PUBLIC_ disponíveis:", availableVars);
+
 // Verificar se todas as variáveis de ambiente estão definidas
 const requiredEnvVars = [
   "NEXT_PUBLIC_FIREBASE_API_KEY",
@@ -24,6 +30,8 @@ const requiredEnvVars = [
 
 const missingVars = requiredEnvVars.filter((varName) => !process.env[varName]);
 if (missingVars.length > 0) {
+  console.error("❌ Variáveis ausentes:", missingVars);
+  console.error("🔍 Variáveis disponíveis:", availableVars);
   throw new Error(
     `Missing required environment variables: ${missingVars.join(", ")}`
   );
