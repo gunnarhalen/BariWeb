@@ -3,14 +3,12 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { getPatientProfile, getLastMealDate } from "@/services/nutritionistService";
-import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  getPatientProfile,
+  getLastMealDate,
+} from "@/services/nutritionistService";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   IconArrowLeft,
   IconUser,
@@ -26,6 +24,7 @@ import {
   IconChartBar,
 } from "@tabler/icons-react";
 import type { UserProfile } from "@/types";
+import type { Timestamp } from "firebase/firestore";
 
 export default function PatientDetailsPage() {
   const params = useParams();
@@ -34,7 +33,9 @@ export default function PatientDetailsPage() {
   const [patientProfile, setPatientProfile] = useState<UserProfile | null>(
     null
   );
-  const [lastMealDate, setLastMealDate] = useState<string | undefined>(undefined);
+  const [lastMealDate, setLastMealDate] = useState<string | undefined>(
+    undefined
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -61,29 +62,39 @@ export default function PatientDetailsPage() {
         const userProfile: UserProfile = {
           fullName: profileData.fullName || "",
           email: profileData.email || "",
-          birthDate: profileData.birthDate || "",
-          gender: profileData.gender as "male" | "female" || "male",
-          weight: profileData.weight || 0,
-          height: profileData.height || 0,
-          activityLevel: profileData.activityLevel || "",
-          goal: profileData.goal || "",
-          dietType: profileData.dietType || "",
-          religiousDiet: profileData.religiousDiet || "",
-          intolerances: profileData.intolerances || [],
-          allergies: profileData.allergies || [],
-          goals: profileData.goals || {
+          birthDate: profileData.birthDate ? String(profileData.birthDate) : "",
+          gender: (profileData.gender as "male" | "female") || "male",
+          weight: Number(profileData.weight) || 0,
+          height: Number(profileData.height) || 0,
+          activityLevel: String(profileData.activityLevel) || "",
+          goal: String(profileData.goal) || "",
+          dietType: String(profileData.dietType) || "",
+          religiousDiet: String(profileData.religiousDiet) || "",
+          intolerances: Array.isArray(profileData.intolerances)
+            ? profileData.intolerances
+            : [],
+          allergies: Array.isArray(profileData.allergies)
+            ? profileData.allergies
+            : [],
+          goals: (profileData.goals as {
+            dailyKcal: number;
+            protein: number;
+            carb: number;
+            fat: number;
+          }) || {
             dailyKcal: 2000,
             protein: 120,
             carb: 220,
             fat: 60,
           },
-          notifications: profileData.notifications || true,
-          privacyMode: profileData.privacyMode || false,
-          isNutritionist: profileData.isNutritionist || false,
-          cfnCrn: profileData.cfnCrn || "",
-          associatedNutritionistId: profileData.associatedNutritionistId || "",
-          createdAt: profileData.createdAt as unknown,
-          updatedAt: profileData.updatedAt as unknown,
+          notifications: Boolean(profileData.notifications) || true,
+          privacyMode: Boolean(profileData.privacyMode) || false,
+          isNutritionist: Boolean(profileData.isNutritionist) || false,
+          cfnCrn: String(profileData.cfnCrn) || "",
+          associatedNutritionistId:
+            String(profileData.associatedNutritionistId) || "",
+          createdAt: profileData.createdAt as Timestamp,
+          updatedAt: profileData.updatedAt as Timestamp,
         };
 
         setPatientProfile(userProfile);
@@ -231,13 +242,13 @@ export default function PatientDetailsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-             <div className="flex items-center gap-3">
-               <IconMail className="w-4 h-4 text-gray-400" />
-               <div>
-                 <p className="text-sm font-medium">{patientProfile.email}</p>
-                 <p className="text-xs text-gray-500">Email</p>
-               </div>
-             </div>
+            <div className="flex items-center gap-3">
+              <IconMail className="w-4 h-4 text-gray-400" />
+              <div>
+                <p className="text-sm font-medium">{patientProfile.email}</p>
+                <p className="text-xs text-gray-500">Email</p>
+              </div>
+            </div>
             <div className="flex items-center gap-3">
               <IconCalendar className="w-4 h-4 text-gray-400" />
               <div>
@@ -294,9 +305,9 @@ export default function PatientDetailsPage() {
                 <span className="text-sm font-medium text-blue-900">
                   Calorias
                 </span>
-                 <span className="text-lg font-bold text-blue-900">
-                   {patientProfile.goals.dailyKcal}
-                 </span>
+                <span className="text-lg font-bold text-blue-900">
+                  {patientProfile.goals.dailyKcal}
+                </span>
               </div>
               <p className="text-xs text-blue-700 mt-1">kcal/dia</p>
             </div>
@@ -305,9 +316,9 @@ export default function PatientDetailsPage() {
                 <span className="text-sm font-medium text-green-900">
                   Proteínas
                 </span>
-                 <span className="text-lg font-bold text-green-900">
-                   {patientProfile.goals.protein}g
-                 </span>
+                <span className="text-lg font-bold text-green-900">
+                  {patientProfile.goals.protein}g
+                </span>
               </div>
               <p className="text-xs text-green-700 mt-1">gramas/dia</p>
             </div>
@@ -316,9 +327,9 @@ export default function PatientDetailsPage() {
                 <span className="text-sm font-medium text-yellow-900">
                   Carboidratos
                 </span>
-                 <span className="text-lg font-bold text-yellow-900">
-                   {patientProfile.goals.carb}g
-                 </span>
+                <span className="text-lg font-bold text-yellow-900">
+                  {patientProfile.goals.carb}g
+                </span>
               </div>
               <p className="text-xs text-yellow-700 mt-1">gramas/dia</p>
             </div>
@@ -327,9 +338,9 @@ export default function PatientDetailsPage() {
                 <span className="text-sm font-medium text-red-900">
                   Gorduras
                 </span>
-                 <span className="text-lg font-bold text-red-900">
-                   {patientProfile.goals.fat}g
-                 </span>
+                <span className="text-lg font-bold text-red-900">
+                  {patientProfile.goals.fat}g
+                </span>
               </div>
               <p className="text-xs text-red-700 mt-1">gramas/dia</p>
             </div>
@@ -344,17 +355,15 @@ export default function PatientDetailsPage() {
               Status
             </CardTitle>
           </CardHeader>
-           <CardContent className="space-y-4">
-             <div className="text-center">{getStatusBadge()}</div>
-             <div className="space-y-3">
-               <div>
-                 <p className="text-sm font-medium text-gray-900">
-                   Última Refeição
-                 </p>
-                 <p className="text-sm text-gray-600">
-                   {getLastMealText()}
-                 </p>
-               </div>
+          <CardContent className="space-y-4">
+            <div className="text-center">{getStatusBadge()}</div>
+            <div className="space-y-3">
+              <div>
+                <p className="text-sm font-medium text-gray-900">
+                  Última Refeição
+                </p>
+                <p className="text-sm text-gray-600">{getLastMealText()}</p>
+              </div>
               <div>
                 <p className="text-sm font-medium text-gray-900">Objetivo</p>
                 <p className="text-sm text-gray-600 capitalize">
