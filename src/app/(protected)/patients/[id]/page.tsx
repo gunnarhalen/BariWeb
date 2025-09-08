@@ -8,6 +8,10 @@ import {
   getLastMealDate,
 } from "@/services/nutritionistService";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/ui/spinner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   IconArrowLeft,
@@ -116,17 +120,23 @@ export default function PatientDetailsPage() {
 
     if (hasMealToday) {
       return (
-        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+        <Badge
+          variant="default"
+          className="bg-green-100 text-green-800 hover:bg-green-100"
+        >
           <IconTrendingUp className="w-4 h-4 mr-1" />
           Ativo
-        </span>
+        </Badge>
       );
     } else {
       return (
-        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+        <Badge
+          variant="secondary"
+          className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
+        >
           <IconAlertTriangle className="w-4 h-4 mr-1" />
           Inativo
-        </span>
+        </Badge>
       );
     }
   };
@@ -173,10 +183,23 @@ export default function PatientDetailsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Carregando dados do paciente...</p>
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-8 w-16" />
+            <div>
+              <Skeleton className="h-8 w-48 mb-2" />
+              <Skeleton className="h-4 w-64" />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-6 w-16" />
+            <Skeleton className="h-8 w-20" />
+          </div>
+        </div>
+
+        <div className="flex items-center justify-center py-16">
+          <Spinner size="lg" />
         </div>
       </div>
     );
@@ -184,19 +207,14 @@ export default function PatientDetailsPage() {
 
   if (error || !patientProfile) {
     return (
-      <div className="text-center py-8">
-        <IconAlertTriangle className="mx-auto h-12 w-12 text-red-400" />
-        <h3 className="mt-2 text-sm font-medium text-gray-900">
-          Erro ao carregar paciente
-        </h3>
-        <p className="mt-1 text-sm text-gray-500">
-          {error || "Paciente não encontrado"}
-        </p>
-        <Button
-          onClick={() => router.back()}
-          className="mt-4"
-          variant="outline"
-        >
+      <div className="space-y-6">
+        <Alert variant="destructive">
+          <IconAlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            {error || "Paciente não encontrado"}
+          </AlertDescription>
+        </Alert>
+        <Button onClick={() => router.back()} variant="outline">
           <IconArrowLeft className="w-4 h-4 mr-2" />
           Voltar
         </Button>
@@ -412,12 +430,13 @@ export default function PatientDetailsPage() {
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {patientProfile.intolerances.map((intolerance, index) => (
-                        <span
+                        <Badge
                           key={index}
-                          className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full"
+                          variant="secondary"
+                          className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
                         >
                           {intolerance}
-                        </span>
+                        </Badge>
                       ))}
                     </div>
                   </div>
@@ -429,12 +448,13 @@ export default function PatientDetailsPage() {
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {patientProfile.allergies.map((allergy, index) => (
-                        <span
+                        <Badge
                           key={index}
-                          className="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full"
+                          variant="destructive"
+                          className="bg-red-100 text-red-800 hover:bg-red-100"
                         >
                           {allergy}
-                        </span>
+                        </Badge>
                       ))}
                     </div>
                   </div>

@@ -1,106 +1,41 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import Logo from "@/components/Logo";
+import { LoginForm } from "@/components/LoginForm";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  const { signIn } = useAuth();
-  const router = useRouter();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    try {
-      const success = await signIn(email, password);
-
-      if (success) {
-        router.push("/dashboard");
-      } else {
-        setError("Apenas nutricionistas podem acessar esta área");
-      }
-    } catch {
-      setError("Erro ao fazer login. Verifique suas credenciais.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="flex justify-center mb-4">
-            <Logo width={120} height={30} />
+    <div className="grid min-h-svh lg:grid-cols-2">
+      <div className="flex flex-col gap-4 p-6 md:p-10">
+        <div className="flex justify-center gap-2 md:justify-start">
+          <div className="flex items-center gap-2 font-medium">
+            <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
+              <Logo width={24} height={24} />
+            </div>
+            Bari Web
           </div>
-          <CardTitle className="text-2xl font-bold">Bari Web</CardTitle>
-          <CardDescription>
-            Central de Acompanhamento para Nutricionistas
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Email
-              </label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="seu@email.com"
-                required
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Senha
-              </label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Sua senha"
-                required
-              />
-            </div>
-
-            {error && (
-              <div className="text-red-600 text-sm text-center">{error}</div>
-            )}
-
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Entrando..." : "Entrar"}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+        </div>
+        <div className="flex flex-1 items-center justify-center">
+          <div className="w-full max-w-xs">
+            <LoginForm />
+          </div>
+        </div>
+      </div>
+      <div className="bg-muted relative hidden lg:block">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-950 dark:to-indigo-900" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center space-y-4 p-8">
+            <Logo width={200} height={50} />
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Central de Acompanhamento
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300 max-w-md">
+              Gerencie seus pacientes de forma eficiente com nossa plataforma
+              especializada para nutricionistas.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

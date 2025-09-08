@@ -11,6 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
 import {
   IconUsers,
   IconUserCheck,
@@ -107,7 +108,7 @@ function DashboardContent() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+          <Spinner size="lg" />
           <p className="mt-2 text-gray-600">Carregando dashboard...</p>
         </div>
       </div>
