@@ -128,9 +128,6 @@ export function PatientsTableNavigation({
             <span className="truncate font-semibold">
               {row.getValue("name")}
             </span>
-            {/* <span className="truncate text-xs text-muted-foreground">
-              {row.getValue("email")}
-            </span> */}
           </div>
         </div>
       ),
