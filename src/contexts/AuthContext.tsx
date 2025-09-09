@@ -9,12 +9,22 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { auth } from "@/config/firebase";
-import { isNutritionist } from "@/services/nutritionistService";
+import {
+  isNutritionist,
+  getNutritionistProfile,
+} from "@/services/nutritionistService";
+
+interface NutritionistProfile {
+  id: string;
+  fullName?: string;
+  email?: string;
+}
 
 interface AuthContextType {
   user: User | null;
   isNutritionist: boolean;
   loading: boolean;
+  nutritionistProfile: NutritionistProfile | null;
   signIn: (email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
 }
@@ -24,6 +34,9 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isNutritionistUser, setIsNutritionistUser] = useState(false);
+  const [nutritionistProfile, setNutritionistProfile] = useState<NutritionistProfile | null>(
+    null
+  );
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -36,12 +49,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const isNutri = await isNutritionist(user.uid);
         setIsNutritionistUser(isNutri);
 
-        // Se o usuário está logado mas não é nutricionista, redirecionar
-        if (!isNutri) {
+        if (isNutri) {
+          // Buscar perfil do nutricionista
+          const profile = await getNutritionistProfile(user.uid);
+          setNutritionistProfile(profile);
+        } else {
+          setNutritionistProfile(null);
+          // Se o usuário está logado mas não é nutricionista, redirecionar
           router.push("/unauthorized");
         }
       } else {
         setIsNutritionistUser(false);
+        setNutritionistProfile(null);
       }
 
       setLoading(false);
@@ -90,6 +109,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     user,
     isNutritionist: isNutritionistUser,
     loading,
+    nutritionistProfile,
     signIn,
     logout,
   };

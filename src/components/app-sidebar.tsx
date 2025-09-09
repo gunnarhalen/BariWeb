@@ -137,10 +137,28 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { user } = useAuth();
+  const { user, nutritionistProfile } = useAuth();
+
+  // Função para extrair os dois primeiros nomes do usuário
+  const getUserDisplayName = () => {
+    // Priorizar o nome do perfil do nutricionista
+    const displayName = nutritionistProfile?.fullName || user?.displayName;
+    
+    if (!displayName) return "Nutricionista";
+
+    // Remove "Dr." se presente e extrai os dois primeiros nomes
+    const cleanName = displayName.replace(/^Dr\.?\s*/i, "");
+    const nameParts = cleanName.trim().split(" ");
+
+    if (nameParts.length >= 2) {
+      return `${nameParts[0]} ${nameParts[1]}`;
+    }
+
+    return nameParts[0] || "Nutricionista";
+  };
 
   const userData = {
-    name: user?.displayName || "Dr. Nutricionista",
+    name: getUserDisplayName(),
     email: user?.email || "nutricionista@bari.com",
     avatar: "/avatars/nutritionist.jpg",
   };

@@ -300,11 +300,11 @@ export const getLastMealDate = async (
 // Obter perfil do nutricionista
 export const getNutritionistProfile = async (nutritionistId: string) => {
   try {
-    const nutritionistRef = doc(db, "nutritionists", nutritionistId);
-    const nutritionistDoc = await getDoc(nutritionistRef);
+    const profileRef = doc(db, "users", nutritionistId, "profile", "data");
+    const profileDoc = await getDoc(profileRef);
 
-    if (nutritionistDoc.exists()) {
-      return { id: nutritionistDoc.id, ...nutritionistDoc.data() };
+    if (profileDoc.exists()) {
+      return { id: nutritionistId, ...profileDoc.data() };
     }
 
     return null;

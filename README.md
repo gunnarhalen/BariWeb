@@ -177,14 +177,6 @@ src/
 - Componentes reutilizáveis
 - Performance otimizada
 
-## 🚀 Deploy
-
-### **Vercel (Recomendado)**
-
-1. Conecte o repositório ao Vercel
-2. Configure as variáveis de ambiente
-3. Deploy automático a cada push
-
 ### **Build Local**
 
 ```bash
@@ -201,14 +193,6 @@ yarn start
 - ✅ **Responsividade** - Otimizada
 - ✅ **Performance** - Otimizada
 - ✅ **Limpeza de Código** - Concluída
-
-## 🤝 Contribuição
-
-1. Fork o projeto
-2. Crie uma branch para sua feature
-3. Commit suas mudanças
-4. Push para a branch
-5. Abra um Pull Request
 
 ## 📄 Licença
 
