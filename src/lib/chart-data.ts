@@ -1,24 +1,4 @@
-// Funções para gerar dados mockados dos gráficos
-
-export interface ChartDataPoint {
-  date: string;
-  value: number;
-}
-
-export interface MealsDataPoint {
-  date: string;
-  meals: number;
-}
-
-export interface PatientGoals {
-  dailyKcal: number;
-  protein: number;
-  carb: number;
-  fat: number;
-}
-
-// Funções para gerar dados mockados dos gráficos
-
+// Utilitários de dados de gráfico (mock e conversões de dados reais)
 import { DailyMealData } from "@/services/nutritionistService";
 
 export interface ChartDataPoint {
@@ -38,7 +18,7 @@ export interface PatientGoals {
   fat: number;
 }
 
-// Converter dados reais de refeições para formato dos gráficos
+// Converter dados reais de refeições para formato dos gráficos (nutrientes)
 export function convertRealDataToChartData(
   realData: DailyMealData[],
   nutrientType: "kcal" | "protein" | "carb" | "fat"
@@ -49,7 +29,7 @@ export function convertRealDataToChartData(
   }));
 }
 
-// Converter dados reais para gráfico de refeições
+// Converter dados reais para gráfico de número de refeições por dia
 export function convertRealDataToMealsData(
   realData: DailyMealData[]
 ): MealsDataPoint[] {
@@ -59,7 +39,7 @@ export function convertRealDataToMealsData(
   }));
 }
 
-// Gerar dados para gráficos de nutrientes
+// Gerar dados mockados para gráficos de nutrientes
 export function generateNutrientData(
   days: number,
   goalValue: number,
@@ -77,6 +57,7 @@ export function generateNutrientData(
     const value = baseValue * (1 + variation);
 
     data.push({
+      // Mantém o formato dd/mm para exibição simples em PT-BR
       date: date.toLocaleDateString("pt-BR", {
         day: "2-digit",
         month: "2-digit",
@@ -88,7 +69,7 @@ export function generateNutrientData(
   return data;
 }
 
-// Gerar dados para gráfico de refeições
+// Gerar dados mockados para gráfico de refeições
 export function generateMealsData(days: number): MealsDataPoint[] {
   const data: MealsDataPoint[] = [];
   const today = new Date();
@@ -112,7 +93,7 @@ export function generateMealsData(days: number): MealsDataPoint[] {
   return data;
 }
 
-// Obter metas do paciente (mockado por enquanto)
+// Metas do paciente (mock por enquanto)
 export function getPatientGoals(): PatientGoals {
   return {
     dailyKcal: 2000,
