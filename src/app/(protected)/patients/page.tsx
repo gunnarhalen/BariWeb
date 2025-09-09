@@ -182,10 +182,10 @@ export default function PatientsPage() {
                 </CardHeader>
                 <CardFooter className="flex-col items-start gap-1.5 text-sm">
                   <div className="line-clamp-1 flex gap-2 font-medium">
-                    Total de pacientes <IconUsers className="size-4" />
+                    Cadastrados no sistema <IconUsers className="size-4" />
                   </div>
                   <div className="text-muted-foreground">
-                    Pacientes cadastrados no sistema
+                    Todos os pacientes sob seu cuidado
                   </div>
                 </CardFooter>
               </Card>
@@ -226,10 +226,11 @@ export default function PatientsPage() {
                 </CardHeader>
                 <CardFooter className="flex-col items-start gap-1.5 text-sm">
                   <div className="line-clamp-1 flex gap-2 font-medium">
-                    Alta aderência <IconTrendingUp className="size-4" />
+                    Engajados no tratamento{" "}
+                    <IconTrendingUp className="size-4" />
                   </div>
                   <div className="text-muted-foreground">
-                    Pacientes com refeições registradas hoje
+                    Registrando refeições regularmente
                   </div>
                 </CardFooter>
               </Card>
@@ -265,10 +266,11 @@ export default function PatientsPage() {
                 </CardHeader>
                 <CardFooter className="flex-col items-start gap-1.5 text-sm">
                   <div className="line-clamp-1 flex gap-2 font-medium">
-                    Necessitam atenção <IconAlertTriangle className="size-4" />
+                    Precisam de acompanhamento{" "}
+                    <IconAlertTriangle className="size-4" />
                   </div>
                   <div className="text-muted-foreground">
-                    Pacientes sem refeições recentes
+                    Sem atividade há mais de 2 dias
                   </div>
                 </CardFooter>
               </Card>
@@ -288,10 +290,10 @@ export default function PatientsPage() {
                 </CardHeader>
                 <CardFooter className="flex-col items-start gap-1.5 text-sm">
                   <div className="line-clamp-1 flex gap-2 font-medium">
-                    Sistema estável <IconCalendar className="size-4" />
+                    Monitoramento contínuo <IconCalendar className="size-4" />
                   </div>
                   <div className="text-muted-foreground">
-                    Nenhum alerta crítico no momento
+                    Alertas de metas e consultas
                   </div>
                 </CardFooter>
               </Card>
