@@ -143,7 +143,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const getUserDisplayName = () => {
     // Priorizar o nome do perfil do nutricionista
     const displayName = nutritionistProfile?.fullName || user?.displayName;
-    
+
     if (!displayName) return "Nutricionista";
 
     // Remove "Dr." se presente e extrai os dois primeiros nomes

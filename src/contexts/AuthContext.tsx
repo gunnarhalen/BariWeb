@@ -34,9 +34,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isNutritionistUser, setIsNutritionistUser] = useState(false);
-  const [nutritionistProfile, setNutritionistProfile] = useState<NutritionistProfile | null>(
-    null
-  );
+  const [nutritionistProfile, setNutritionistProfile] =
+    useState<NutritionistProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
