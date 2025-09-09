@@ -139,7 +139,6 @@ export const ChartCard: React.FC<ChartCardProps> = ({
                   stroke={goalColor}
                   strokeDasharray="8 8"
                   strokeWidth={1}
-                  label="Meta"
                   isFront={true}
                 />
               )}

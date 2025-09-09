@@ -19,7 +19,15 @@ export default function LoginPage() {
         </div>
       </div>
       <div className="bg-muted relative hidden lg:block">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-950 dark:to-indigo-900" />
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: "url('/login_background.png')",
+            backgroundSize: "70%",
+            backgroundRepeat: "repeat",
+            opacity: 0.3,
+          }}
+        />
       </div>
     </div>
   );
