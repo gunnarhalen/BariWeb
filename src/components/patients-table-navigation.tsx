@@ -128,10 +128,19 @@ export function PatientsTableNavigation({
             <span className="truncate font-semibold">
               {row.getValue("name")}
             </span>
-            <span className="truncate text-xs text-muted-foreground">
+            {/* <span className="truncate text-xs text-muted-foreground">
               {row.getValue("email")}
-            </span>
+            </span> */}
           </div>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "email",
+      header: "Email",
+      cell: ({ row }) => (
+        <div className="text-sm text-muted-foreground">
+          {row.getValue("email")}
         </div>
       ),
     },
