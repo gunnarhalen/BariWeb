@@ -6,6 +6,7 @@ import {
   getNutritionistRequests,
   acceptNutritionistRequest,
   rejectNutritionistRequest,
+  revokeNutritionistRequest,
 } from "@/services/nutritionistService";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +20,16 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { SiteHeader } from "@/components/site-header";
 import {
   IconUserPlus,
@@ -27,14 +38,21 @@ import {
   IconClock,
   IconUserCheck,
   IconUserX,
+  IconUserMinus,
 } from "@tabler/icons-react";
 
 interface RequestWithProfile {
   id: string;
   nutritionistId: string;
   userId: string;
-  status: "pending" | "accepted" | "rejected";
+  userName: string;
+  userEmail: string;
+  status: "pending" | "accepted" | "rejected" | "revoked";
   createdAt: Date | { seconds: number; nanoseconds: number } | string;
+  acceptedAt?: Date | { seconds: number; nanoseconds: number } | string;
+  rejectedAt?: Date | { seconds: number; nanoseconds: number } | string;
+  revokedAt?: Date | { seconds: number; nanoseconds: number } | string;
+  revokedBy?: "user" | "nutritionist";
   patientProfile: {
     fullName: string;
     email: string;
@@ -49,6 +67,8 @@ export default function RequestsPage() {
   const [requests, setRequests] = useState<RequestWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState<string | null>(null);
+  const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
+  const [removing, setRemoving] = useState(false);
 
   const loadRequests = useCallback(async () => {
     if (!user) return;
@@ -104,6 +124,30 @@ export default function RequestsPage() {
     }
   };
 
+  const handleRevoke = async (requestId: string) => {
+    setConfirmRemove(requestId);
+  };
+
+  const confirmRevoke = async () => {
+    if (!confirmRemove) return;
+
+    try {
+      setRemoving(true);
+      const result = await revokeNutritionistRequest(confirmRemove);
+
+      if (result.success) {
+        await loadRequests(); // Recarregar a lista
+        setConfirmRemove(null);
+      } else {
+        console.error("Erro ao remover solicitação:", result.error);
+      }
+    } catch (error) {
+      console.error("Erro ao remover solicitação:", error);
+    } finally {
+      setRemoving(false);
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "pending":
@@ -125,6 +169,13 @@ export default function RequestsPage() {
           <Badge variant="destructive" className="bg-red-100 text-red-800">
             <IconUserX className="w-3 h-3 mr-1" />
             Rejeitada
+          </Badge>
+        );
+      case "revoked":
+        return (
+          <Badge variant="outline" className="bg-gray-100 text-gray-800">
+            <IconUserMinus className="w-3 h-3 mr-1" />
+            Revogada
           </Badge>
         );
       default:
@@ -163,6 +214,7 @@ export default function RequestsPage() {
   const pendingRequests = requests.filter((r) => r.status === "pending");
   const acceptedRequests = requests.filter((r) => r.status === "accepted");
   const rejectedRequests = requests.filter((r) => r.status === "rejected");
+  const revokedRequests = requests.filter((r) => r.status === "revoked");
 
   if (loading) {
     return (
@@ -192,7 +244,7 @@ export default function RequestsPage() {
             </div>
 
             {/* Estatísticas */}
-            <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-3">
+            <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
               <Card className="@container/card">
                 <CardHeader>
                   <CardDescription>Pendentes</CardDescription>
@@ -261,6 +313,30 @@ export default function RequestsPage() {
                   </div>
                 </CardFooter>
               </Card>
+
+              <Card className="@container/card">
+                <CardHeader>
+                  <CardDescription>Revogadas</CardDescription>
+                  <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+                    {revokedRequests.length}
+                  </CardTitle>
+                  <CardAction>
+                    <Badge variant="outline">
+                      <IconUserMinus className="size-4" />
+                      Revogadas
+                    </Badge>
+                  </CardAction>
+                </CardHeader>
+                <CardFooter className="flex-col items-start gap-1.5 text-sm">
+                  <div className="line-clamp-1 flex gap-2 font-medium">
+                    Relacionamentos cancelados{" "}
+                    <IconUserMinus className="size-4" />
+                  </div>
+                  <div className="text-muted-foreground">
+                    Solicitações que foram revogadas
+                  </div>
+                </CardFooter>
+              </Card>
             </div>
 
             {/* Lista de Solicitações */}
@@ -319,6 +395,34 @@ export default function RequestsPage() {
                                 <strong>Solicitado em:</strong>{" "}
                                 {formatDate(request.createdAt)}
                               </p>
+                              {request.acceptedAt && (
+                                <p>
+                                  <strong>Aceito em:</strong>{" "}
+                                  {formatDate(request.acceptedAt)}
+                                </p>
+                              )}
+                              {request.rejectedAt && (
+                                <p>
+                                  <strong>Rejeitado em:</strong>{" "}
+                                  {formatDate(request.rejectedAt)}
+                                </p>
+                              )}
+                              {request.revokedAt && (
+                                <p>
+                                  <strong>Revogado em:</strong>{" "}
+                                  {formatDate(request.revokedAt)}
+                                  {request.revokedBy && (
+                                    <span className="text-gray-500">
+                                      {" "}
+                                      (por{" "}
+                                      {request.revokedBy === "user"
+                                        ? "usuário"
+                                        : "nutricionista"}
+                                      )
+                                    </span>
+                                  )}
+                                </p>
+                              )}
                             </div>
                           </div>
 
@@ -344,6 +448,21 @@ export default function RequestsPage() {
                               </Button>
                             </div>
                           )}
+
+                          {request.status === "accepted" && (
+                            <div className="flex gap-2 ml-4">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleRevoke(request.id)}
+                                disabled={processing === request.id}
+                                className="border-orange-300 text-orange-700 hover:bg-orange-50"
+                              >
+                                <IconUserMinus className="w-4 h-4 mr-1" />
+                                Remover
+                              </Button>
+                            </div>
+                          )}
                         </div>
                       </CardContent>
                     </Card>
@@ -354,6 +473,39 @@ export default function RequestsPage() {
           </div>
         </div>
       </div>
+
+      {/* Diálogo de Confirmação para Remover */}
+      <AlertDialog
+        open={!!confirmRemove}
+        onOpenChange={() => setConfirmRemove(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar Remoção</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja remover esta relação? Esta ação não pode
+              ser desfeita. O paciente não terá mais acesso aos seus serviços de
+              nutrição.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmRevoke}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {removing ? (
+                <>
+                  <Spinner className="h-4 w-4 mr-2" />
+                  Removendo...
+                </>
+              ) : (
+                "Remover"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

@@ -23,6 +23,16 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   IconUser,
   IconShield,
   IconBell,
@@ -35,6 +45,7 @@ export default function SettingsPage() {
   const { user, logout } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
 
   // Estados do formulário
   const [profileData, setProfileData] = useState({
@@ -75,10 +86,13 @@ export default function SettingsPage() {
     }
   };
 
-  const handleLogout = async () => {
-    if (confirm("Tem certeza que deseja sair?")) {
-      await logout();
-    }
+  const handleLogout = () => {
+    setShowLogoutDialog(true);
+  };
+
+  const confirmLogout = async () => {
+    await logout();
+    setShowLogoutDialog(false);
   };
 
   const tabs = [
@@ -559,6 +573,29 @@ export default function SettingsPage() {
           </div>
         </div>
       </div>
+
+      {/* Diálogo de Confirmação para Logout */}
+      <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar Logout</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja sair da sua conta? Você precisará fazer
+              login novamente para acessar o sistema.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmLogout}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              <IconLogout className="h-4 w-4 mr-2" />
+              Sair
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

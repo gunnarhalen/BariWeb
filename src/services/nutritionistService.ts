@@ -8,7 +8,6 @@ import {
   getDoc,
   updateDoc,
   Timestamp,
-  orderBy,
 } from "firebase/firestore";
 
 // Interfaces
@@ -40,8 +39,14 @@ export interface NutritionistRequest {
   id: string;
   nutritionistId: string;
   userId: string;
-  status: "pending" | "accepted" | "rejected";
+  userName: string;
+  userEmail: string;
+  status: "pending" | "accepted" | "rejected" | "revoked";
   createdAt: Timestamp;
+  acceptedAt?: Timestamp;
+  rejectedAt?: Timestamp;
+  revokedAt?: Timestamp;
+  revokedBy?: "user" | "nutritionist";
 }
 
 // Função auxiliar para calcular idade a partir da data de nascimento
@@ -399,7 +404,16 @@ export const getPatientProfile = async (
     const patientDoc = await getDoc(patientRef);
 
     if (patientDoc.exists()) {
-      return { id: patientDoc.id, ...patientDoc.data() } as PatientProfile;
+      const data = patientDoc.data();
+      const calculatedAge = data.birthDate
+        ? calculateAge(data.birthDate)
+        : undefined;
+
+      return {
+        id: patientDoc.id,
+        ...data,
+        age: calculatedAge,
+      } as PatientProfile;
     }
 
     return null;
@@ -413,7 +427,10 @@ export const getPatientProfile = async (
 export const acceptNutritionistRequest = async (requestId: string) => {
   try {
     const requestRef = doc(db, "nutritionist_requests", requestId);
-    await updateDoc(requestRef, { status: "accepted" });
+    await updateDoc(requestRef, {
+      status: "accepted",
+      acceptedAt: Timestamp.now(),
+    });
     return { success: true };
   } catch (error) {
     console.error("Erro ao aceitar solicitação:", error);
@@ -428,10 +445,32 @@ export const acceptNutritionistRequest = async (requestId: string) => {
 export const rejectNutritionistRequest = async (requestId: string) => {
   try {
     const requestRef = doc(db, "nutritionist_requests", requestId);
-    await updateDoc(requestRef, { status: "rejected" });
+    await updateDoc(requestRef, {
+      status: "rejected",
+      rejectedAt: Timestamp.now(),
+    });
     return { success: true };
   } catch (error) {
     console.error("Erro ao rejeitar solicitação:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Erro desconhecido",
+    };
+  }
+};
+
+// Revogar solicitação de nutricionista
+export const revokeNutritionistRequest = async (requestId: string) => {
+  try {
+    const requestRef = doc(db, "nutritionist_requests", requestId);
+    await updateDoc(requestRef, {
+      status: "revoked",
+      revokedAt: Timestamp.now(),
+      revokedBy: "nutritionist",
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Erro ao revogar solicitação:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Erro desconhecido",
@@ -457,8 +496,9 @@ export const getNutritionistRequests = async (nutritionistId: string) => {
     const requestsRef = collection(db, "nutritionist_requests");
     const requestsQuery = query(
       requestsRef,
-      where("nutritionistId", "==", nutritionistId),
-      orderBy("createdAt", "desc")
+      where("nutritionistId", "==", nutritionistId)
+      // TODO: Testar se o índice composto está 100% ativo para restaurar o orderBy
+      // orderBy("createdAt", "desc") - removido temporariamente
     );
 
     const requestsSnapshot = await getDocs(requestsQuery);
@@ -482,6 +522,14 @@ export const getNutritionistRequests = async (nutritionistId: string) => {
           : null,
       });
     }
+
+    // TODO: Remover esta ordenação manual quando o orderBy do Firestore estiver funcionando
+    // Ordenar manualmente por data de criação (mais recente primeiro)
+    requests.sort((a, b) => {
+      const dateA = a.createdAt?.toDate() || new Date(0);
+      const dateB = b.createdAt?.toDate() || new Date(0);
+      return dateB.getTime() - dateA.getTime();
+    });
 
     return requests;
   } catch (error) {
