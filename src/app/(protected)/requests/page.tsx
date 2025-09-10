@@ -32,13 +32,13 @@ import {
 } from "@/components/ui/alert-dialog";
 import { SiteHeader } from "@/components/site-header";
 import {
-  IconUserPlus,
   IconCheck,
   IconX,
   IconClock,
   IconUserCheck,
   IconUserX,
   IconUserMinus,
+  IconUserPlus,
 } from "@tabler/icons-react";
 
 interface RequestWithProfile {
@@ -148,7 +148,7 @@ export default function RequestsPage() {
     }
   };
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: string, revokedBy?: string) => {
     switch (status) {
       case "pending":
         return (
@@ -172,10 +172,12 @@ export default function RequestsPage() {
           </Badge>
         );
       case "revoked":
+        const revokedByText =
+          revokedBy === "user" ? "por paciente" : "por nutricionista";
         return (
           <Badge variant="outline" className="bg-gray-100 text-gray-800">
             <IconUserMinus className="w-3 h-3 mr-1" />
-            Revogada
+            Revogada {revokedByText}
           </Badge>
         );
       default:
@@ -237,9 +239,6 @@ export default function RequestsPage() {
                   Gerencie as solicitações de pacientes que querem se associar a
                   você
                 </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <IconUserPlus className="w-6 h-6 text-blue-600" />
               </div>
             </div>
 
@@ -362,72 +361,31 @@ export default function RequestsPage() {
                 <div className="space-y-4">
                   {requests.map((request) => (
                     <Card key={request.id}>
-                      <CardContent className="p-6">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-2">
+                      <CardContent>
+                        {/* Header com nome, idade e status */}
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-baseline gap-3">
+                            <div>
                               <h3 className="text-lg font-semibold text-gray-900">
                                 {request.patientProfile?.fullName ||
                                   "Nome não disponível"}
+                                {request.patientProfile?.age && (
+                                  <span className="text-gray-600 font-normal ml-2">
+                                    , {request.patientProfile.age} anos
+                                  </span>
+                                )}
                               </h3>
-                              {getStatusBadge(request.status)}
-                            </div>
-
-                            <div className="space-y-1 text-sm text-gray-600">
-                              <p>
-                                <strong>Email:</strong>{" "}
+                              <p className="text-sm text-gray-500 mt-1">
                                 {request.patientProfile?.email ||
-                                  "Não disponível"}
+                                  "Email não disponível"}
                               </p>
-                              {request.patientProfile?.age && (
-                                <p>
-                                  <strong>Idade:</strong>{" "}
-                                  {request.patientProfile.age} anos
-                                </p>
-                              )}
-                              {request.patientProfile?.gender && (
-                                <p>
-                                  <strong>Gênero:</strong>{" "}
-                                  {request.patientProfile.gender}
-                                </p>
-                              )}
-                              <p>
-                                <strong>Solicitado em:</strong>{" "}
-                                {formatDate(request.createdAt)}
-                              </p>
-                              {request.acceptedAt && (
-                                <p>
-                                  <strong>Aceito em:</strong>{" "}
-                                  {formatDate(request.acceptedAt)}
-                                </p>
-                              )}
-                              {request.rejectedAt && (
-                                <p>
-                                  <strong>Rejeitado em:</strong>{" "}
-                                  {formatDate(request.rejectedAt)}
-                                </p>
-                              )}
-                              {request.revokedAt && (
-                                <p>
-                                  <strong>Revogado em:</strong>{" "}
-                                  {formatDate(request.revokedAt)}
-                                  {request.revokedBy && (
-                                    <span className="text-gray-500">
-                                      {" "}
-                                      (por{" "}
-                                      {request.revokedBy === "user"
-                                        ? "usuário"
-                                        : "nutricionista"}
-                                      )
-                                    </span>
-                                  )}
-                                </p>
-                              )}
                             </div>
+                            {getStatusBadge(request.status, request.revokedBy)}
                           </div>
 
+                          {/* Botões de ação */}
                           {request.status === "pending" && (
-                            <div className="flex gap-2 ml-4">
+                            <div className="flex gap-2">
                               <Button
                                 size="sm"
                                 onClick={() => handleAccept(request.id)}
@@ -450,7 +408,7 @@ export default function RequestsPage() {
                           )}
 
                           {request.status === "accepted" && (
-                            <div className="flex gap-2 ml-4">
+                            <div className="flex gap-2">
                               <Button
                                 size="sm"
                                 variant="outline"
@@ -463,6 +421,42 @@ export default function RequestsPage() {
                               </Button>
                             </div>
                           )}
+                        </div>
+
+                        {/* Timeline das datas */}
+                        <div className="border-t pt-3">
+                          <div className="flex flex-wrap gap-4 text-sm text-gray-500">
+                            <div className="flex items-center gap-1">
+                              <IconClock className="w-3 h-3 text-blue-600" />
+                              <span>
+                                Solicitado em: {formatDate(request.createdAt)}
+                              </span>
+                            </div>
+                            {request.acceptedAt && (
+                              <div className="flex items-center gap-1">
+                                <IconCheck className="w-3 h-3 text-green-600" />
+                                <span>
+                                  Aceito em: {formatDate(request.acceptedAt)}
+                                </span>
+                              </div>
+                            )}
+                            {request.rejectedAt && (
+                              <div className="flex items-center gap-1">
+                                <IconX className="w-3 h-3 text-red-600" />
+                                <span>
+                                  Rejeitado em: {formatDate(request.rejectedAt)}
+                                </span>
+                              </div>
+                            )}
+                            {request.revokedAt && (
+                              <div className="flex items-center gap-1">
+                                <IconUserMinus className="w-3 h-3 text-gray-600" />
+                                <span>
+                                  Revogado em: {formatDate(request.revokedAt)}
+                                </span>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
