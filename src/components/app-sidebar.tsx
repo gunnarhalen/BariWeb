@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useMemo } from "react";
 import {
   IconLayoutDashboardFilled,
   IconHelp,
@@ -29,7 +30,8 @@ import {
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/contexts/AuthContext";
 
-const data = {
+// Configuração da navegação
+const navigationData = {
   navMain: [
     {
       title: "Dashboard",
@@ -86,29 +88,29 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user, nutritionistProfile } = useAuth();
 
-  // Função para extrair os dois primeiros nomes do usuário
-  const getUserDisplayName = () => {
-    // Priorizar o nome do perfil do nutricionista
+  // Memoizar o nome do usuário para evitar recálculos desnecessários
+  const userDisplayName = useMemo(() => {
     const displayName = nutritionistProfile?.fullName || user?.displayName;
 
     if (!displayName) return "Nutricionista";
 
     // Remove "Dr." se presente e extrai os dois primeiros nomes
-    const cleanName = displayName.replace(/^Dr\.?\s*/i, "");
-    const nameParts = cleanName.trim().split(" ");
+    const cleanName = displayName.replace(/^Dr\.?\s*/i, "").trim();
+    const nameParts = cleanName.split(/\s+/);
 
-    if (nameParts.length >= 2) {
-      return `${nameParts[0]} ${nameParts[1]}`;
-    }
+    return nameParts.length >= 2
+      ? `${nameParts[0]} ${nameParts[1]}`
+      : nameParts[0] || "Nutricionista";
+  }, [nutritionistProfile?.fullName, user?.displayName]);
 
-    return nameParts[0] || "Nutricionista";
-  };
-
-  const userData = {
-    name: getUserDisplayName(),
-    email: user?.email || "nutricionista@bari.com",
-    avatar: "/avatars/nutritionist.jpg",
-  };
+  // Memoizar os dados do usuário
+  const userData = useMemo(
+    () => ({
+      name: userDisplayName,
+      email: user?.email || "nutricionista@bari.com",
+    }),
+    [userDisplayName, user?.email]
+  );
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
@@ -122,9 +124,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        <NavMain items={navigationData.navMain} />
+        <NavDocuments items={navigationData.documents} />
+        <NavSecondary items={navigationData.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={userData} />
