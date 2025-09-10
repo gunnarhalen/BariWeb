@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -39,6 +40,11 @@ import {
   IconPalette,
   IconLogout,
   IconDeviceFloppy,
+  IconCreditCard,
+  IconCalendar,
+  IconDownload,
+  IconAlertTriangle,
+  IconCheck,
 } from "@tabler/icons-react";
 
 export default function SettingsPage() {
@@ -73,6 +79,15 @@ export default function SettingsPage() {
     autoSave: true,
   });
 
+  // Estado da assinatura
+  const [subscription] = useState({
+    plan: "professional",
+    status: "active",
+    nextBilling: "2024-02-15",
+    amount: 99.9,
+    paymentMethod: "cartão_visa_****1234",
+  });
+
   const handleSave = async () => {
     setIsLoading(true);
     try {
@@ -97,10 +112,42 @@ export default function SettingsPage() {
 
   const tabs = [
     { id: "profile", label: "Perfil", icon: IconUser },
+    { id: "subscription", label: "Assinatura", icon: IconCreditCard },
     { id: "notifications", label: "Notificações", icon: IconBell },
     { id: "preferences", label: "Preferências", icon: IconPalette },
     { id: "security", label: "Segurança", icon: IconShield },
   ];
+
+  const getPlanName = (plan: string) => {
+    switch (plan) {
+      case "basic":
+        return "Básico";
+      case "professional":
+        return "Profissional";
+      case "enterprise":
+        return "Empresarial";
+      default:
+        return "Desconhecido";
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "active":
+        return (
+          <Badge className="bg-green-100 text-green-800">
+            <IconCheck className="w-3 h-3 mr-1" />
+            Ativa
+          </Badge>
+        );
+      case "expired":
+        return <Badge variant="destructive">Expirada</Badge>;
+      case "cancelled":
+        return <Badge variant="outline">Cancelada</Badge>;
+      default:
+        return <Badge variant="outline">{status}</Badge>;
+    }
+  };
 
   return (
     <>
@@ -274,6 +321,127 @@ export default function SettingsPage() {
                       </div>
                     </CardContent>
                   </Card>
+                )}
+
+                {/* Assinatura */}
+                {activeTab === "subscription" && (
+                  <div className="space-y-6">
+                    {/* Plano Atual */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <IconCreditCard className="h-5 w-5" />
+                          Plano Atual
+                        </CardTitle>
+                        <CardDescription>
+                          Informações sobre sua assinatura atual
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h3 className="text-lg font-semibold">
+                              {getPlanName(subscription.plan)}
+                            </h3>
+                            <p className="text-sm text-gray-600">
+                              R$ {subscription.amount.toFixed(2)}/mês
+                            </p>
+                          </div>
+                          {getStatusBadge(subscription.status)}
+                        </div>
+
+                        <Separator />
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <Label className="text-sm font-medium">
+                              Próxima Cobrança
+                            </Label>
+                            <p className="text-sm text-gray-600 flex items-center gap-1">
+                              <IconCalendar className="h-4 w-4" />
+                              {new Date(
+                                subscription.nextBilling
+                              ).toLocaleDateString("pt-BR")}
+                            </p>
+                          </div>
+                          <div>
+                            <Label className="text-sm font-medium">
+                              Método de Pagamento
+                            </Label>
+                            <p className="text-sm text-gray-600">
+                              {subscription.paymentMethod}
+                            </p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Ações */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Ações da Assinatura</CardTitle>
+                        <CardDescription>
+                          Gerencie sua assinatura e pagamentos
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <Button
+                            variant="outline"
+                            className="flex items-center gap-2"
+                          >
+                            <IconCreditCard className="h-4 w-4" />
+                            Alterar Método de Pagamento
+                          </Button>
+                          <Button
+                            variant="outline"
+                            className="flex items-center gap-2"
+                          >
+                            <IconDownload className="h-4 w-4" />
+                            Baixar Faturas
+                          </Button>
+                        </div>
+
+                        <Separator />
+
+                        <div className="p-4 border border-orange-200 rounded-lg bg-orange-50">
+                          <div className="flex items-start gap-3">
+                            <IconAlertTriangle className="h-5 w-5 text-orange-600 mt-0.5" />
+                            <div>
+                              <h4 className="font-medium text-orange-800 mb-1">
+                                Alterar Plano
+                              </h4>
+                              <p className="text-sm text-orange-600 mb-3">
+                                Entre em contato conosco para alterar seu plano
+                                atual
+                              </p>
+                              <Button variant="outline" size="sm">
+                                Entrar em Contato
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="p-4 border border-red-200 rounded-lg bg-red-50">
+                          <div className="flex items-start gap-3">
+                            <IconAlertTriangle className="h-5 w-5 text-red-600 mt-0.5" />
+                            <div>
+                              <h4 className="font-medium text-red-800 mb-1">
+                                Cancelar Assinatura
+                              </h4>
+                              <p className="text-sm text-red-600 mb-3">
+                                Esta ação é irreversível. Você perderá acesso a
+                                todos os recursos premium.
+                              </p>
+                              <Button variant="destructive" size="sm">
+                                Cancelar Assinatura
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
                 )}
 
                 {/* Notificações */}

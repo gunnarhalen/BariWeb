@@ -42,21 +42,26 @@ export function NavUser({
 
   return (
     <SidebarMenu>
-      {/* Informações do Usuário */}
+      {/* Informações do Usuário - Apenas informacional */}
       <SidebarMenuItem>
-        <SidebarMenuButton className="cursor-default">
+        <div className="px-3 py-2">
           <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-medium">{user.name}</span>
+            <span className="truncate font-medium text-gray-900">
+              {user.name}
+            </span>
             <span className="text-muted-foreground truncate text-xs">
               {user.email}
             </span>
           </div>
-        </SidebarMenuButton>
+        </div>
       </SidebarMenuItem>
 
-      {/* Botão Sair */}
+      {/* Botão Sair - Com destaque vermelho */}
       <SidebarMenuItem>
-        <SidebarMenuButton onClick={handleLogout}>
+        <SidebarMenuButton
+          onClick={handleLogout}
+          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+        >
           <IconLogout className="size-4" />
           <span>Sair</span>
         </SidebarMenuButton>

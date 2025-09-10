@@ -11,7 +11,6 @@ import {
   IconClipboardList,
   IconUserPlus,
   IconBook2,
-  IconCreditCard,
 } from "@tabler/icons-react";
 
 import { NavDocuments } from "@/components/nav-documents";
@@ -71,11 +70,6 @@ const navigationData = {
       title: "Conta",
       url: "/settings",
       icon: IconSettings,
-    },
-    {
-      title: "Faturamento",
-      url: "#",
-      icon: IconCreditCard,
     },
     {
       title: "Ajuda",
