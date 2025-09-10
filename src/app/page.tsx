@@ -147,6 +147,13 @@ export default function LandingPage() {
             <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
+                onClick={() => router.push("/pricing")}
+                className="text-slate-600 hover:text-slate-900"
+              >
+                Planos
+              </Button>
+              <Button
+                variant="ghost"
                 onClick={() => router.push("/login")}
                 className="text-slate-600 hover:text-slate-900"
               >
