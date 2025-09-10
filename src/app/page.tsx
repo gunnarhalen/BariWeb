@@ -11,6 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
 import Logo from "@/components/Logo";
 import {
@@ -20,6 +21,16 @@ import {
   IconTrendingUp,
   IconArrowRight,
   IconCheck,
+  IconHeart,
+  IconTarget,
+  IconSparkles,
+  IconBolt,
+  IconDownload,
+  IconBrandApple,
+  IconBrandGooglePlay,
+  IconDeviceMobile,
+  IconUserCheck,
+  IconBrain,
 } from "@tabler/icons-react";
 
 export default function LandingPage() {
@@ -36,7 +47,7 @@ export default function LandingPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
         <div className="text-center">
           <Spinner size="lg" />
         </div>
@@ -49,114 +60,226 @@ export default function LandingPage() {
     return null;
   }
 
-  const features = [
+  const userFeatures = [
+    {
+      icon: IconDeviceMobile,
+      title: "App Intuitivo",
+      description:
+        "Interface simples e fácil de usar para acompanhar sua alimentação diária.",
+      color: "from-blue-500 to-cyan-500",
+    },
+    {
+      icon: IconChartBar,
+      title: "Insights Personalizados",
+      description:
+        "Receba análises automáticas dos seus hábitos alimentares e sugestões.",
+      color: "from-emerald-500 to-teal-500",
+    },
+    {
+      icon: IconHeart,
+      title: "Saúde em Primeiro",
+      description:
+        "Foque no seu bem-estar com acompanhamento nutricional completo.",
+      color: "from-pink-500 to-rose-500",
+    },
+    {
+      icon: IconShield,
+      title: "Privacidade Total",
+      description:
+        "Seus dados são seus. Controle total sobre suas informações pessoais.",
+      color: "from-purple-500 to-violet-500",
+    },
+  ];
+
+  const nutritionistFeatures = [
     {
       icon: IconUsers,
       title: "Gestão de Pacientes",
       description:
-        "Acompanhe todos os seus pacientes em um só lugar com dados organizados e atualizados.",
-    },
-    {
-      icon: IconChartBar,
-      title: "Análise de Dados",
-      description:
-        "Visualize gráficos detalhados dos macros e progresso nutricional dos seus pacientes.",
-    },
-    {
-      icon: IconShield,
-      title: "Segurança Total",
-      description:
-        "Dados protegidos com criptografia e acesso restrito apenas para nutricionistas.",
+        "Acompanhe todos os seus pacientes em uma plataforma centralizada.",
+      color: "from-blue-500 to-cyan-500",
     },
     {
       icon: IconTrendingUp,
-      title: "Relatórios Avançados",
-      description:
-        "Gere relatórios profissionais para acompanhamento e documentação.",
+      title: "Relatórios Profissionais",
+      description: "Gere relatórios detalhados para acompanhamento clínico.",
+      color: "from-emerald-500 to-teal-500",
+    },
+    {
+      icon: IconUserCheck,
+      title: "Acompanhamento Remoto",
+      description: "Monitore o progresso dos seus pacientes em tempo real.",
+      color: "from-orange-500 to-red-500",
+    },
+    {
+      icon: IconBrain,
+      title: "Insights Avançados",
+      description: "Análises inteligentes para melhorar seus atendimentos.",
+      color: "from-purple-500 to-violet-500",
     },
   ];
 
+  const stats = [
+    { number: "50K+", label: "Usuários Ativos" },
+    { number: "500+", label: "Nutricionistas" },
+    { number: "1M+", label: "Refeições Registradas" },
+    { number: "4.8★", label: "Avaliação App Store" },
+  ];
+
   const benefits = [
-    "Acesso exclusivo para nutricionistas",
-    "Interface intuitiva e responsiva",
-    "Sincronização em tempo real",
-    "Relatórios exportáveis",
-    "Suporte técnico especializado",
+    "Registro fácil de refeições",
+    "Lembretes personalizados",
+    "Metas adaptáveis",
+    "Histórico completo",
+    "Integração com wearables",
+    "Suporte nutricional opcional",
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       {/* Header */}
-      <header className="bg-white">
+      <header className="bg-white/80 backdrop-blur-md border-b border-white/20 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
+          <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
               <Logo width={120} height={30} />
             </div>
-            <Button
-              onClick={() => router.push("/login")}
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              Entrar
-            </Button>
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                onClick={() => router.push("/login")}
+                className="text-slate-600 hover:text-slate-900"
+              >
+                Sou Nutricionista
+              </Button>
+              <Button
+                onClick={() => router.push("/login")}
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                Baixar App
+              </Button>
+            </div>
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-            Central de Acompanhamento
-            <span className="text-blue-600 block">para Nutricionistas</span>
+      <section className="relative py-24 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-indigo-600/5"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <Badge className="mb-6 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 border-blue-200">
+            <IconSparkles className="w-4 h-4 mr-2" />
+            Sua jornada para uma vida mais saudável
+          </Badge>
+
+          <h1 className="text-5xl md:text-7xl font-bold text-slate-900 mb-8 leading-tight">
+            Transforme sua
+            <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent block">
+              Alimentação
+            </span>
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            Gerencie seus pacientes, acompanhe o progresso nutricional e gere
-            relatórios profissionais com a plataforma mais completa do mercado.
+
+          <p className="text-xl md:text-2xl text-slate-600 mb-12 max-w-4xl mx-auto leading-relaxed">
+            O app mais completo para acompanhar sua alimentação e alcançar seus
+            objetivos de saúde. Use sozinho ou conecte-se com seu nutricionista.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+
+          <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
             <Button
               size="lg"
-              onClick={() => router.push("/login")}
-              className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-3"
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-lg px-8 py-4 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
             >
-              Acessar Plataforma
-              <IconArrowRight className="ml-2 h-5 w-5" />
+              <IconDownload className="mr-2 h-5 w-5" />
+              Baixar App Grátis
             </Button>
-            <Button size="lg" variant="outline" className="text-lg px-8 py-3">
-              Saiba Mais
+            <Button
+              size="lg"
+              variant="outline"
+              className="text-lg px-8 py-4 border-2 border-slate-300 hover:border-slate-400 hover:bg-slate-50 transition-all duration-300"
+            >
+              Ver Demonstração
             </Button>
+          </div>
+
+          {/* App Store Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+            <Button
+              variant="outline"
+              size="lg"
+              className="bg-black text-white hover:bg-gray-800 border-black px-6 py-3"
+            >
+              <IconBrandApple className="mr-2 h-6 w-6" />
+              <div className="text-left">
+                <div className="text-xs">Baixar na</div>
+                <div className="text-sm font-semibold">App Store</div>
+              </div>
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="bg-black text-white hover:bg-gray-800 border-black px-6 py-3"
+            >
+              <IconBrandGooglePlay className="mr-2 h-6 w-6" />
+              <div className="text-left">
+                <div className="text-xs">Disponível no</div>
+                <div className="text-sm font-semibold">Google Play</div>
+              </div>
+            </Button>
+          </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+            {stats.map((stat, index) => (
+              <div key={index} className="text-center">
+                <div className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">
+                  {stat.number}
+                </div>
+                <div className="text-slate-600 font-medium">{stat.label}</div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-20 bg-white">
+      {/* User Features Section */}
+      <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Tudo que você precisa para acompanhar seus pacientes
+          <div className="text-center mb-20">
+            <Badge className="mb-4 bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-700 border-emerald-200">
+              <IconBolt className="w-4 h-4 mr-2" />
+              Para Você
+            </Badge>
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
+              Tudo que você precisa para
+              <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                {" "}
+                uma vida mais saudável
+              </span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Uma plataforma completa desenvolvida especificamente para
-              nutricionistas profissionais.
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+              Um app completo para registrar refeições, acompanhar metas e
+              receber insights personalizados sobre sua alimentação.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => (
+            {userFeatures.map((feature, index) => (
               <Card
                 key={index}
-                className="text-center hover:bg-gray-50 transition-colors"
+                className="group hover:shadow-2xl transition-all duration-500 border-0 bg-gradient-to-br from-white to-slate-50 hover:-translate-y-2"
               >
-                <CardHeader>
-                  <div className="mx-auto mb-4 p-3 bg-blue-100 rounded-full w-fit">
-                    <feature.icon className="h-8 w-8 text-blue-600" />
+                <CardHeader className="text-center pb-4">
+                  <div
+                    className={`mx-auto mb-6 p-4 bg-gradient-to-r ${feature.color} rounded-2xl w-fit shadow-lg group-hover:scale-110 transition-transform duration-300`}
+                  >
+                    <feature.icon className="h-8 w-8 text-white" />
                   </div>
-                  <CardTitle className="text-xl">{feature.title}</CardTitle>
+                  <CardTitle className="text-xl font-bold text-slate-900 group-hover:text-slate-700 transition-colors">
+                    {feature.title}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="text-gray-600">
+                  <CardDescription className="text-slate-600 text-center leading-relaxed">
                     {feature.description}
                   </CardDescription>
                 </CardContent>
@@ -167,59 +290,157 @@ export default function LandingPage() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-24 bg-gradient-to-br from-slate-50 to-blue-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                Por que escolher o Bari Web?
+              <Badge className="mb-6 bg-gradient-to-r from-purple-100 to-violet-100 text-purple-700 border-purple-200">
+                <IconHeart className="w-4 h-4 mr-2" />
+                Por que escolher o Bari?
+              </Badge>
+
+              <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-8 leading-tight">
+                Desenvolvido para
+                <span className="bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">
+                  {" "}
+                  sua jornada
+                </span>
               </h2>
-              <p className="text-xl text-gray-600 mb-8">
-                Desenvolvido por especialistas em nutrição e tecnologia,
-                oferecemos a melhor experiência para profissionais da área.
+
+              <p className="text-xl text-slate-600 mb-10 leading-relaxed">
+                Nosso app combina tecnologia avançada com simplicidade,
+                oferecendo a melhor experiência para quem busca uma vida mais
+                saudável.
               </p>
-              <ul className="space-y-4">
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {benefits.map((benefit, index) => (
-                  <li key={index} className="flex items-center">
-                    <IconCheck className="h-6 w-6 text-green-600 mr-3 flex-shrink-0" />
-                    <span className="text-gray-700">{benefit}</span>
-                  </li>
+                  <div key={index} className="flex items-start gap-3">
+                    <div className="p-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full mt-1">
+                      <IconCheck className="h-4 w-4 text-white" />
+                    </div>
+                    <span className="text-slate-700 font-medium">
+                      {benefit}
+                    </span>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
-            <div className="bg-white rounded-lg p-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-                Pronto para começar?
-              </h3>
-              <p className="text-gray-600 mb-6 text-center">
-                Acesse sua conta de nutricionista e comece a acompanhar seus
-                pacientes hoje mesmo.
-              </p>
-              <Button
-                onClick={() => router.push("/login")}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-lg py-3"
-              >
-                Fazer Login
-                <IconArrowRight className="ml-2 h-5 w-5" />
-              </Button>
+
+            <div className="relative">
+              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-2xl">
+                <CardContent className="p-8">
+                  <div className="text-center mb-8">
+                    <div className="p-4 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl w-fit mx-auto mb-6">
+                      <IconTarget className="h-8 w-8 text-white" />
+                    </div>
+                    <h3 className="text-3xl font-bold text-slate-900 mb-4">
+                      Pronto para começar?
+                    </h3>
+                    <p className="text-slate-600 text-lg leading-relaxed">
+                      Baixe o app gratuitamente e comece sua jornada para uma
+                      alimentação mais saudável hoje mesmo.
+                    </p>
+                  </div>
+
+                  <div className="space-y-4">
+                    <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-lg py-4 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                      <IconDownload className="mr-2 h-5 w-5" />
+                      Baixar App Grátis
+                    </Button>
+
+                    <Button
+                      variant="outline"
+                      onClick={() => router.push("/login")}
+                      className="w-full text-lg py-4"
+                    >
+                      Sou Nutricionista
+                      <IconArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </div>
+
+                  <p className="text-center text-sm text-slate-500 mt-4">
+                    ✨ Sem custos ocultos • Sem compromisso
+                  </p>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>
       </section>
 
+      {/* Nutritionist Section */}
+      <section className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-20">
+            <Badge className="mb-4 bg-gradient-to-r from-orange-100 to-red-100 text-orange-700 border-orange-200">
+              <IconUserCheck className="w-4 h-4 mr-2" />
+              Para Nutricionistas
+            </Badge>
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
+              Plataforma profissional para
+              <span className="bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+                {" "}
+                acompanhamento clínico
+              </span>
+            </h2>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+              Gerencie seus pacientes, acompanhe progressos e gere relatórios
+              profissionais com nossa plataforma web especializada.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+            {nutritionistFeatures.map((feature, index) => (
+              <Card
+                key={index}
+                className="group hover:shadow-2xl transition-all duration-500 border-0 bg-gradient-to-br from-white to-slate-50 hover:-translate-y-2"
+              >
+                <CardHeader className="text-center pb-4">
+                  <div
+                    className={`mx-auto mb-6 p-4 bg-gradient-to-r ${feature.color} rounded-2xl w-fit shadow-lg group-hover:scale-110 transition-transform duration-300`}
+                  >
+                    <feature.icon className="h-8 w-8 text-white" />
+                  </div>
+                  <CardTitle className="text-xl font-bold text-slate-900 group-hover:text-slate-700 transition-colors">
+                    {feature.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-slate-600 text-center leading-relaxed">
+                    {feature.description}
+                  </CardDescription>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <Button
+              onClick={() => router.push("/login")}
+              size="lg"
+              className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-lg px-8 py-4 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
+            >
+              Acessar Plataforma Web
+              <IconArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
+      <footer className="bg-gradient-to-r from-slate-900 to-slate-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center mb-4 md:mb-0">
+            <div className="flex items-center mb-8 md:mb-0">
               <Logo width={120} height={30} className="text-white" />
             </div>
             <div className="text-center md:text-right">
-              <p className="text-gray-400 mb-2">
-                Central de Acompanhamento para Nutricionistas
+              <p className="text-slate-300 mb-2 text-lg font-medium">
+                Sua jornada para uma vida mais saudável
               </p>
-              <p className="text-sm text-gray-500">
-                © 2024 Bari Web. Todos os direitos reservados.
+              <p className="text-sm text-slate-400">
+                © 2024 Bari. Todos os direitos reservados.
               </p>
             </div>
           </div>
