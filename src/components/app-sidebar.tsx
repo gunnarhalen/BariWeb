@@ -2,15 +2,15 @@
 
 import * as React from "react";
 import {
-  IconChartBar,
-  IconDashboard,
+  IconLayoutDashboardFilled,
   IconHelp,
-  IconReport,
   IconSearch,
   IconSettings,
   IconUsers,
+  IconFileAnalytics,
   IconClipboardList,
   IconUserPlus,
+  IconBook2,
 } from "@tabler/icons-react";
 
 import { NavDocuments } from "@/components/nav-documents";
@@ -34,7 +34,7 @@ const data = {
     {
       title: "Dashboard",
       url: "/dashboard",
-      icon: IconDashboard,
+      icon: IconLayoutDashboardFilled,
     },
     {
       title: "Pacientes",
@@ -42,62 +42,26 @@ const data = {
       icon: IconUsers,
     },
     {
-      title: "Relatórios",
-      url: "/reports",
-      icon: IconChartBar,
-    },
-    {
       title: "Solicitações",
       url: "/requests",
-      icon: IconClipboardList,
+      icon: IconUserPlus,
     },
   ],
-  navClouds: [
+  documents: [
     {
-      title: "Gestão de Pacientes",
-      icon: IconUsers,
-      isActive: true,
-      url: "/patients",
-      items: [
-        {
-          title: "Todos os Pacientes",
-          url: "/patients",
-        },
-        {
-          title: "Novos Pacientes",
-          url: "/patients?filter=new",
-        },
-      ],
+      name: "Biblioteca Nutricional",
+      url: "#",
+      icon: IconBook2,
     },
     {
-      title: "Relatórios",
-      icon: IconReport,
+      name: "Relatórios",
       url: "/reports",
-      items: [
-        {
-          title: "Relatório Mensal",
-          url: "/reports/monthly",
-        },
-        {
-          title: "Relatório de Progresso",
-          url: "/reports/progress",
-        },
-      ],
+      icon: IconFileAnalytics,
     },
     {
-      title: "Solicitações",
-      icon: IconUserPlus,
-      url: "/requests",
-      items: [
-        {
-          title: "Novas Solicitações",
-          url: "/requests/new",
-        },
-        {
-          title: "Solicitações Pendentes",
-          url: "/requests/pending",
-        },
-      ],
+      name: "Planos Alimentares",
+      url: "#",
+      icon: IconClipboardList,
     },
   ],
   navSecondary: [
@@ -115,23 +79,6 @@ const data = {
       title: "Buscar",
       url: "#",
       icon: IconSearch,
-    },
-  ],
-  documents: [
-    {
-      name: "Biblioteca Nutricional",
-      url: "#",
-      icon: IconChartBar,
-    },
-    {
-      name: "Relatórios",
-      url: "/reports",
-      icon: IconReport,
-    },
-    {
-      name: "Planos Alimentares",
-      url: "#",
-      icon: IconClipboardList,
     },
   ],
 };
