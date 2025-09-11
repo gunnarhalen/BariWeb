@@ -162,23 +162,6 @@ export default function LandingPage() {
             objetivos de saúde. Use sozinho ou conecte-se com seu nutricionista.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
-            <Button
-              size="lg"
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-lg px-8 py-4 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
-            >
-              <IconDownload className="mr-2 h-5 w-5" />
-              Baixar App Grátis
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="text-lg px-8 py-4 border-2 border-slate-300 hover:border-slate-400 hover:bg-slate-50 transition-all duration-300"
-            >
-              Ver Demonstração
-            </Button>
-          </div>
-
           {/* App Store Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
             <Button
@@ -321,19 +304,29 @@ export default function LandingPage() {
                     </p>
                   </div>
 
-                  <div className="space-y-4">
-                    <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-lg py-4 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-                      <IconDownload className="mr-2 h-5 w-5" />
-                      Baixar App Grátis
-                    </Button>
-
+                  {/* App Store Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
                     <Button
                       variant="outline"
-                      onClick={() => router.push("/login")}
-                      className="w-full text-lg py-4"
+                      size="lg"
+                      className="bg-black text-white hover:bg-gray-800 border-black px-6 py-3"
                     >
-                      Sou Nutricionista
-                      <IconArrowRight className="ml-2 h-5 w-5" />
+                      <IconBrandApple className="mr-2 h-6 w-6" />
+                      <div className="text-left">
+                        <div className="text-xs">Baixar na</div>
+                        <div className="text-sm font-semibold">App Store</div>
+                      </div>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="bg-black text-white hover:bg-gray-800 border-black px-6 py-3"
+                    >
+                      <IconBrandGooglePlay className="mr-2 h-6 w-6" />
+                      <div className="text-left">
+                        <div className="text-xs">Disponível no</div>
+                        <div className="text-sm font-semibold">Google Play</div>
+                      </div>
                     </Button>
                   </div>
 
@@ -411,7 +404,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center mb-8 md:mb-0">
-              <Logo width={120} height={30} className="text-white" />
+              <Logo width={120} height={30} className="text-white invert" />
             </div>
             <div className="text-center md:text-right">
               <p className="text-slate-300 mb-2 text-lg font-medium">

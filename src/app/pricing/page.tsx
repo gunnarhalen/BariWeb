@@ -35,7 +35,7 @@ export default function PricingPage() {
     {
       name: "Iniciante",
       description:
-        "Perfeito para estudantes e profissionais em início de carreira",
+        "Perfeito para estudantes e profissionais que querem começar a usar a plataforma",
       price: { monthly: 0, annual: 0 },
       icon: IconRocket,
       color: "from-blue-500 to-cyan-500",
@@ -46,9 +46,7 @@ export default function PricingPage() {
         { name: "Visualização de refeições", included: true },
         { name: "Dados básicos do paciente", included: true },
         { name: "Suporte por email", included: true },
-        { name: "Relatórios simples", included: false },
         { name: "Análise de macros", included: false },
-        { name: "Relatórios personalizados", included: false },
         { name: "Exportação de dados", included: false },
         { name: "Suporte prioritário", included: false },
       ],
@@ -58,7 +56,7 @@ export default function PricingPage() {
     {
       name: "Profissional",
       description:
-        "Ideal para nutricionistas estabelecidos com clientela média",
+        "Ideal para nutricionistas estabelecidos com um número razoável de pacientes",
       price: { monthly: 29, annual: 290 },
       icon: IconStar,
       color: "from-emerald-500 to-teal-500",
@@ -69,18 +67,17 @@ export default function PricingPage() {
         { name: "Visualização completa de refeições", included: true },
         { name: "Dados completos do paciente", included: true },
         { name: "Análise de macros", included: true },
-        { name: "Relatórios personalizados", included: true },
         { name: "Histórico de progresso", included: true },
         { name: "Suporte prioritário", included: true },
         { name: "Exportação de dados", included: true },
-        { name: "Backup automático", included: true },
       ],
-      cta: "Começar Teste",
+      cta: "Quero este plano",
       ctaVariant: "default" as const,
     },
     {
       name: "Premium",
-      description: "Para nutricionistas com maior volume de pacientes",
+      description:
+        "Para nutricionistas com um grande volume de pacientes e que precisam de mais recursos",
       price: { monthly: 59, annual: 590 },
       icon: IconCrown,
       color: "from-purple-500 to-violet-500",
@@ -91,15 +88,11 @@ export default function PricingPage() {
         { name: "Visualização completa de refeições", included: true },
         { name: "Dados completos do paciente", included: true },
         { name: "Análise de macros avançada", included: true },
-        { name: "Relatórios profissionais", included: true },
         { name: "Histórico completo de progresso", included: true },
         { name: "Suporte prioritário", included: true },
         { name: "Exportação avançada", included: true },
-        { name: "Backup automático", included: true },
-        { name: "Relatórios em PDF", included: true },
-        { name: "Treinamento personalizado", included: true },
       ],
-      cta: "Falar com Vendas",
+      cta: "Quero este plano",
       ctaVariant: "default" as const,
     },
   ];
@@ -160,10 +153,6 @@ export default function PricingPage() {
       <div className="bg-white/80 backdrop-blur-md border-b border-white/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="text-center">
-            <Badge className="mb-4 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 border-blue-200">
-              <IconStar className="w-4 h-4 mr-2" />
-              Planos para Nutricionistas
-            </Badge>
             <h1 className="text-4xl md:text-6xl font-bold text-slate-900 mb-6">
               Escolha o plano ideal para
               <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent block">
@@ -309,10 +298,6 @@ export default function PricingPage() {
       <div className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-20">
-            <Badge className="mb-4 bg-gradient-to-r from-purple-100 to-violet-100 text-purple-700 border-purple-200">
-              <IconBrain className="w-4 h-4 mr-2" />
-              Recursos Inclusos
-            </Badge>
             <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
               Tudo que você precisa para
               <span className="bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">
@@ -355,10 +340,6 @@ export default function PricingPage() {
       <div className="py-24 bg-gradient-to-br from-slate-50 to-blue-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <Badge className="mb-4 bg-gradient-to-r from-orange-100 to-red-100 text-orange-700 border-orange-200">
-              <IconMessageCircle className="w-4 h-4 mr-2" />
-              Perguntas Frequentes
-            </Badge>
             <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
               Dúvidas sobre nossos
               <span className="bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
@@ -408,14 +389,6 @@ export default function PricingPage() {
             >
               Começar Teste Grátis
               <IconRocket className="ml-2 h-5 w-5" />
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="text-lg px-8 py-4 border-2 border-white text-white hover:bg-white hover:text-slate-900 transition-all duration-300"
-            >
-              Falar com Vendas
-              <IconMessageCircle className="ml-2 h-5 w-5" />
             </Button>
           </div>
           <p className="text-sm text-slate-400 mt-6">
