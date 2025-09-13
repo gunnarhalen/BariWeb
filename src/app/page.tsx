@@ -124,18 +124,55 @@ export default function LandingPage() {
     "Suporte nutricional opcional",
   ];
 
+  const appStoreButtons = (
+    <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start mb-16">
+      <Button variant="outline" size="lg" className="bg-black text-white hover:bg-gray-800 border-black px-6 py-3">
+        <IconBrandApple className="mr-2 h-6 w-6" />
+        <div className="text-left">
+          <div className="text-xs">Baixar na</div>
+          <div className="text-sm font-semibold">App Store</div>
+        </div>
+      </Button>
+      <Button variant="outline" size="lg" className="bg-black text-white hover:bg-gray-800 border-black px-6 py-3">
+        <IconBrandGooglePlay className="mr-2 h-6 w-6" />
+        <div className="text-left">
+          <div className="text-xs">Disponível no</div>
+          <div className="text-sm font-semibold">Google Play</div>
+        </div>
+      </Button>
+    </div>
+  );
+
+  const appStoreButtonsCentered = (
+    <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+      <Button variant="outline" size="lg" className="bg-black text-white hover:bg-gray-800 border-black px-6 py-3">
+        <IconBrandApple className="mr-2 h-6 w-6" />
+        <div className="text-left">
+          <div className="text-xs">Baixar na</div>
+          <div className="text-sm font-semibold">App Store</div>
+        </div>
+      </Button>
+      <Button variant="outline" size="lg" className="bg-black text-white hover:bg-gray-800 border-black px-6 py-3">
+        <IconBrandGooglePlay className="mr-2 h-6 w-6" />
+        <div className="text-left">
+          <div className="text-xs">Disponível no</div>
+          <div className="text-sm font-semibold">Google Play</div>
+        </div>
+      </Button>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       {/* Header */}
       <PublicHeader showHomeLink={true} />
 
       {/* Hero Section */}
-      <section className="relative py-16 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 md:bg-transparent">
+      <section className="relative py-16 overflow-hidden bg-white">
         <div
           className="absolute inset-0 bg-contain bg-right bg-no-repeat hidden md:block"
           style={{ backgroundImage: "url('/home-header-bg.jpg')" }}
         ></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-white/70 to-white/0 hidden md:block"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center md:text-left">
           <div className="max-w-full md:max-w-[50%]">
             <Badge className="mb-6 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 border-blue-200">
@@ -156,30 +193,7 @@ export default function LandingPage() {
             </p>
 
             {/* App Store Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start mb-16">
-              <Button
-                variant="outline"
-                size="lg"
-                className="bg-black text-white hover:bg-gray-800 border-black px-6 py-3"
-              >
-                <IconBrandApple className="mr-2 h-6 w-6" />
-                <div className="text-left">
-                  <div className="text-xs">Baixar na</div>
-                  <div className="text-sm font-semibold">App Store</div>
-                </div>
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="bg-black text-white hover:bg-gray-800 border-black px-6 py-3"
-              >
-                <IconBrandGooglePlay className="mr-2 h-6 w-6" />
-                <div className="text-left">
-                  <div className="text-xs">Disponível no</div>
-                  <div className="text-sm font-semibold">Google Play</div>
-                </div>
-              </Button>
-            </div>
+            {appStoreButtons}
 
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -291,30 +305,7 @@ export default function LandingPage() {
                   </div>
 
                   {/* App Store Buttons */}
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="bg-black text-white hover:bg-gray-800 border-black px-6 py-3"
-                    >
-                      <IconBrandApple className="mr-2 h-6 w-6" />
-                      <div className="text-left">
-                        <div className="text-xs">Baixar na</div>
-                        <div className="text-sm font-semibold">App Store</div>
-                      </div>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="bg-black text-white hover:bg-gray-800 border-black px-6 py-3"
-                    >
-                      <IconBrandGooglePlay className="mr-2 h-6 w-6" />
-                      <div className="text-left">
-                        <div className="text-xs">Disponível no</div>
-                        <div className="text-sm font-semibold">Google Play</div>
-                      </div>
-                    </Button>
-                  </div>
+                  {appStoreButtonsCentered}
 
                   <p className="text-center text-sm text-slate-500 mt-4">✨ Sem custos ocultos • Sem compromisso</p>
                 </CardContent>
