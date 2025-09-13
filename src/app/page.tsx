@@ -170,7 +170,7 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="relative py-16 overflow-hidden bg-white">
         <div
-          className="absolute inset-0 bg-contain bg-right bg-no-repeat hidden md:block"
+          className="absolute inset-0 bg-cover bg-right bg-no-repeat hidden md:block"
           style={{ backgroundImage: "url('/home-header-bg.jpg')" }}
         ></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center md:text-left">
@@ -257,7 +257,7 @@ export default function LandingPage() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-24 bg-gradient-to-br from-slate-50 to-blue-50">
+      <section className="py-48 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/home-bg-01.jpg')" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
@@ -295,7 +295,7 @@ export default function LandingPage() {
               <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-2xl">
                 <CardContent className="p-8">
                   <div className="text-center mb-8">
-                    <div className="p-4 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl w-fit mx-auto mb-6">
+                    <div className="p-4 bg-gradient-to-r from-blue-500 to-indigo-500 rounded- w-fit mx-auto mb-6">
                       <IconTarget className="h-8 w-8 text-white" />
                     </div>
                     <h3 className="text-3xl font-bold text-slate-900 mb-4">Pronto para começar?</h3>
