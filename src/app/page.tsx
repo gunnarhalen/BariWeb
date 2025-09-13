@@ -295,7 +295,7 @@ export default function LandingPage() {
               <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-2xl">
                 <CardContent className="p-8">
                   <div className="text-center mb-8">
-                    <div className="p-4 bg-gradient-to-r from-blue-500 to-indigo-500 rounded- w-fit mx-auto mb-6">
+                    <div className="p-4 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl w-fit mx-auto mb-6">
                       <IconTarget className="h-8 w-8 text-white" />
                     </div>
                     <h3 className="text-3xl font-bold text-slate-900 mb-4">Pronto para começar?</h3>
