@@ -4,16 +4,9 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
-import Logo from "@/components/Logo";
 import {
   IconUsers,
   IconChartBar,
@@ -33,6 +26,7 @@ import {
   IconBrain,
 } from "@tabler/icons-react";
 import PublicHeader from "@/components/public-header";
+import PublicFooter from "@/components/public-footer";
 
 export default function LandingPage() {
   const { user, isNutritionist, loading } = useAuth();
@@ -65,29 +59,25 @@ export default function LandingPage() {
     {
       icon: IconDeviceMobile,
       title: "App Intuitivo",
-      description:
-        "Interface simples e fácil de usar para acompanhar sua alimentação diária.",
+      description: "Interface simples e fácil de usar para acompanhar sua alimentação diária.",
       color: "from-blue-500 to-cyan-500",
     },
     {
       icon: IconChartBar,
       title: "Insights Personalizados",
-      description:
-        "Receba análises automáticas dos seus hábitos alimentares e sugestões.",
+      description: "Receba análises automáticas dos seus hábitos alimentares e sugestões.",
       color: "from-emerald-500 to-teal-500",
     },
     {
       icon: IconHeart,
       title: "Saúde em Primeiro",
-      description:
-        "Foque no seu bem-estar com acompanhamento nutricional completo.",
+      description: "Foque no seu bem-estar com acompanhamento nutricional completo.",
       color: "from-pink-500 to-rose-500",
     },
     {
       icon: IconShield,
       title: "Privacidade Total",
-      description:
-        "Seus dados são seus. Controle total sobre suas informações pessoais.",
+      description: "Seus dados são seus. Controle total sobre suas informações pessoais.",
       color: "from-purple-500 to-violet-500",
     },
   ];
@@ -96,8 +86,7 @@ export default function LandingPage() {
     {
       icon: IconUsers,
       title: "Gestão de Pacientes",
-      description:
-        "Acompanhe todos os seus pacientes em uma plataforma centralizada.",
+      description: "Acompanhe todos os seus pacientes em uma plataforma centralizada.",
       color: "from-blue-500 to-cyan-500",
     },
     {
@@ -158,8 +147,8 @@ export default function LandingPage() {
           </h1>
 
           <p className="text-xl md:text-2xl text-slate-600 mb-12 max-w-4xl mx-auto leading-relaxed">
-            O app mais completo para acompanhar sua alimentação e alcançar seus
-            objetivos de saúde. Use sozinho ou conecte-se com seu nutricionista.
+            O app mais completo para acompanhar sua alimentação e alcançar seus objetivos de saúde. Use sozinho ou
+            conecte-se com seu nutricionista.
           </p>
 
           {/* App Store Buttons */}
@@ -192,9 +181,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
             {stats.map((stat, index) => (
               <div key={index} className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">
-                  {stat.number}
-                </div>
+                <div className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">{stat.number}</div>
                 <div className="text-slate-600 font-medium">{stat.label}</div>
               </div>
             ))}
@@ -218,8 +205,8 @@ export default function LandingPage() {
               </span>
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              Um app completo para registrar refeições, acompanhar metas e
-              receber insights personalizados sobre sua alimentação.
+              Um app completo para registrar refeições, acompanhar metas e receber insights personalizados sobre sua
+              alimentação.
             </p>
           </div>
 
@@ -269,9 +256,8 @@ export default function LandingPage() {
               </h2>
 
               <p className="text-xl text-slate-600 mb-10 leading-relaxed">
-                Nosso app combina tecnologia avançada com simplicidade,
-                oferecendo a melhor experiência para quem busca uma vida mais
-                saudável.
+                Nosso app combina tecnologia avançada com simplicidade, oferecendo a melhor experiência para quem busca
+                uma vida mais saudável.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -280,9 +266,7 @@ export default function LandingPage() {
                     <div className="p-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full mt-1">
                       <IconCheck className="h-4 w-4 text-white" />
                     </div>
-                    <span className="text-slate-700 font-medium">
-                      {benefit}
-                    </span>
+                    <span className="text-slate-700 font-medium">{benefit}</span>
                   </div>
                 ))}
               </div>
@@ -295,12 +279,9 @@ export default function LandingPage() {
                     <div className="p-4 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl w-fit mx-auto mb-6">
                       <IconTarget className="h-8 w-8 text-white" />
                     </div>
-                    <h3 className="text-3xl font-bold text-slate-900 mb-4">
-                      Pronto para começar?
-                    </h3>
+                    <h3 className="text-3xl font-bold text-slate-900 mb-4">Pronto para começar?</h3>
                     <p className="text-slate-600 text-lg leading-relaxed">
-                      Baixe o app gratuitamente e comece sua jornada para uma
-                      alimentação mais saudável hoje mesmo.
+                      Baixe o app gratuitamente e comece sua jornada para uma alimentação mais saudável hoje mesmo.
                     </p>
                   </div>
 
@@ -330,9 +311,7 @@ export default function LandingPage() {
                     </Button>
                   </div>
 
-                  <p className="text-center text-sm text-slate-500 mt-4">
-                    ✨ Sem custos ocultos • Sem compromisso
-                  </p>
+                  <p className="text-center text-sm text-slate-500 mt-4">✨ Sem custos ocultos • Sem compromisso</p>
                 </CardContent>
               </Card>
             </div>
@@ -356,8 +335,8 @@ export default function LandingPage() {
               </span>
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              Gerencie seus pacientes, acompanhe progressos e gere relatórios
-              profissionais com nossa plataforma web especializada.
+              Gerencie seus pacientes, acompanhe progressos e gere relatórios profissionais com nossa plataforma web
+              especializada.
             </p>
           </div>
 
@@ -400,23 +379,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gradient-to-r from-slate-900 to-slate-800 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center mb-8 md:mb-0">
-              <Logo width={120} height={30} className="text-white invert" />
-            </div>
-            <div className="text-center md:text-right">
-              <p className="text-slate-300 mb-2 text-lg font-medium">
-                Sua jornada para uma vida mais saudável
-              </p>
-              <p className="text-sm text-slate-400">
-                © 2024 Bari. Todos os direitos reservados.
-              </p>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
     </div>
   );
 }

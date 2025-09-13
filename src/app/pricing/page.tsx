@@ -3,16 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import PublicHeader from "@/components/public-header";
+import PublicFooter from "@/components/public-footer";
 import {
   IconUsers,
   IconChartBar,
@@ -34,8 +29,7 @@ export default function PricingPage() {
   const plans = [
     {
       name: "Iniciante",
-      description:
-        "Perfeito para estudantes e profissionais que querem começar a usar a plataforma",
+      description: "Perfeito para estudantes e profissionais que querem começar a usar a plataforma",
       price: { monthly: 0, annual: 0 },
       icon: IconRocket,
       color: "from-blue-500 to-cyan-500",
@@ -55,8 +49,7 @@ export default function PricingPage() {
     },
     {
       name: "Profissional",
-      description:
-        "Ideal para nutricionistas estabelecidos com um número razoável de pacientes",
+      description: "Ideal para nutricionistas estabelecidos com um número razoável de pacientes",
       price: { monthly: 29, annual: 290 },
       icon: IconStar,
       color: "from-emerald-500 to-teal-500",
@@ -76,8 +69,7 @@ export default function PricingPage() {
     },
     {
       name: "Premium",
-      description:
-        "Para nutricionistas com um grande volume de pacientes e que precisam de mais recursos",
+      description: "Para nutricionistas com um grande volume de pacientes e que precisam de mais recursos",
       price: { monthly: 59, annual: 590 },
       icon: IconCrown,
       color: "from-purple-500 to-violet-500",
@@ -101,14 +93,12 @@ export default function PricingPage() {
     {
       icon: IconUsers,
       title: "Gestão de Pacientes",
-      description:
-        "Organize e acompanhe todos os seus pacientes em uma plataforma centralizada",
+      description: "Organize e acompanhe todos os seus pacientes em uma plataforma centralizada",
     },
     {
       icon: IconChartBar,
       title: "Análise Avançada",
-      description:
-        "Insights inteligentes sobre hábitos alimentares e progresso nutricional",
+      description: "Insights inteligentes sobre hábitos alimentares e progresso nutricional",
     },
     {
       icon: IconFileAnalytics,
@@ -130,8 +120,7 @@ export default function PricingPage() {
     },
     {
       question: "Há período de teste gratuito?",
-      answer:
-        "Sim! Todos os planos pagos incluem 14 dias de teste gratuito. Não é necessário cartão de crédito.",
+      answer: "Sim! Todos os planos pagos incluem 14 dias de teste gratuito. Não é necessário cartão de crédito.",
     },
     {
       question: "Meus dados estão seguros?",
@@ -140,8 +129,7 @@ export default function PricingPage() {
     },
     {
       question: "Posso cancelar quando quiser?",
-      answer:
-        "Sim! Não há fidelidade. Você pode cancelar sua assinatura a qualquer momento sem taxas.",
+      answer: "Sim! Não há fidelidade. Você pode cancelar sua assinatura a qualquer momento sem taxas.",
     },
   ];
 
@@ -160,8 +148,7 @@ export default function PricingPage() {
               </span>
             </h1>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-8">
-              Planos flexíveis que crescem com seu consultório. Comece grátis e
-              evolua conforme sua necessidade.
+              Planos flexíveis que crescem com seu consultório. Comece grátis e evolua conforme sua necessidade.
             </p>
           </div>
         </div>
@@ -170,29 +157,11 @@ export default function PricingPage() {
       {/* Pricing Toggle */}
       <div className="py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center gap-4">
-          <Badge className="bg-green-100 text-green-700 border-green-200">
-            Economize 17% no plano anual
-          </Badge>
+          <Badge className="bg-green-100 text-green-700 border-green-200">Economize 17% no plano anual</Badge>
           <div className="flex items-center justify-center gap-4 mb-8">
-            <span
-              className={`text-lg font-medium ${
-                !isAnnual ? "text-slate-900" : "text-slate-500"
-              }`}
-            >
-              Mensal
-            </span>
-            <Switch
-              checked={isAnnual}
-              onCheckedChange={setIsAnnual}
-              className="data-[state=checked]:bg-blue-600"
-            />
-            <span
-              className={`text-lg font-medium ${
-                isAnnual ? "text-slate-900" : "text-slate-500"
-              }`}
-            >
-              Anual
-            </span>
+            <span className={`text-lg font-medium ${!isAnnual ? "text-slate-900" : "text-slate-500"}`}>Mensal</span>
+            <Switch checked={isAnnual} onCheckedChange={setIsAnnual} className="data-[state=checked]:bg-blue-600" />
+            <span className={`text-lg font-medium ${isAnnual ? "text-slate-900" : "text-slate-500"}`}>Anual</span>
           </div>
         </div>
       </div>
@@ -223,12 +192,8 @@ export default function PricingPage() {
                   >
                     <plan.icon className="h-8 w-8 text-white" />
                   </div>
-                  <CardTitle className="text-2xl font-bold text-slate-900 mb-2">
-                    {plan.name}
-                  </CardTitle>
-                  <CardDescription className="text-slate-600 mb-6">
-                    {plan.description}
-                  </CardDescription>
+                  <CardTitle className="text-2xl font-bold text-slate-900 mb-2">{plan.name}</CardTitle>
+                  <CardDescription className="text-slate-600 mb-6">{plan.description}</CardDescription>
 
                   <div className="mb-6">
                     <div className="flex items-baseline justify-center">
@@ -236,11 +201,7 @@ export default function PricingPage() {
                         R$ {isAnnual ? plan.price.annual : plan.price.monthly}
                       </span>
                       <span className="text-slate-500 ml-2">
-                        {plan.price.monthly === 0
-                          ? ""
-                          : isAnnual
-                          ? "/ano"
-                          : "/mês"}
+                        {plan.price.monthly === 0 ? "" : isAnnual ? "/ano" : "/mês"}
                       </span>
                     </div>
                     {isAnnual && plan.price.monthly > 0 && (
@@ -263,11 +224,7 @@ export default function PricingPage() {
                           <IconX className="h-4 w-4 text-slate-400" />
                         </div>
                       )}
-                      <span
-                        className={`text-sm ${
-                          feature.included ? "text-slate-700" : "text-slate-400"
-                        }`}
-                      >
+                      <span className={`text-sm ${feature.included ? "text-slate-700" : "text-slate-400"}`}>
                         {feature.name}
                       </span>
                     </div>
@@ -306,8 +263,8 @@ export default function PricingPage() {
               </span>
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              Recursos profissionais desenvolvidos especificamente para
-              nutricionistas, com tecnologia de ponta e interface intuitiva.
+              Recursos profissionais desenvolvidos especificamente para nutricionistas, com tecnologia de ponta e
+              interface intuitiva.
             </p>
           </div>
 
@@ -351,14 +308,9 @@ export default function PricingPage() {
 
           <div className="space-y-6">
             {faqs.map((faq, index) => (
-              <Card
-                key={index}
-                className="border-0 bg-white/80 backdrop-blur-sm shadow-lg"
-              >
+              <Card key={index} className="border-0 bg-white/80 backdrop-blur-sm shadow-lg">
                 <CardContent className="p-6">
-                  <h3 className="text-lg font-semibold text-slate-900 mb-3">
-                    {faq.question}
-                  </h3>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-3">{faq.question}</h3>
                   <p className="text-slate-600 leading-relaxed">{faq.answer}</p>
                 </CardContent>
               </Card>
@@ -378,8 +330,7 @@ export default function PricingPage() {
             </span>
           </h2>
           <p className="text-xl text-slate-300 mb-8 max-w-2xl mx-auto">
-            Junte-se a centenas de nutricionistas que já transformaram seu
-            consultório com nossa plataforma.
+            Junte-se a centenas de nutricionistas que já transformaram seu consultório com nossa plataforma.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
@@ -391,11 +342,12 @@ export default function PricingPage() {
               <IconRocket className="ml-2 h-5 w-5" />
             </Button>
           </div>
-          <p className="text-sm text-slate-400 mt-6">
-            ✨ 14 dias grátis • Sem compromisso • Suporte especializado
-          </p>
+          <p className="text-sm text-slate-400 mt-6">✨ 14 dias grátis • Sem compromisso • Suporte especializado</p>
         </div>
       </div>
+
+      {/* Footer */}
+      <PublicFooter />
     </div>
   );
 }
