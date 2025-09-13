@@ -170,7 +170,7 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="relative py-16 overflow-hidden bg-white">
         <div
-          className="absolute inset-0 md:bg-cover md:bg-left lg:bg-contain lg:bg-right bg-right bg-no-repeat hidden md:block"
+          className="absolute inset-0 md:bg-cover md:bg-left lg:bg-contain lg:bg-right bg-no-repeat hidden md:block"
           style={{ backgroundImage: "url('/home-header-bg.jpg')" }}
         ></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center md:text-left">
@@ -198,9 +198,9 @@ export default function LandingPage() {
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {stats.map((stat, index) => (
-                <div key={index} className="text-center md:text-left flex flex-col items-center">
-                  <div className="text-3xl md:text-3xl font-bold text-slate-900 mb-2">{stat.number}</div>
-                  <div className="text-slate-600 font-light text-sm text-center">{stat.label}</div>
+                <div key={index} className="flex flex-col items-center text-center">
+                  <div className="text-3xl font-bold text-slate-900 mb-2">{stat.number}</div>
+                  <div className="text-slate-600 font-light text-sm">{stat.label}</div>
                 </div>
               ))}
             </div>
