@@ -170,7 +170,7 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="relative py-16 overflow-hidden bg-white">
         <div
-          className="absolute inset-0 bg-cover bg-right bg-no-repeat hidden md:block"
+          className="absolute inset-0 md:bg-cover md:bg-left lg:bg-contain lg:bg-right bg-right bg-no-repeat hidden md:block"
           style={{ backgroundImage: "url('/home-header-bg.jpg')" }}
         ></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center md:text-left">
