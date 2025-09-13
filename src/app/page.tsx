@@ -204,6 +204,12 @@ export default function LandingPage() {
               ))}
             </div>
           </div>
+          {/* Mouse Scroll Indicator */}
+          <div className="flex justify-center mt-12">
+            <div className="relative w-6 h-9 border-2 border-slate-400 rounded-full">
+              <div className="absolute left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 bg-slate-500 rounded-full animate-scroll-ball"></div>
+            </div>
+          </div>
         </div>
       </section>
 

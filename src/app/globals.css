@@ -134,3 +134,20 @@
     outline: none !important;
   }
 }
+
+@layer utilities {
+  /* Mouse scroll ball animation */
+  @keyframes scrollBall {
+    0%,
+    100% {
+      top: 6px;
+    }
+    70% {
+      top: 24px;
+    }
+  }
+
+  .animate-scroll-ball {
+    animation: scrollBall 2s ease-in-out infinite;
+  }
+}
