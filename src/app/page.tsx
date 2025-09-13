@@ -169,11 +169,11 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="relative py-16 overflow-hidden bg-white">
         <div
-          className="absolute inset-0 md:bg-cover md:bg-left lg:bg-contain lg:bg-right bg-no-repeat hidden md:block"
+          className="absolute inset-0 bg-cover md:bg-left lg:bg-right bg-no-repeat hidden md:block"
           style={{ backgroundImage: "url('/home-header-bg.jpg')" }}
         ></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center md:text-left">
-          <div className="max-w-full md:max-w-[50%]">
+          <div className="max-w-full md:max-w-[45%]">
             <Badge className="mb-6 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 border-blue-200">
               <IconSparkles className="w-4 h-4 mr-2" />
               Sua jornada para uma vida mais saudável
@@ -186,7 +186,7 @@ export default function LandingPage() {
               </span>
             </h1>
 
-            <p className="text-xl md:text-2xl text-slate-600 mb-12 leading-relaxed">
+            <p className="text-xl text-slate-600 mb-12 leading-relaxed">
               O app mais completo para acompanhar sua alimentação e alcançar seus objetivos de saúde. Use sozinho ou
               conecte-se com seu nutricionista.
             </p>
