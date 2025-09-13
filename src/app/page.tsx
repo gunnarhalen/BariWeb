@@ -12,7 +12,6 @@ import {
   IconChartBar,
   IconShield,
   IconTrendingUp,
-  IconArrowRight,
   IconCheck,
   IconHeart,
   IconTarget,
@@ -365,10 +364,10 @@ export default function LandingPage() {
             <Button
               onClick={() => router.push("/login")}
               size="lg"
-              className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-lg px-8 py-4 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-lg px-10 py-8
+              shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
             >
               Acessar Plataforma Web
-              <IconArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
         </div>
