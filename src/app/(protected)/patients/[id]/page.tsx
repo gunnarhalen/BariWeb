@@ -387,7 +387,7 @@ export default function PatientDetailsPage() {
               </div>
             )}
 
-            {/* Gráficos de Acompanhamento */}
+            {/* Gráficos de Acompanhamento Nutricional */}
             <div className="px-4 lg:px-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="flex items-center gap-2 text-lg font-semibold">
@@ -398,9 +398,9 @@ export default function PatientDetailsPage() {
               </div>
               {chartData ? (
                 <div className="space-y-4">
-                  {/* Primeira linha: Refeições e Calorias */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    {/* Gráfico de Refeições */}
+                  {/* Primeira linha: Refeições (1 coluna) e Calorias (2 colunas) */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {/* Gráfico de Refeições - 1 coluna */}
                     <ChartCard
                       title="Refeições por Dia"
                       data={chartData.meals || []}
@@ -411,19 +411,21 @@ export default function PatientDetailsPage() {
                       showGoal={false}
                     />
 
-                    {/* Gráfico de Calorias */}
-                    <ChartCard
-                      title="Calorias Diárias"
-                      data={chartData.calories || []}
-                      goal={patientProfile.goals.dailyKcal}
-                      color="#3b82f6"
-                      gradientId="fillCalories"
-                      unit="kcal"
-                    />
+                    {/* Gráfico de Calorias - 2 colunas */}
+                    <div className="md:col-span-2">
+                      <ChartCard
+                        title="Calorias Diárias"
+                        data={chartData.calories || []}
+                        goal={patientProfile.goals.dailyKcal}
+                        color="#3b82f6"
+                        gradientId="fillCalories"
+                        unit="kcal"
+                      />
+                    </div>
                   </div>
 
-                  {/* Segunda linha: Proteína, Carboidratos e Gorduras */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                  {/* Segunda linha: Proteína, Carboidratos e Gordura (1 coluna cada) */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {/* Gráfico de Proteína */}
                     <ChartCard
                       title="Proteína"
@@ -455,8 +457,8 @@ export default function PatientDetailsPage() {
                     />
                   </div>
 
-                  {/* Terceira linha: Fibras, Açúcar, Sódio e Água */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                  {/* Terceira linha: Fibras, Açúcar e Sódio (1 coluna cada) */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {/* Gráfico de Fibras */}
                     <ChartCard
                       title="Fibras"
@@ -486,16 +488,37 @@ export default function PatientDetailsPage() {
                       gradientId="fillSodium"
                       unit="mg"
                     />
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-64">
+                  <Spinner size="lg" />
+                </div>
+              )}
+            </div>
 
-                    {/* Gráfico de Água */}
-                    <ChartCard
-                      title="Água"
-                      data={chartData.water || []}
-                      goal={patientProfile.goals.water || 2000}
-                      color="#0ea5e9"
-                      gradientId="fillWater"
-                      unit="ml"
-                    />
+            {/* Gráficos de Consumo de Água */}
+            <div className="px-4 lg:px-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="flex items-center gap-2 text-lg font-semibold">
+                  <IconChartBar className="w-5 h-5" />
+                  Consumo de Água
+                </h2>
+              </div>
+              {chartData ? (
+                <div className="space-y-4">
+                  {/* Linha única: Água (3 colunas) */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="md:col-span-3">
+                      <ChartCard
+                        title="Água"
+                        data={chartData.water || []}
+                        goal={patientProfile.goals.water || 2000}
+                        color="#0ea5e9"
+                        gradientId="fillWater"
+                        unit="ml"
+                      />
+                    </div>
                   </div>
                 </div>
               ) : (
