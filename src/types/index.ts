@@ -19,6 +19,10 @@ export interface UserProfile {
     protein: number;
     carb: number;
     fat: number;
+    fiber: number;
+    sugar: number;
+    sodium: number;
+    water: number;
   };
   notifications: boolean;
   privacyMode: boolean;
@@ -69,6 +73,10 @@ export interface Patient {
     protein: number;
     carb: number;
     fat: number;
+    fiber: number;
+    sugar: number;
+    sodium: number;
+    water: number;
   };
   associatedNutritionistId: string;
 }

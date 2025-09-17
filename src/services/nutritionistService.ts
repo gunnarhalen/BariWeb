@@ -65,8 +65,102 @@ export interface DailyMealData {
   protein: number;
   carb: number;
   fat: number;
+  fiber: number;
+  sugar: number;
+  sodium: number;
   mealsCount: number;
 }
+
+// Interface para dados de água por dia
+export interface DailyWaterData {
+  date: string;
+  total: number;
+}
+
+// Buscar dados reais de água do paciente por período
+export const getPatientWaterData = async (patientId: string, days: number = 7): Promise<DailyWaterData[]> => {
+  try {
+    console.log(`Buscando dados de água para paciente ${patientId} nos últimos ${days} dias`);
+
+    const waterRef = collection(db, "users", patientId, "water");
+    const allDocsSnapshot = await getDocs(waterRef);
+
+    console.log(`Encontrados ${allDocsSnapshot.docs.length} documentos na coleção water`);
+
+    if (allDocsSnapshot.empty) {
+      console.log("Nenhum documento encontrado na coleção water");
+      return [];
+    }
+
+    // Criar array com todos os dias do período solicitado
+    const allDays: DailyWaterData[] = [];
+    const today = new Date();
+
+    for (let i = days - 1; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      const dateKey = date.toISOString().split("T")[0];
+
+      allDays.push({
+        date: dateKey,
+        total: 0,
+      });
+    }
+
+    // Criar mapa para facilitar a busca dos dados existentes
+    const existingDataMap = new Map<string, DailyWaterData>();
+
+    // Processar cada documento de data
+    for (const doc of allDocsSnapshot.docs) {
+      const docId = doc.id;
+
+      // Pular documentos que não são datas
+      if (docId === "data" || !/^\d{4}-\d{2}-\d{2}$/.test(docId)) {
+        continue;
+      }
+
+      try {
+        const docDate = new Date(docId);
+
+        // Verificar se a data está dentro do período solicitado
+        const daysDiff = Math.floor((today.getTime() - docDate.getTime()) / (1000 * 60 * 60 * 24));
+
+        if (daysDiff >= days) {
+          continue;
+        }
+
+        // Buscar dados do documento da data
+        const dateDocSnapshot = doc;
+
+        if (dateDocSnapshot.exists()) {
+          const dateData = dateDocSnapshot.data() as {
+            total?: number;
+          };
+
+          const dateKey = docDate.toISOString().split("T")[0]; // Formato YYYY-MM-DD para recharts
+
+          existingDataMap.set(dateKey, {
+            date: dateKey,
+            total: Math.max(0, dateData.total || 0),
+          });
+        }
+      } catch (error) {
+        console.error(`Erro ao processar documento ${docId}:`, error);
+      }
+    }
+
+    // Mesclar dados existentes com todos os dias do período
+    const result = allDays.map((day) => {
+      const existingData = existingDataMap.get(day.date);
+      return existingData || day; // Usa dados existentes ou mantém zeros
+    });
+
+    return result;
+  } catch (error) {
+    console.error("Erro ao buscar dados de água do paciente:", error);
+    return [];
+  }
+};
 
 // Buscar dados reais de refeições do paciente por período
 export const getPatientMealData = async (patientId: string, days: number = 7): Promise<DailyMealData[]> => {
@@ -98,6 +192,9 @@ export const getPatientMealData = async (patientId: string, days: number = 7): P
         protein: 0,
         carb: 0,
         fat: 0,
+        fiber: 0,
+        sugar: 0,
+        sodium: 0,
         mealsCount: 0,
       });
     }
@@ -134,6 +231,9 @@ export const getPatientMealData = async (patientId: string, days: number = 7): P
               protein?: number;
               carb?: number;
               fat?: number;
+              fiber?: number;
+              sugar?: number;
+              sodium?: number;
             };
             meals?: unknown[];
           };
@@ -150,6 +250,9 @@ export const getPatientMealData = async (patientId: string, days: number = 7): P
             protein: Math.max(0, totals.protein || 0),
             carb: Math.max(0, totals.carb || 0),
             fat: Math.max(0, totals.fat || 0),
+            fiber: Math.max(0, totals.fiber || 0),
+            sugar: Math.max(0, totals.sugar || 0),
+            sodium: Math.max(0, totals.sodium || 0),
             mealsCount: Math.max(0, Array.isArray(meals) ? meals.length : 0),
           });
         }

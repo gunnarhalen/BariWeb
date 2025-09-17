@@ -7,6 +7,7 @@ import {
   getPatientProfile,
   getLastMealDate,
   getPatientMealData,
+  getPatientWaterData,
 } from "@/services/nutritionistService";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +21,7 @@ import {
   generateMealsData,
   convertRealDataToChartData,
   convertRealDataToMealsData,
+  convertRealDataToWaterData,
   type ChartDataPoint,
   type MealsDataPoint,
 } from "@/lib/chart-data";
@@ -45,12 +47,8 @@ export default function PatientDetailsPage() {
   const params = useParams();
   const router = useRouter();
   const { user } = useAuth();
-  const [patientProfile, setPatientProfile] = useState<UserProfile | null>(
-    null
-  );
-  const [lastMealDate, setLastMealDate] = useState<string | undefined>(
-    undefined
-  );
+  const [patientProfile, setPatientProfile] = useState<UserProfile | null>(null);
+  const [lastMealDate, setLastMealDate] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState<"7" | "15" | "30">("7");
@@ -59,6 +57,10 @@ export default function PatientDetailsPage() {
     protein: ChartDataPoint[];
     carb: ChartDataPoint[];
     fat: ChartDataPoint[];
+    fiber: ChartDataPoint[];
+    sugar: ChartDataPoint[];
+    sodium: ChartDataPoint[];
+    water: ChartDataPoint[];
     meals: MealsDataPoint[];
   } | null>(null);
 
@@ -93,29 +95,32 @@ export default function PatientDetailsPage() {
           goal: String(profileData.goal) || "",
           dietType: String(profileData.dietType) || "",
           religiousDiet: String(profileData.religiousDiet) || "",
-          intolerances: Array.isArray(profileData.intolerances)
-            ? profileData.intolerances
-            : [],
-          allergies: Array.isArray(profileData.allergies)
-            ? profileData.allergies
-            : [],
+          intolerances: Array.isArray(profileData.intolerances) ? profileData.intolerances : [],
+          allergies: Array.isArray(profileData.allergies) ? profileData.allergies : [],
           goals: (profileData.goals as {
             dailyKcal: number;
             protein: number;
             carb: number;
             fat: number;
+            fiber: number;
+            sugar: number;
+            sodium: number;
+            water: number;
           }) || {
             dailyKcal: 2000,
             protein: 120,
             carb: 220,
             fat: 60,
+            fiber: 25,
+            sugar: 50,
+            sodium: 2300,
+            water: 2000,
           },
           notifications: Boolean(profileData.notifications) || true,
           privacyMode: Boolean(profileData.privacyMode) || false,
           isNutritionist: Boolean(profileData.isNutritionist) || false,
           cfnCrn: String(profileData.cfnCrn) || "",
-          associatedNutritionistId:
-            String(profileData.associatedNutritionistId) || "",
+          associatedNutritionistId: String(profileData.associatedNutritionistId) || "",
           createdAt: profileData.createdAt as Timestamp,
           updatedAt: profileData.updatedAt as Timestamp,
         };
@@ -140,8 +145,9 @@ export default function PatientDetailsPage() {
         const days = parseInt(dateRange);
 
         try {
-          // Buscar dados reais das refeições
+          // Buscar dados reais das refeições e água
           const realMealData = await getPatientMealData(patientId, days);
+          const realWaterData = await getPatientWaterData(patientId, days);
 
           // Converter para formato dos gráficos
           const chartDataConverted = {
@@ -149,6 +155,10 @@ export default function PatientDetailsPage() {
             protein: convertRealDataToChartData(realMealData, "protein"),
             carb: convertRealDataToChartData(realMealData, "carb"),
             fat: convertRealDataToChartData(realMealData, "fat"),
+            fiber: convertRealDataToChartData(realMealData, "fiber"),
+            sugar: convertRealDataToChartData(realMealData, "sugar"),
+            sodium: convertRealDataToChartData(realMealData, "sodium"),
+            water: convertRealDataToWaterData(realWaterData),
             meals: convertRealDataToMealsData(realMealData),
           };
 
@@ -157,13 +167,14 @@ export default function PatientDetailsPage() {
           console.error("Erro ao buscar dados reais dos gráficos:", error);
           // Fallback para dados mockados em caso de erro
           setChartData({
-            calories: generateNutrientData(
-              days,
-              patientProfile.goals.dailyKcal
-            ),
+            calories: generateNutrientData(days, patientProfile.goals.dailyKcal),
             protein: generateNutrientData(days, patientProfile.goals.protein),
             carb: generateNutrientData(days, patientProfile.goals.carb),
             fat: generateNutrientData(days, patientProfile.goals.fat),
+            fiber: generateNutrientData(days, patientProfile.goals.fiber || 25),
+            sugar: generateNutrientData(days, patientProfile.goals.sugar || 50),
+            sodium: generateNutrientData(days, patientProfile.goals.sodium || 2300),
+            water: generateNutrientData(days, patientProfile.goals.water || 2000),
             meals: generateMealsData(days),
           });
         }
@@ -179,20 +190,14 @@ export default function PatientDetailsPage() {
 
     if (hasMealToday) {
       return (
-        <Badge
-          variant="default"
-          className="bg-green-100 text-green-800 hover:bg-green-100"
-        >
+        <Badge variant="default" className="bg-green-100 text-green-800 hover:bg-green-100">
           <IconTrendingUp className="w-4 h-4 mr-1" />
           Ativo
         </Badge>
       );
     } else {
       return (
-        <Badge
-          variant="secondary"
-          className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
-        >
+        <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
           <IconAlertTriangle className="w-4 h-4 mr-1" />
           Inativo
         </Badge>
@@ -225,10 +230,7 @@ export default function PatientDetailsPage() {
     let age = today.getFullYear() - birth.getFullYear();
     const monthDiff = today.getMonth() - birth.getMonth();
 
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birth.getDate())
-    ) {
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
       age--;
     }
 
@@ -269,9 +271,7 @@ export default function PatientDetailsPage() {
       <div className="space-y-6">
         <Alert variant="destructive">
           <IconAlertTriangle className="h-4 w-4" />
-          <AlertDescription>
-            {error || "Paciente não encontrado"}
-          </AlertDescription>
+          <AlertDescription>{error || "Paciente não encontrado"}</AlertDescription>
         </Alert>
         <Button onClick={() => router.back()} variant="outline">
           <IconArrowLeft className="w-4 h-4 mr-2" />
@@ -293,12 +293,7 @@ export default function PatientDetailsPage() {
                 {/* Informações principais - Layout horizontal compacto */}
                 <div className="flex-1">
                   <div className="flex items-center gap-4 mb-4">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => router.back()}
-                      className="flex items-center gap-2"
-                    >
+                    <Button variant="ghost" size="sm" onClick={() => router.back()} className="flex items-center gap-2">
                       <IconArrowLeft className="w-4 h-4" />
                       Voltar
                     </Button>
@@ -307,18 +302,12 @@ export default function PatientDetailsPage() {
                     {/* Nome e Status */}
                     <div className="lg:col-span-2">
                       <div className="mb-2">
-                        <h1 className="text-xl font-semibold">
-                          {patientProfile.fullName}
-                        </h1>
-                        <p className="text-sm text-muted-foreground">
-                          {patientProfile.email}
-                        </p>
+                        <h1 className="text-xl font-semibold">{patientProfile.fullName}</h1>
+                        <p className="text-sm text-muted-foreground">{patientProfile.email}</p>
                       </div>
                       <div className="flex items-center gap-2">
                         {getStatusBadge()}
-                        <span className="text-sm text-muted-foreground">
-                          {getLastMealText()}
-                        </span>
+                        <span className="text-sm text-muted-foreground">{getLastMealText()}</span>
                       </div>
                     </div>
 
@@ -326,21 +315,15 @@ export default function PatientDetailsPage() {
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
                         <IconCalendar className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-sm font-medium">
-                          {calculateAge(patientProfile.birthDate)} anos
-                        </span>
+                        <span className="text-sm font-medium">{calculateAge(patientProfile.birthDate)} anos</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <IconWeight className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-sm font-medium">
-                          {patientProfile.weight} kg
-                        </span>
+                        <span className="text-sm font-medium">{patientProfile.weight} kg</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <IconRuler className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-sm font-medium">
-                          {patientProfile.height} cm
-                        </span>
+                        <span className="text-sm font-medium">{patientProfile.height} cm</span>
                       </div>
                     </div>
 
@@ -349,25 +332,17 @@ export default function PatientDetailsPage() {
                       <div className="flex items-center gap-2">
                         <IconTarget className="w-4 h-4 text-muted-foreground" />
                         <span className="text-sm font-medium">
-                          IMC:{" "}
-                          {calculateBMI(
-                            patientProfile.weight,
-                            patientProfile.height
-                          )}
+                          IMC: {calculateBMI(patientProfile.weight, patientProfile.height)}
                         </span>
                       </div>
                       <div className="space-y-2">
                         <div className="flex items-center gap-2">
                           <IconFlag className="w-4 h-4 text-muted-foreground" />
-                          <span className="text-sm font-medium">
-                            {patientProfile.goal.replace("_", " ")}
-                          </span>
+                          <span className="text-sm font-medium">{patientProfile.goal.replace("_", " ")}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <IconLeaf className="w-4 h-4 text-muted-foreground" />
-                          <span className="text-sm font-medium">
-                            {patientProfile.dietType}
-                          </span>
+                          <span className="text-sm font-medium">{patientProfile.dietType}</span>
                         </div>
                       </div>
                     </div>
@@ -376,19 +351,11 @@ export default function PatientDetailsPage() {
 
                 {/* Ações */}
                 <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex items-center gap-2"
-                  >
+                  <Button variant="outline" size="sm" className="flex items-center gap-2">
                     <IconEdit className="w-4 h-4" />
                     Editar
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex items-center gap-2"
-                  >
+                  <Button variant="outline" size="sm" className="flex items-center gap-2">
                     <IconNotes className="w-4 h-4" />
                     Notas
                   </Button>
@@ -397,8 +364,7 @@ export default function PatientDetailsPage() {
             </div>
 
             {/* Restrições Alimentares - Horizontal compacto */}
-            {(patientProfile.intolerances.length > 0 ||
-              patientProfile.allergies.length > 0) && (
+            {(patientProfile.intolerances.length > 0 || patientProfile.allergies.length > 0) && (
               <div className="px-4 lg:px-6">
                 <div className="flex items-center gap-4 p-3 bg-muted/30 rounded-lg">
                   <div className="flex items-center gap-2">
@@ -407,20 +373,12 @@ export default function PatientDetailsPage() {
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {patientProfile.intolerances.map((intolerance, index) => (
-                      <Badge
-                        key={index}
-                        variant="secondary"
-                        className="text-xs"
-                      >
+                      <Badge key={index} variant="secondary" className="text-xs">
                         {intolerance}
                       </Badge>
                     ))}
                     {patientProfile.allergies.map((allergy, index) => (
-                      <Badge
-                        key={index}
-                        variant="destructive"
-                        className="text-xs"
-                      >
+                      <Badge key={index} variant="destructive" className="text-xs">
                         {allergy}
                       </Badge>
                     ))}
@@ -436,10 +394,7 @@ export default function PatientDetailsPage() {
                   <IconChartBar className="w-5 h-5" />
                   Acompanhamento Nutricional
                 </h2>
-                <DateRangeSelector
-                  selectedRange={dateRange}
-                  onRangeChange={setDateRange}
-                />
+                <DateRangeSelector selectedRange={dateRange} onRangeChange={setDateRange} />
               </div>
               {chartData ? (
                 <div className="space-y-4">
@@ -497,6 +452,49 @@ export default function PatientDetailsPage() {
                       color="#ef4444"
                       gradientId="fillFat"
                       unit="g"
+                    />
+                  </div>
+
+                  {/* Terceira linha: Fibras, Açúcar, Sódio e Água */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                    {/* Gráfico de Fibras */}
+                    <ChartCard
+                      title="Fibras"
+                      data={chartData.fiber || []}
+                      goal={patientProfile.goals.fiber || 25}
+                      color="#8b5cf6"
+                      gradientId="fillFiber"
+                      unit="g"
+                    />
+
+                    {/* Gráfico de Açúcar */}
+                    <ChartCard
+                      title="Açúcar"
+                      data={chartData.sugar || []}
+                      goal={patientProfile.goals.sugar || 50}
+                      color="#f97316"
+                      gradientId="fillSugar"
+                      unit="g"
+                    />
+
+                    {/* Gráfico de Sódio */}
+                    <ChartCard
+                      title="Sódio"
+                      data={chartData.sodium || []}
+                      goal={patientProfile.goals.sodium || 2300}
+                      color="#06b6d4"
+                      gradientId="fillSodium"
+                      unit="mg"
+                    />
+
+                    {/* Gráfico de Água */}
+                    <ChartCard
+                      title="Água"
+                      data={chartData.water || []}
+                      goal={patientProfile.goals.water || 2000}
+                      color="#0ea5e9"
+                      gradientId="fillWater"
+                      unit="ml"
                     />
                   </div>
                 </div>

@@ -3,19 +3,8 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  AreaChart,
-  Area,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  ReferenceLine,
-} from "recharts";
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
+import { AreaChart, Area, CartesianGrid, XAxis, YAxis, ReferenceLine } from "recharts";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
 interface ChartCardProps {
   title: string;
@@ -78,7 +67,7 @@ export const ChartCard: React.FC<ChartCardProps> = ({
               <defs>
                 <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor={color} stopOpacity={1.0} />
-                  <stop offset="95%" stopColor={color} stopOpacity={0.1} />
+                  <stop offset="100%" stopColor={color} stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid vertical={false} />
@@ -126,13 +115,7 @@ export const ChartCard: React.FC<ChartCardProps> = ({
                   />
                 }
               />
-              <Area
-                dataKey={dataKey}
-                type="monotone"
-                fill={`url(#${gradientId})`}
-                stroke={color}
-                strokeWidth={2}
-              />
+              <Area dataKey={dataKey} type="monotone" fill={`url(#${gradientId})`} stroke={color} strokeWidth={2} />
               {showGoal && (
                 <ReferenceLine
                   y={Number(goal)}

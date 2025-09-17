@@ -11,17 +11,26 @@ export interface MealsDataPoint {
   meals: number;
 }
 
+export interface DailyWaterData {
+  date: string;
+  total: number;
+}
+
 export interface PatientGoals {
   dailyKcal: number;
   protein: number;
   carb: number;
   fat: number;
+  fiber: number;
+  sugar: number;
+  sodium: number;
+  water: number;
 }
 
 // Converter dados reais de refeições para formato dos gráficos (nutrientes)
 export function convertRealDataToChartData(
   realData: DailyMealData[],
-  nutrientType: "kcal" | "protein" | "carb" | "fat"
+  nutrientType: "kcal" | "protein" | "carb" | "fat" | "fiber" | "sugar" | "sodium"
 ): ChartDataPoint[] {
   return realData.map((day) => ({
     date: day.date,
@@ -30,12 +39,18 @@ export function convertRealDataToChartData(
 }
 
 // Converter dados reais para gráfico de número de refeições por dia
-export function convertRealDataToMealsData(
-  realData: DailyMealData[]
-): MealsDataPoint[] {
+export function convertRealDataToMealsData(realData: DailyMealData[]): MealsDataPoint[] {
   return realData.map((day) => ({
     date: day.date,
     meals: day.mealsCount,
+  }));
+}
+
+// Converter dados reais de água para formato dos gráficos
+export function convertRealDataToWaterData(realData: DailyWaterData[]): ChartDataPoint[] {
+  return realData.map((day) => ({
+    date: day.date,
+    value: day.total,
   }));
 }
 
@@ -100,5 +115,9 @@ export function getPatientGoals(): PatientGoals {
     protein: 150,
     carb: 250,
     fat: 67,
+    fiber: 25,
+    sugar: 50,
+    sodium: 2300,
+    water: 2000,
   };
 }
