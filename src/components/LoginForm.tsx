@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Spinner } from "@/components/ui/spinner";
-import { IconAlertTriangle } from "@tabler/icons-react";
+import { IconAlertTriangle, IconMail, IconCheck, IconArrowLeft } from "@tabler/icons-react";
 
 interface LoginFormProps extends React.ComponentProps<"form"> {
   className?: string;
@@ -20,41 +20,151 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [isEmailSent, setIsEmailSent] = useState(false);
 
   const { signIn } = useAuth();
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     try {
-      const success = await signIn(email, password);
+      const result = await signIn(email, password);
 
-      if (success) {
-        router.push("/dashboard");
-      } else {
-        setError("Apenas nutricionistas podem acessar esta área");
+      if (!result.success) {
+        setError(result.error || "Erro ao fazer login. Tente novamente.");
       }
-    } catch {
-      setError("Erro ao fazer login. Verifique suas credenciais.");
+    } catch (error: any) {
+      console.error("Erro no login:", error);
+      setError("Erro ao fazer login. Tente novamente.");
     } finally {
       setLoading(false);
     }
   };
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      // Simular envio de email
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      setIsEmailSent(true);
+    } catch (err) {
+      setError("Erro ao enviar email de recuperação. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Tela de confirmação de email enviado
+  if (isEmailSent) {
+    return (
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col items-center gap-2 text-center">
+          <h1 className="text-2xl font-bold">Email Enviado!</h1>
+        </div>
+
+        <Alert className="border-gray-200 bg-gray-50">
+          <IconMail className="h-4 w-4" />
+          <AlertDescription>
+            <p>
+              <strong>Enviamos um link de recuperação para seu email.</strong>
+            </p>
+            <p>Verifique sua caixa de entrada e siga as instruções.</p>
+            <p>Não recebeu o email? Verifique sua pasta de spam ou tente novamente.</p>
+          </AlertDescription>
+        </Alert>
+
+        <div className="grid gap-3">
+          <Button onClick={() => setIsEmailSent(false)} variant="outline" className="w-full">
+            Tentar Novamente
+          </Button>
+          <Button
+            onClick={() => {
+              setIsEmailSent(false);
+              setIsForgotPassword(false);
+            }}
+            variant="ghost"
+            className="w-full"
+          >
+            <IconArrowLeft className="w-4 h-4 mr-2" />
+            Voltar ao Login
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Formulário de recuperação de senha
+  if (isForgotPassword) {
+    return (
+      <form className={cn("flex flex-col gap-6", className)} onSubmit={handleForgotPassword} {...props}>
+        <div className="flex flex-col items-center gap-2 text-center">
+          <h1 className="text-2xl font-bold">Recuperar Senha</h1>
+          <p className="text-muted-foreground text-sm text-balance">
+            Digite seu email para receber um link de recuperação
+          </p>
+        </div>
+
+        <div className="grid gap-6">
+          <div className="grid gap-3">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="seu@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          {error && (
+            <Alert variant="destructive">
+              <IconAlertTriangle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? (
+              <div className="flex items-center gap-2">
+                <Spinner size="sm" />
+                Enviando...
+              </div>
+            ) : (
+              "Enviar Link de Recuperação"
+            )}
+          </Button>
+
+          <div className="text-center">
+            <Button
+              type="button"
+              onClick={() => setIsForgotPassword(false)}
+              variant="ghost"
+              size="sm"
+              className="text-blue-600 hover:text-blue-700 hover:underline hover:bg-transparent p-0 h-auto cursor-pointer"
+            >
+              <IconArrowLeft className="w-4 h-4 mr-2" />
+              Voltar ao Login
+            </Button>
+          </div>
+        </div>
+      </form>
+    );
+  }
+
+  // Formulário de login padrão
   return (
-    <form
-      className={cn("flex flex-col gap-6", className)}
-      onSubmit={handleSubmit}
-      {...props}
-    >
+    <form className={cn("flex flex-col gap-6", className)} onSubmit={handleLogin} {...props}>
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Entrar na sua conta</h1>
-        <p className="text-muted-foreground text-sm text-balance">
-          Digite seu email abaixo para entrar na sua conta
-        </p>
+        <p className="text-muted-foreground text-sm text-balance">Digite seu email abaixo para entrar na sua conta</p>
       </div>
 
       <div className="grid gap-6">
@@ -80,6 +190,17 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+          <div className="text-center">
+            <Button
+              type="button"
+              onClick={() => setIsForgotPassword(true)}
+              variant="ghost"
+              size="sm"
+              className="text-blue-600 hover:text-blue-700 hover:underline hover:bg-transparent p-0 h-auto cursor-pointer"
+            >
+              Esqueceu sua senha?
+            </Button>
+          </div>
         </div>
 
         {error && (

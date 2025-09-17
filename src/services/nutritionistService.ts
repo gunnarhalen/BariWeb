@@ -1,14 +1,5 @@
 import { db } from "../config/firebase";
-import {
-  collection,
-  query,
-  getDocs,
-  where,
-  doc,
-  getDoc,
-  updateDoc,
-  Timestamp,
-} from "firebase/firestore";
+import { collection, query, getDocs, where, doc, getDoc, updateDoc, Timestamp } from "firebase/firestore";
 
 // Interfaces
 export interface Nutritionist {
@@ -57,10 +48,7 @@ export const calculateAge = (birthDate: string): number => {
     let age = today.getFullYear() - birth.getFullYear();
     const monthDiff = today.getMonth() - birth.getMonth();
 
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birth.getDate())
-    ) {
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
       age--;
     }
 
@@ -81,21 +69,14 @@ export interface DailyMealData {
 }
 
 // Buscar dados reais de refeições do paciente por período
-export const getPatientMealData = async (
-  patientId: string,
-  days: number = 7
-): Promise<DailyMealData[]> => {
+export const getPatientMealData = async (patientId: string, days: number = 7): Promise<DailyMealData[]> => {
   try {
-    console.log(
-      `Buscando dados de refeições para paciente ${patientId} nos últimos ${days} dias`
-    );
+    console.log(`Buscando dados de refeições para paciente ${patientId} nos últimos ${days} dias`);
 
     const mealsRef = collection(db, "users", patientId, "meals");
     const allDocsSnapshot = await getDocs(mealsRef);
 
-    console.log(
-      `Encontrados ${allDocsSnapshot.docs.length} documentos na coleção meals`
-    );
+    console.log(`Encontrados ${allDocsSnapshot.docs.length} documentos na coleção meals`);
 
     if (allDocsSnapshot.empty) {
       console.log("Nenhum documento encontrado na coleção meals");
@@ -137,9 +118,7 @@ export const getPatientMealData = async (
         const docDate = new Date(docId);
 
         // Verificar se a data está dentro do período solicitado
-        const daysDiff = Math.floor(
-          (today.getTime() - docDate.getTime()) / (1000 * 60 * 60 * 24)
-        );
+        const daysDiff = Math.floor((today.getTime() - docDate.getTime()) / (1000 * 60 * 60 * 24));
 
         if (daysDiff >= days) {
           continue;
@@ -193,9 +172,7 @@ export const getPatientMealData = async (
 };
 
 // Função auxiliar para obter a data da última refeição
-export const getLastMealDate = async (
-  patientId: string
-): Promise<string | undefined> => {
+export const getLastMealDate = async (patientId: string): Promise<string | undefined> => {
   try {
     // Buscar documentos de data na subcoleção meals
     const mealsRef = collection(db, "users", patientId, "meals");
@@ -236,11 +213,7 @@ export const getLastMealDate = async (
     const dateDocData = latestDateDoc.data();
 
     // Verificar se tem campo 'meals' com array de refeições
-    if (
-      !dateDocData.meals ||
-      !Array.isArray(dateDocData.meals) ||
-      dateDocData.meals.length === 0
-    ) {
+    if (!dateDocData.meals || !Array.isArray(dateDocData.meals) || dateDocData.meals.length === 0) {
       return undefined;
     }
 
@@ -320,9 +293,7 @@ export const getNutritionistProfile = async (nutritionistId: string) => {
 };
 
 // Obter pacientes do nutricionista
-export const getNutritionistPatients = async (
-  nutritionistId: string
-): Promise<Patient[]> => {
+export const getNutritionistPatients = async (nutritionistId: string): Promise<Patient[]> => {
   try {
     // Buscar solicitações aceitas
     const requestsRef = collection(db, "nutritionist_requests");
@@ -350,9 +321,7 @@ export const getNutritionistPatients = async (
           const lastMealDate = await getLastMealDate(patientId);
 
           // Calcular idade a partir da data de nascimento
-          const calculatedAge = patientData.birthDate
-            ? calculateAge(patientData.birthDate)
-            : undefined;
+          const calculatedAge = patientData.birthDate ? calculateAge(patientData.birthDate) : undefined;
 
           patients.push({
             id: patientId,
@@ -396,18 +365,14 @@ interface PatientProfile {
 }
 
 // Obter perfil completo do paciente
-export const getPatientProfile = async (
-  patientId: string
-): Promise<PatientProfile | null> => {
+export const getPatientProfile = async (patientId: string): Promise<PatientProfile | null> => {
   try {
     const patientRef = doc(db, "users", patientId, "profile", "data");
     const patientDoc = await getDoc(patientRef);
 
     if (patientDoc.exists()) {
       const data = patientDoc.data();
-      const calculatedAge = data.birthDate
-        ? calculateAge(data.birthDate)
-        : undefined;
+      const calculatedAge = data.birthDate ? calculateAge(data.birthDate) : undefined;
 
       return {
         id: patientDoc.id,

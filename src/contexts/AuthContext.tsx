@@ -2,17 +2,9 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  User,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-} from "firebase/auth";
+import { User, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/config/firebase";
-import {
-  isNutritionist,
-  getNutritionistProfile,
-} from "@/services/nutritionistService";
+import { isNutritionist, getNutritionistProfile } from "@/services/nutritionistService";
 
 interface NutritionistProfile {
   id: string;
@@ -25,7 +17,7 @@ interface AuthContextType {
   isNutritionist: boolean;
   loading: boolean;
   nutritionistProfile: NutritionistProfile | null;
-  signIn: (email: string, password: string) => Promise<boolean>;
+  signIn: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
 }
 
@@ -34,8 +26,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isNutritionistUser, setIsNutritionistUser] = useState(false);
-  const [nutritionistProfile, setNutritionistProfile] =
-    useState<NutritionistProfile | null>(null);
+  const [nutritionistProfile, setNutritionistProfile] = useState<NutritionistProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -68,30 +59,42 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => unsubscribe();
   }, [router]);
 
-  const signIn = async (email: string, password: string): Promise<boolean> => {
+  const signIn = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
 
       // Verificar se é nutricionista
       const isNutri = await isNutritionist(userCredential.user.uid);
 
       if (!isNutri) {
-        // Se não for nutricionista, fazer logout e redirecionar
+        // Se não for nutricionista, fazer logout e retornar erro específico
         await signOut(auth);
-        router.push("/unauthorized");
-        return false;
+        return { success: false, error: "Apenas nutricionistas podem acessar esta área" };
       }
 
       // Se for nutricionista, redirecionar para o dashboard
       router.push("/dashboard");
-      return true;
-    } catch (error) {
+      return { success: true };
+    } catch (error: any) {
       console.error("Erro ao fazer login:", error);
-      return false;
+
+      // Tratar diferentes tipos de erro do Firebase
+      switch (error.code) {
+        case "auth/invalid-credential":
+          return { success: false, error: "Email ou senha incorretos. Verifique suas credenciais." };
+        case "auth/user-not-found":
+          return { success: false, error: "Usuário não encontrado. Verifique o email." };
+        case "auth/wrong-password":
+          return { success: false, error: "Senha incorreta." };
+        case "auth/invalid-email":
+          return { success: false, error: "Email inválido." };
+        case "auth/too-many-requests":
+          return { success: false, error: "Muitas tentativas. Tente novamente mais tarde." };
+        case "auth/user-disabled":
+          return { success: false, error: "Conta desabilitada. Entre em contato com o suporte." };
+        default:
+          return { success: false, error: "Erro ao fazer login. Tente novamente." };
+      }
     }
   };
 
