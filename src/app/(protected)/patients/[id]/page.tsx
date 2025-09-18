@@ -16,6 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import { SiteHeader } from "@/components/site-header";
 import { DateRangeSelector } from "@/components/ui/date-range-selector";
+import { MealsSheet } from "@/components/MealsSheet";
 import {
   generateNutrientData,
   generateMealsData,
@@ -410,6 +411,13 @@ export default function PatientDetailsPage() {
                       dataKey="meals"
                       showGoal={false}
                       chartType="bar"
+                      actionButton={
+                        <MealsSheet
+                          patientId={patientId}
+                          patientName={patientProfile?.fullName || "Paciente"}
+                          maxDays={30}
+                        />
+                      }
                     />
 
                     {/* Gráfico de Calorias - 2 colunas */}

@@ -24,6 +24,7 @@ interface ChartCardProps {
   dataKey?: string;
   showGoal?: boolean;
   chartType?: "area" | "bar";
+  actionButton?: React.ReactNode;
 }
 
 export const ChartCard: React.FC<ChartCardProps> = ({
@@ -38,6 +39,7 @@ export const ChartCard: React.FC<ChartCardProps> = ({
   dataKey = "value",
   showGoal = true,
   chartType = "area",
+  actionButton,
 }) => {
   const [currentChartType, setCurrentChartType] = useState<"area" | "bar">(chartType);
   const hasData = data && data.length > 0;
@@ -72,11 +74,14 @@ export const ChartCard: React.FC<ChartCardProps> = ({
               </Button>
             </div>
           </div>
-          {showGoal && (
-            <Badge variant="secondary" className="text-xs">
-              Meta: {goal} {unit}
-            </Badge>
-          )}
+          <div className="flex items-center gap-2">
+            {showGoal && (
+              <Badge variant="secondary" className="text-xs">
+                Meta: {goal} {unit}
+              </Badge>
+            )}
+            {actionButton}
+          </div>
         </div>
       </CardHeader>
       <CardContent>

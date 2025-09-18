@@ -605,3 +605,188 @@ export const getNutritionistRequests = async (nutritionistId: string) => {
     return [];
   }
 };
+
+// Interface para refeições individuais
+export interface IndividualMeal {
+  id: string;
+  date: string;
+  type: string;
+  time: string;
+  foods: string[];
+  calories: number;
+  protein?: number;
+  carb?: number;
+  fat?: number;
+}
+
+// Buscar refeições individuais do paciente por período
+export const getPatientIndividualMeals = async (patientId: string, days: number = 30): Promise<IndividualMeal[]> => {
+  try {
+    console.log(`Buscando refeições individuais para paciente ${patientId} nos últimos ${days} dias`);
+
+    const mealsRef = collection(db, "users", patientId, "meals");
+    const allDocsSnapshot = await getDocs(mealsRef);
+
+    console.log(`Encontrados ${allDocsSnapshot.docs.length} documentos na coleção meals`);
+
+    if (allDocsSnapshot.empty) {
+      console.log("Nenhum documento encontrado na coleção meals");
+      return [];
+    }
+
+    const individualMeals: IndividualMeal[] = [];
+    const today = new Date();
+
+    // Processar cada documento de data
+    for (const doc of allDocsSnapshot.docs) {
+      const docId = doc.id;
+      console.log(`Processando documento: ${docId}`);
+
+      // Pular documentos que não são datas
+      if (docId === "data" || !/^\d{4}-\d{2}-\d{2}$/.test(docId)) {
+        console.log(`Pulando documento ${docId} - não é uma data válida`);
+        continue;
+      }
+
+      try {
+        const docDate = new Date(docId);
+
+        // Verificar se a data está dentro do período solicitado
+        const daysDiff = Math.floor((today.getTime() - docDate.getTime()) / (1000 * 60 * 60 * 24));
+        console.log(`Data ${docId}: ${daysDiff} dias atrás`);
+
+        if (daysDiff >= days) {
+          console.log(`Pulando documento ${docId} - muito antigo (${daysDiff} dias)`);
+          continue;
+        }
+
+        const dateData = doc.data();
+        console.log(`Dados do documento ${docId}:`, dateData);
+
+        // Tentar diferentes estruturas de dados
+        let mealsArray: any[] = [];
+
+        // Estrutura 1: dateData.meals
+        if (dateData.meals && Array.isArray(dateData.meals)) {
+          mealsArray = dateData.meals;
+          console.log(`Encontradas ${mealsArray.length} refeições no campo 'meals'`);
+        }
+        // Estrutura 2: dateData é diretamente um array
+        else if (Array.isArray(dateData)) {
+          mealsArray = dateData;
+          console.log(`Documento é diretamente um array com ${mealsArray.length} refeições`);
+        }
+        // Estrutura 3: procurar por outros campos possíveis
+        else {
+          // Tentar encontrar arrays em outros campos
+          for (const [key, value] of Object.entries(dateData)) {
+            if (Array.isArray(value) && value.length > 0) {
+              // Verificar se parece com dados de refeição
+              const firstItem = value[0];
+              if (firstItem && (firstItem.type || firstItem.foods || firstItem.calories || firstItem.items)) {
+                mealsArray = value;
+                console.log(`Encontradas ${mealsArray.length} refeições no campo '${key}'`);
+                break;
+              }
+            }
+          }
+        }
+
+        if (mealsArray.length > 0) {
+          mealsArray.forEach((meal, index) => {
+            console.log(`Processando refeição ${index}:`, meal);
+
+            // Converter createdAt para string de tempo
+            let timeString = "00:00";
+            if (meal.createdAt) {
+              try {
+                let mealDate: Date;
+                const createdAt = meal.createdAt;
+
+                if (createdAt.toDate) {
+                  mealDate = createdAt.toDate();
+                } else if (createdAt.seconds) {
+                  mealDate = new Date(createdAt.seconds * 1000);
+                } else if (typeof createdAt === "string") {
+                  mealDate = new Date(createdAt);
+                } else {
+                  mealDate = new Date(createdAt);
+                }
+
+                timeString = mealDate.toLocaleTimeString("pt-BR", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                });
+              } catch (error) {
+                console.error("Erro ao converter createdAt:", error);
+              }
+            }
+
+            // Extrair alimentos do array items
+            const foods: string[] = [];
+            if (meal.items && Array.isArray(meal.items)) {
+              meal.items.forEach((item: any) => {
+                if (item.name) {
+                  foods.push(item.name);
+                }
+              });
+            }
+
+            // Usar dados de total ou totals para valores nutricionais
+            const totalData = meal.total || meal.totals || {};
+            console.log(`Dados nutricionais da refeição ${meal.id}:`, totalData);
+
+            // CORREÇÃO: Extrair calorias do lugar correto baseado na estrutura real
+            const calories = meal.totalKcal || totalData.totalKcal || totalData.kcal || totalData.calories || 0;
+            const protein = totalData.protein || 0;
+            const carb = totalData.carb || totalData.carbohydrates || 0;
+            const fat = totalData.fat || totalData.fats || 0;
+
+            console.log(
+              `Valores extraídos - Calorias: ${calories}, Proteína: ${protein}, Carb: ${carb}, Gordura: ${fat}`
+            );
+
+            // Determinar tipo de refeição baseado no horário
+            let mealType = "Refeição";
+            if (timeString) {
+              const hour = parseInt(timeString.split(":")[0]);
+              if (hour >= 6 && hour < 11) {
+                mealType = "Café da Manhã";
+              } else if (hour >= 11 && hour < 15) {
+                mealType = "Almoço";
+              } else if (hour >= 15 && hour < 18) {
+                mealType = "Lanche";
+              } else if (hour >= 18) {
+                mealType = "Jantar";
+              }
+            }
+
+            individualMeals.push({
+              id: meal.id || `${docId}-${index}`,
+              date: docId,
+              type: mealType,
+              time: timeString,
+              foods: foods,
+              calories: calories,
+              protein: protein,
+              carb: carb,
+              fat: fat,
+            });
+            console.log(`Adicionada refeição: ${mealType} às ${timeString} - ${foods.join(", ")}`);
+          });
+        } else {
+          console.log(`Documento ${docId} não contém dados de refeições válidos`);
+        }
+      } catch (error) {
+        console.error(`Erro ao processar documento ${docId}:`, error);
+        continue;
+      }
+    }
+
+    console.log(`Encontradas ${individualMeals.length} refeições individuais`);
+    return individualMeals;
+  } catch (error) {
+    console.error("Erro ao buscar refeições individuais:", error);
+    return [];
+  }
+};
