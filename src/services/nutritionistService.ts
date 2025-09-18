@@ -22,6 +22,10 @@ export interface Patient {
     protein: number;
     carb: number;
     fat: number;
+    fiber: number;
+    sugar: number;
+    sodium: number;
+    water: number;
   };
   associatedNutritionistId: string;
 }
@@ -440,6 +444,10 @@ export const getNutritionistPatients = async (nutritionistId: string): Promise<P
               protein: 120,
               carb: 220,
               fat: 60,
+              fiber: 25,
+              sugar: 50,
+              sodium: 2300,
+              water: 2000,
             },
             associatedNutritionistId: nutritionistId,
           });

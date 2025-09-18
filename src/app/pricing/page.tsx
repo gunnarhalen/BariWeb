@@ -18,8 +18,6 @@ import {
   IconStar,
   IconCrown,
   IconRocket,
-  IconBrain,
-  IconMessageCircle,
 } from "@tabler/icons-react";
 
 export default function PricingPage() {

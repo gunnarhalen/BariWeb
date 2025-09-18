@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -9,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Spinner } from "@/components/ui/spinner";
-import { IconAlertTriangle, IconMail, IconCheck, IconArrowLeft } from "@tabler/icons-react";
+import { IconAlertTriangle, IconMail, IconArrowLeft } from "@tabler/icons-react";
 
 interface LoginFormProps extends React.ComponentProps<"form"> {
   className?: string;
@@ -24,7 +23,6 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
   const [isEmailSent, setIsEmailSent] = useState(false);
 
   const { signIn } = useAuth();
-  const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
