@@ -411,13 +411,7 @@ export default function PatientDetailsPage() {
                       dataKey="meals"
                       showGoal={false}
                       chartType="bar"
-                      actionButton={
-                        <MealsSheet
-                          patientId={patientId}
-                          patientName={patientProfile?.fullName || "Paciente"}
-                          maxDays={30}
-                        />
-                      }
+                      actionButton={<MealsSheet patientId={patientId} maxDays={30} />}
                     />
 
                     {/* Gráfico de Calorias - 2 colunas */}

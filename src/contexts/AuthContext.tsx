@@ -75,26 +75,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Se for nutricionista, redirecionar para o dashboard
       router.push("/dashboard");
       return { success: true };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erro ao fazer login:", error);
 
       // Tratar diferentes tipos de erro do Firebase
-      switch (error.code) {
-        case "auth/invalid-credential":
-          return { success: false, error: "Email ou senha incorretos. Verifique suas credenciais." };
-        case "auth/user-not-found":
-          return { success: false, error: "Usuário não encontrado. Verifique o email." };
-        case "auth/wrong-password":
-          return { success: false, error: "Senha incorreta." };
-        case "auth/invalid-email":
-          return { success: false, error: "Email inválido." };
-        case "auth/too-many-requests":
-          return { success: false, error: "Muitas tentativas. Tente novamente mais tarde." };
-        case "auth/user-disabled":
-          return { success: false, error: "Conta desabilitada. Entre em contato com o suporte." };
-        default:
-          return { success: false, error: "Erro ao fazer login. Tente novamente." };
+      if (error && typeof error === "object" && "code" in error) {
+        switch ((error as { code: string }).code) {
+          case "auth/invalid-credential":
+            return { success: false, error: "Email ou senha incorretos. Verifique suas credenciais." };
+          case "auth/user-not-found":
+            return { success: false, error: "Usuário não encontrado. Verifique o email." };
+          case "auth/wrong-password":
+            return { success: false, error: "Senha incorreta." };
+          case "auth/invalid-email":
+            return { success: false, error: "Email inválido." };
+          case "auth/too-many-requests":
+            return { success: false, error: "Muitas tentativas. Tente novamente mais tarde." };
+          case "auth/user-disabled":
+            return { success: false, error: "Conta desabilitada. Entre em contato com o suporte." };
+          default:
+            return { success: false, error: "Erro ao fazer login. Tente novamente." };
+        }
       }
+
+      return { success: false, error: "Erro ao fazer login. Tente novamente." };
     }
   };
 

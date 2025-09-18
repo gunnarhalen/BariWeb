@@ -664,7 +664,7 @@ export const getPatientIndividualMeals = async (patientId: string, days: number 
         console.log(`Dados do documento ${docId}:`, dateData);
 
         // Tentar diferentes estruturas de dados
-        let mealsArray: any[] = [];
+        let mealsArray: unknown[] = [];
 
         // Estrutura 1: dateData.meals
         if (dateData.meals && Array.isArray(dateData.meals)) {
@@ -725,9 +725,9 @@ export const getPatientIndividualMeals = async (patientId: string, days: number 
             // Extrair alimentos do array items
             const foods: string[] = [];
             if (meal.items && Array.isArray(meal.items)) {
-              meal.items.forEach((item: any) => {
-                if (item.name) {
-                  foods.push(item.name);
+              meal.items.forEach((item: unknown) => {
+                if (item && typeof item === "object" && "name" in item) {
+                  foods.push((item as { name: string }).name);
                 }
               });
             }

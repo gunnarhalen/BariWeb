@@ -11,11 +11,10 @@ type MealData = IndividualMeal;
 
 interface MealsSheetProps {
   patientId: string;
-  patientName: string;
   maxDays?: number;
 }
 
-export const MealsSheet: React.FC<MealsSheetProps> = ({ patientId, patientName, maxDays = 30 }) => {
+export const MealsSheet: React.FC<MealsSheetProps> = ({ patientId, maxDays = 30 }) => {
   const [sortBy, setSortBy] = useState<"date" | "calories">("date");
   const [meals, setMeals] = useState<MealData[]>([]);
   const [loading, setLoading] = useState(false);

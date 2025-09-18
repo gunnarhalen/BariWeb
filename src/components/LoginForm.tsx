@@ -37,7 +37,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
       if (!result.success) {
         setError(result.error || "Erro ao fazer login. Tente novamente.");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erro no login:", error);
       setError("Erro ao fazer login. Tente novamente.");
     } finally {
