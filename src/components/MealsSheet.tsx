@@ -26,21 +26,11 @@ export const MealsSheet: React.FC<MealsSheetProps> = ({ patientId, maxDays = 30 
 
       setLoading(true);
       try {
-        console.log("=== DEBUG: Iniciando busca de refeições ===");
-        console.log("Patient ID:", patientId);
-        console.log("Max Days:", maxDays);
-
         const realMeals = await getPatientIndividualMeals(patientId, maxDays);
-
-        console.log("=== DEBUG: Resultado da busca ===");
-        console.log("Refeições encontradas:", realMeals.length);
-        console.log("Dados das refeições:", realMeals);
 
         setMeals(realMeals);
       } catch (error) {
         console.error("Erro ao buscar refeições:", error);
-        // Fallback para dados mockados em caso de erro
-        setMeals(getMockMeals());
       } finally {
         setLoading(false);
       }
@@ -49,65 +39,6 @@ export const MealsSheet: React.FC<MealsSheetProps> = ({ patientId, maxDays = 30 
     fetchMeals();
   }, [patientId, maxDays]);
 
-  // Dados mockados como fallback
-  const getMockMeals = (): MealData[] => [
-    {
-      id: "1",
-      date: "2024-01-15",
-      type: "Café da Manhã",
-      time: "08:30",
-      foods: ["Pão integral", "Ovos", "Abacate"],
-      calories: 450,
-      protein: 20,
-      carb: 35,
-      fat: 18,
-    },
-    {
-      id: "2",
-      date: "2024-01-15",
-      type: "Almoço",
-      time: "12:15",
-      foods: ["Frango grelhado", "Arroz integral", "Brócolis"],
-      calories: 650,
-      protein: 35,
-      carb: 45,
-      fat: 15,
-    },
-    {
-      id: "3",
-      date: "2024-01-15",
-      type: "Jantar",
-      time: "19:00",
-      foods: ["Salmão", "Batata doce", "Salada"],
-      calories: 520,
-      protein: 30,
-      carb: 40,
-      fat: 20,
-    },
-    {
-      id: "4",
-      date: "2024-01-14",
-      type: "Café da Manhã",
-      time: "08:00",
-      foods: ["Aveia", "Banana", "Leite"],
-      calories: 380,
-      protein: 15,
-      carb: 50,
-      fat: 8,
-    },
-    {
-      id: "5",
-      date: "2024-01-14",
-      type: "Almoço",
-      time: "12:30",
-      foods: ["Carne magra", "Quinoa", "Vegetais"],
-      calories: 580,
-      protein: 40,
-      carb: 35,
-      fat: 12,
-    },
-  ];
-
   // Componente para exibir uma refeição individual
   const MealCard = ({ meal, showCalories = false }: { meal: MealData; showCalories?: boolean }) => (
     <div className="border rounded-lg p-3 hover:bg-muted/50 transition-colors">
@@ -115,10 +46,10 @@ export const MealsSheet: React.FC<MealsSheetProps> = ({ patientId, maxDays = 30 
         <div className="text-sm font-medium text-muted-foreground">
           {showCalories ? (
             <div>
-              {new Date(meal.date).toLocaleDateString("pt-BR")} - {meal.time}
+              {new Date(meal.date).toLocaleDateString("pt-BR")} - {meal.time}h
             </div>
           ) : (
-            <div>{meal.time}</div>
+            <div>{meal.time}h</div>
           )}
         </div>
       </div>
