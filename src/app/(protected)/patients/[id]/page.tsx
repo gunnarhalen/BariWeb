@@ -27,9 +27,9 @@ import {
 } from "@/lib/chart-data";
 import {
   IconArrowLeft,
-  IconCalendar,
-  IconWeight,
-  IconRuler,
+  IconCake,
+  IconScaleOutline,
+  IconRulerMeasure2,
   IconTarget,
   IconTrendingUp,
   IconAlertTriangle,
@@ -314,15 +314,15 @@ export default function PatientDetailsPage() {
                     {/* Dados físicos compactos */}
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
-                        <IconCalendar className="w-4 h-4 text-muted-foreground" />
+                        <IconCake className="w-4 h-4 text-muted-foreground" />
                         <span className="text-sm font-medium">{calculateAge(patientProfile.birthDate)} anos</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <IconWeight className="w-4 h-4 text-muted-foreground" />
+                        <IconScaleOutline className="w-4 h-4 text-muted-foreground" />
                         <span className="text-sm font-medium">{patientProfile.weight} kg</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <IconRuler className="w-4 h-4 text-muted-foreground" />
+                        <IconRulerMeasure2 className="w-4 h-4 text-muted-foreground" />
                         <span className="text-sm font-medium">{patientProfile.height} cm</span>
                       </div>
                     </div>
