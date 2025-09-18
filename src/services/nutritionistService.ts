@@ -8,6 +8,15 @@ export interface Nutritionist {
   name: string;
 }
 
+interface MealData {
+  createdAt?: unknown;
+  type?: string;
+  foods?: unknown[];
+  calories?: number;
+  items?: unknown[];
+  [key: string]: unknown;
+}
+
 export interface Patient {
   id: string;
   fullName: string;
@@ -701,7 +710,7 @@ export const getPatientIndividualMeals = async (patientId: string, days: number 
         }
 
         if (mealsArray.length > 0) {
-          mealsArray.forEach((meal, index) => {
+          (mealsArray as MealData[]).forEach((meal, index) => {
             console.log(`Processando refeição ${index}:`, meal);
 
             // Converter createdAt para string de tempo
@@ -711,14 +720,14 @@ export const getPatientIndividualMeals = async (patientId: string, days: number 
                 let mealDate: Date;
                 const createdAt = meal.createdAt;
 
-                if (createdAt.toDate) {
-                  mealDate = createdAt.toDate();
-                } else if (createdAt.seconds) {
-                  mealDate = new Date(createdAt.seconds * 1000);
+                if (createdAt && typeof createdAt === "object" && "toDate" in createdAt) {
+                  mealDate = (createdAt as { toDate: () => Date }).toDate();
+                } else if (createdAt && typeof createdAt === "object" && "seconds" in createdAt) {
+                  mealDate = new Date((createdAt as { seconds: number }).seconds * 1000);
                 } else if (typeof createdAt === "string") {
                   mealDate = new Date(createdAt);
                 } else {
-                  mealDate = new Date(createdAt);
+                  mealDate = new Date(createdAt as string);
                 }
 
                 timeString = mealDate.toLocaleTimeString("pt-BR", {
@@ -741,14 +750,19 @@ export const getPatientIndividualMeals = async (patientId: string, days: number 
             }
 
             // Usar dados de total ou totals para valores nutricionais
-            const totalData = meal.total || meal.totals || {};
+            const totalData = (meal.total || meal.totals || {}) as Record<string, unknown>;
             console.log(`Dados nutricionais da refeição ${meal.id}:`, totalData);
 
             // CORREÇÃO: Extrair calorias do lugar correto baseado na estrutura real
-            const calories = meal.totalKcal || totalData.totalKcal || totalData.kcal || totalData.calories || 0;
-            const protein = totalData.protein || 0;
-            const carb = totalData.carb || totalData.carbohydrates || 0;
-            const fat = totalData.fat || totalData.fats || 0;
+            const calories =
+              (meal.totalKcal as number) ||
+              (totalData.totalKcal as number) ||
+              (totalData.kcal as number) ||
+              (totalData.calories as number) ||
+              0;
+            const protein = (totalData.protein as number) || 0;
+            const carb = (totalData.carb as number) || (totalData.carbohydrates as number) || 0;
+            const fat = (totalData.fat as number) || (totalData.fats as number) || 0;
 
             console.log(
               `Valores extraídos - Calorias: ${calories}, Proteína: ${protein}, Carb: ${carb}, Gordura: ${fat}`
@@ -770,7 +784,7 @@ export const getPatientIndividualMeals = async (patientId: string, days: number 
             }
 
             individualMeals.push({
-              id: meal.id || `${docId}-${index}`,
+              id: (meal.id as string) || `${docId}-${index}`,
               date: docId,
               type: mealType,
               time: timeString,

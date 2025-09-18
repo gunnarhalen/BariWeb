@@ -52,7 +52,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
       // Simular envio de email
       await new Promise((resolve) => setTimeout(resolve, 2000));
       setIsEmailSent(true);
-    } catch (err) {
+    } catch {
       setError("Erro ao enviar email de recuperação. Tente novamente.");
     } finally {
       setLoading(false);
