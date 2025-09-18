@@ -409,6 +409,7 @@ export default function PatientDetailsPage() {
                       gradientId="fillMeals"
                       dataKey="meals"
                       showGoal={false}
+                      chartType="bar"
                     />
 
                     {/* Gráfico de Calorias - 2 colunas */}
@@ -517,6 +518,7 @@ export default function PatientDetailsPage() {
                         color="#0ea5e9"
                         gradientId="fillWater"
                         unit="ml"
+                        chartType="bar"
                       />
                     </div>
                   </div>

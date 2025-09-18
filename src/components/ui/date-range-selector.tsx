@@ -16,20 +16,18 @@ const ranges = [
   { value: "30" as const, label: "30 dias" },
 ];
 
-export function DateRangeSelector({
-  selectedRange,
-  onRangeChange,
-  className,
-}: DateRangeSelectorProps) {
+export function DateRangeSelector({ selectedRange, onRangeChange, className }: DateRangeSelectorProps) {
   return (
     <div className={cn("flex gap-2", className)}>
       {ranges.map((range) => (
         <Button
           key={range.value}
-          variant={selectedRange === range.value ? "default" : "outline"}
+          variant={"default"}
           size="sm"
           onClick={() => onRangeChange(range.value)}
-          className="text-xs"
+          className={`text-xs text-black ${
+            selectedRange === range.value ? "bg-gray-100 hover:bg-gray-100" : "bg-white hover:bg-gray-200"
+          } cursor-pointer`}
         >
           {range.label}
         </Button>
