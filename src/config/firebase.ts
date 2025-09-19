@@ -1,4 +1,4 @@
-import { initializeApp, FirebaseApp } from "firebase/app";
+import { initializeApp, getApp, getApps, FirebaseApp } from "firebase/app";
 import { getAuth, Auth } from "firebase/auth";
 import { getFirestore, Firestore } from "firebase/firestore";
 
@@ -46,20 +46,20 @@ if (typeof window !== "undefined") {
   }
 }
 
-// Inicializar Firebase
+// Inicializar Firebase sem recriar instancia em recarregamentos
 let app: FirebaseApp;
 let auth: Auth;
 let db: Firestore;
 
 try {
-  app = initializeApp(firebaseConfig);
+  app = getApps().length ? getApp() : initializeApp(firebaseConfig);
   auth = getAuth(app);
   db = getFirestore(app);
 } catch (error) {
-  console.error("❌ Erro ao inicializar Firebase:", error);
+  console.error("Erro ao inicializar Firebase:", error);
   throw error;
 }
 
-// Exportar instâncias
+// Exportar instancias configuradas
 export { auth, db };
 export default app;

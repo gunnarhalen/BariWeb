@@ -1,13 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import {
-  // IconCirclePlusFilled,
-  // IconMail,
-  type Icon,
-} from "@tabler/icons-react";
+import { type Icon } from "@tabler/icons-react";
 
-// import { Button } from "@/components/ui/button";
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -23,6 +18,7 @@ export function NavMain({
     title: string;
     url: string;
     icon?: Icon;
+    notificationCount?: number;
   }[];
 }) {
   return (
@@ -32,9 +28,14 @@ export function NavMain({
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton asChild tooltip={item.title}>
-                <Link href={item.url}>
+                <Link href={item.url} className="relative">
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>
+                  {item.title === "Solicitações" &&
+                    item.notificationCount &&
+                    item.notificationCount > 0 && (
+                      <span className="h-2 w-2 rounded-full bg-red-500"></span>
+                    )}
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

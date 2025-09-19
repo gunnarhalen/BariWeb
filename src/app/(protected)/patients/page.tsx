@@ -31,6 +31,8 @@ export default function PatientsPage() {
   const { user } = useAuth();
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(true);
+  const DAY_IN_MS = 1000 * 60 * 60 * 24;
+
 
   // Função para converter dados dos pacientes para o formato da tabela
   const convertPatientsToTableData = (patients: Patient[]) => {
@@ -40,20 +42,13 @@ export default function PatientsPage() {
       // Determinar status baseado na última refeição
       let status = "Inativo";
       if (patient.lastMealDate) {
-        if (patient.lastMealDate === today) {
-          status = "Ativo";
-        } else {
-          // Verificar se foi nos últimos 2 dias para considerar "Ativo"
-          const lastMealDate = new Date(patient.lastMealDate);
-          const todayDate = new Date(today);
-          const diffTime = Math.abs(
-            todayDate.getTime() - lastMealDate.getTime()
-          );
-          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const lastMealDate = new Date(patient.lastMealDate);
+        const todayDate = new Date(today);
+        const diffTime = Math.abs(todayDate.getTime() - lastMealDate.getTime());
+        const diffDays = Math.floor(diffTime / DAY_IN_MS);
 
-          if (diffDays <= 2) {
-            status = "Ativo";
-          }
+        if (diffDays <= 2) {
+          status = "Ativo";
         }
       }
 
@@ -65,16 +60,18 @@ export default function PatientsPage() {
 
         const lastMealDate = new Date(patient.lastMealDate);
         const today = new Date();
-        const diffTime = Math.abs(today.getTime() - lastMealDate.getTime());
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const diffMs = today.getTime() - lastMealDate.getTime();
+        const diffDays = Math.floor(diffMs / DAY_IN_MS);
+
+        if (diffDays <= 0) {
+          return "Hoje";
+        }
 
         if (diffDays === 1) {
-          return "Hoje";
-        } else if (diffDays === 2) {
           return "Ontem";
-        } else {
-          return `${diffDays - 1} dias atrás`;
         }
+
+        return `${diffDays} dias atr\u00E1s`;
       };
 
       return {
@@ -203,15 +200,13 @@ export default function PatientsPage() {
                         )
                           return true;
 
-                        // Verificar se foi nos últimos 2 dias
+                        // Verificar se foi nos ultimos 2 dias
                         const lastMealDate = new Date(p.lastMealDate);
                         const todayDate = new Date();
                         const diffTime = Math.abs(
                           todayDate.getTime() - lastMealDate.getTime()
                         );
-                        const diffDays = Math.ceil(
-                          diffTime / (1000 * 60 * 60 * 24)
-                        );
+                        const diffDays = Math.floor(diffTime / DAY_IN_MS);
 
                         return diffDays <= 2;
                       }).length
@@ -243,15 +238,13 @@ export default function PatientsPage() {
                       patients.filter((p) => {
                         if (!p.lastMealDate) return true;
 
-                        // Verificar se foi há mais de 2 dias
+                        // Verificar se foi ha mais de 2 dias
                         const lastMealDate = new Date(p.lastMealDate);
                         const todayDate = new Date();
                         const diffTime = Math.abs(
                           todayDate.getTime() - lastMealDate.getTime()
                         );
-                        const diffDays = Math.ceil(
-                          diffTime / (1000 * 60 * 60 * 24)
-                        );
+                        const diffDays = Math.floor(diffTime / DAY_IN_MS);
 
                         return diffDays > 2;
                       }).length
