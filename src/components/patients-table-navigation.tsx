@@ -61,7 +61,7 @@ import {
 } from "@/components/ui/tooltip";
 
 export const patientSchema = z.object({
-  id: z.string(), // Mudado de number para string
+  id: z.string(),
   name: z.string(),
   email: z.string(),
   age: z.number(),
