@@ -8,10 +8,7 @@ import {
   IconChevronRight,
   IconChevronsLeft,
   IconChevronsRight,
-  IconDotsVertical,
   IconLayoutColumns,
-  IconPlus,
-  IconUser,
 } from "@tabler/icons-react";
 import {
   ColumnDef,
@@ -36,8 +33,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -58,6 +53,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export const patientSchema = z.object({
   id: z.string(), // Mudado de number para string
@@ -181,14 +182,47 @@ export function PatientsTableNavigation({
       accessorKey: "bmi",
       header: ({ column }) => {
         return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="h-8 !px-0 justify-start"
-          >
-            IMC
-            <IconChevronDown className="ml-2 h-4 w-4" />
-          </Button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  onClick={() =>
+                    column.toggleSorting(column.getIsSorted() === "asc")
+                  }
+                  className="h-8 !px-0 justify-start cursor-help"
+                >
+                  IMC
+                  <IconChevronDown className="ml-2 h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <div className="max-w-xs px-2 py-4">
+                  <p className="font-medium text-sm mb-2">
+                    Índice de Massa Corporal (IMC)
+                  </p>
+                  <p className="mb-2">
+                    <span className="font-medium">Fórmula de Quetelet:</span>
+                    <br />
+                    peso (kg) ÷ altura (m)²
+                  </p>
+                  <div className="text-xs">
+                    <p className="font-medium mb-1">Classificação:</p>
+                    <ul className="space-y-0.5">
+                      <li>• &lt; 16,0: Magreza grave</li>
+                      <li>• 16,0 - 16,9: Magreza moderada</li>
+                      <li>• 17,0 - 18,4: Magreza leve</li>
+                      <li>• 18,5 - 24,9: Eutrofia (normal)</li>
+                      <li>• 25,0 - 29,9: Pré-obesidade</li>
+                      <li>• 30,0 - 34,9: Obesidade grau I</li>
+                      <li>• 35,0 - 39,9: Obesidade grau II</li>
+                      <li>• ≥ 40,0: Obesidade grau III</li>
+                    </ul>
+                  </div>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         );
       },
       cell: ({ row }) => {
@@ -273,39 +307,6 @@ export function PatientsTableNavigation({
       cell: ({ row }) => (
         <div className="text-sm">{row.getValue("lastMeal")}</div>
       ),
-    },
-    {
-      id: "actions",
-      cell: ({ row }) => {
-        return (
-          <div className="flex items-center gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                  <IconDotsVertical className="h-4 w-4" />
-                  <span className="sr-only">Abrir menu</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.stopPropagation(); // Evitar conflito com o onClick da linha
-                    router.push(`/patients/${row.original.id}`);
-                  }}
-                >
-                  <IconUser className="mr-2 h-4 w-4" />
-                  Ver Detalhes
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <IconPlus className="mr-2 h-4 w-4" />
-                  Adicionar Refeição
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        );
-      },
     },
   ];
 
