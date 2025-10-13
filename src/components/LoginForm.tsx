@@ -8,7 +8,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Spinner } from "@/components/ui/spinner";
-import { IconAlertTriangle, IconMail, IconArrowLeft } from "@tabler/icons-react";
+import {
+  IconAlertTriangle,
+  IconMail,
+  IconArrowLeft,
+} from "@tabler/icons-react";
 
 interface LoginFormProps extends React.ComponentProps<"form"> {
   className?: string;
@@ -74,12 +78,19 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
               <strong>Enviamos um link de recuperação para seu email.</strong>
             </p>
             <p>Verifique sua caixa de entrada e siga as instruções.</p>
-            <p>Não recebeu o email? Verifique sua pasta de spam ou tente novamente.</p>
+            <p>
+              Não recebeu o email? Verifique sua pasta de spam ou tente
+              novamente.
+            </p>
           </AlertDescription>
         </Alert>
 
         <div className="grid gap-3">
-          <Button onClick={() => setIsEmailSent(false)} variant="outline" className="w-full">
+          <Button
+            onClick={() => setIsEmailSent(false)}
+            variant="outline"
+            className="w-full"
+          >
             Tentar Novamente
           </Button>
           <Button
@@ -101,7 +112,11 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
   // Formulário de recuperação de senha
   if (isForgotPassword) {
     return (
-      <form className={cn("flex flex-col gap-6", className)} onSubmit={handleForgotPassword} {...props}>
+      <form
+        className={cn("flex flex-col gap-6", className)}
+        onSubmit={handleForgotPassword}
+        {...props}
+      >
         <div className="flex flex-col items-center gap-2 text-center">
           <h1 className="text-2xl font-bold">Recuperar Senha</h1>
           <p className="text-muted-foreground text-sm text-balance">
@@ -159,10 +174,16 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
 
   // Formulário de login padrão
   return (
-    <form className={cn("flex flex-col gap-6", className)} onSubmit={handleLogin} {...props}>
+    <form
+      className={cn("flex flex-col gap-6", className)}
+      onSubmit={handleLogin}
+      {...props}
+    >
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Entrar na sua conta</h1>
-        <p className="text-muted-foreground text-sm text-balance">Digite seu email abaixo para entrar na sua conta</p>
+        <p className="text-muted-foreground text-sm text-balance">
+          Digite seu email abaixo para entrar na sua conta
+        </p>
       </div>
 
       <div className="grid gap-6">
@@ -218,6 +239,19 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
             "Entrar"
           )}
         </Button>
+
+        <div className="text-center text-sm">
+          <span className="text-muted-foreground">Não tem uma conta? </span>
+          <Button
+            type="button"
+            onClick={() => (window.location.href = "/register")}
+            variant="ghost"
+            size="sm"
+            className="text-blue-600 hover:text-blue-700 hover:underline hover:bg-transparent p-0 h-auto cursor-pointer"
+          >
+            Criar conta
+          </Button>
+        </div>
       </div>
     </form>
   );

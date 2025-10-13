@@ -38,10 +38,17 @@ export default function PublicHeader({
               Planos
             </Button>
             <Button
+              variant="outline"
               onClick={() => router.push("/login")}
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+              className="text-slate-700 border-slate-300 hover:bg-slate-50 cursor-pointer"
             >
               Entrar
+            </Button>
+            <Button
+              onClick={() => router.push("/register")}
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+            >
+              Criar Conta
             </Button>
           </div>
         </div>
