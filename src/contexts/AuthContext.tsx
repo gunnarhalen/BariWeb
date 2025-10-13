@@ -5,6 +5,8 @@ import { useRouter, usePathname } from "next/navigation";
 import {
   User,
   signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
@@ -29,6 +31,7 @@ interface AuthContextType {
     email: string,
     password: string
   ) => Promise<{ success: boolean; error?: string }>;
+  signInWithGoogle: () => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
 }
 
@@ -128,10 +131,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const signInWithGoogle = async (): Promise<{
+    success: boolean;
+    error?: string;
+  }> => {
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      return { success: true };
+    } catch (error: unknown) {
+      if (error && typeof error === "object" && "code" in error) {
+        switch ((error as { code: string }).code) {
+          case "auth/popup-closed-by-user":
+            return { success: false, error: "Login cancelado" };
+          case "auth/popup-blocked":
+            return {
+              success: false,
+              error: "Popup bloqueado. Habilite popups para este site.",
+            };
+          default:
+            return { success: false, error: "Erro ao fazer login com Google" };
+        }
+      }
+      return { success: false, error: "Erro ao fazer login com Google" };
+    }
+  };
+
   const logout = async () => {
     try {
       await signOut(auth);
-      // Não fazer redirecionamento manual aqui - deixar o ProtectedRoute gerenciar
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
     }
@@ -143,6 +171,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     loading,
     nutritionistProfile,
     signIn,
+    signInWithGoogle,
     logout,
   };
 

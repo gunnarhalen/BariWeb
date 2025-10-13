@@ -13,6 +13,7 @@ import {
   IconMail,
   IconArrowLeft,
   IconStethoscope,
+  IconBrandGoogle,
 } from "@tabler/icons-react";
 
 interface LoginFormProps extends React.ComponentProps<"form"> {
@@ -27,7 +28,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
 
-  const { signIn } = useAuth();
+  const { signIn, signInWithGoogle } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,6 +44,22 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
     } catch (error: unknown) {
       console.error("Erro no login:", error);
       setError("Erro ao fazer login. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const result = await signInWithGoogle();
+      if (!result.success) {
+        setError(result.error || "Erro ao fazer login com Google");
+      }
+    } catch (error) {
+      setError("Erro ao fazer login com Google");
     } finally {
       setLoading(false);
     }
@@ -241,6 +258,34 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
             </div>
           ) : (
             "Entrar"
+          )}
+        </Button>
+
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">
+              Ou continue com
+            </span>
+          </div>
+        </div>
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleGoogleLogin}
+          disabled={loading}
+          className="w-full"
+        >
+          {loading ? (
+            <Spinner size="sm" />
+          ) : (
+            <>
+              <IconBrandGoogle className="mr-2 h-4 w-4" />
+              Continuar com Google
+            </>
           )}
         </Button>
 

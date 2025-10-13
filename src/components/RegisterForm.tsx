@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "@/config/firebase";
+import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +15,7 @@ import {
   IconAlertTriangle,
   IconCheck,
   IconStethoscope,
+  IconBrandGoogle,
 } from "@tabler/icons-react";
 
 interface RegisterFormProps extends React.ComponentProps<"form"> {
@@ -30,6 +32,23 @@ export function RegisterForm({ className, ...props }: RegisterFormProps) {
   const [success, setSuccess] = useState(false);
 
   const router = useRouter();
+  const { signInWithGoogle } = useAuth();
+
+  const handleGoogleSignup = async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const result = await signInWithGoogle();
+      if (!result.success) {
+        setError(result.error || "Erro ao fazer cadastro com Google");
+      }
+    } catch (error) {
+      setError("Erro ao fazer cadastro com Google");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -218,6 +237,34 @@ export function RegisterForm({ className, ...props }: RegisterFormProps) {
             </div>
           ) : (
             "Criar Conta"
+          )}
+        </Button>
+
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">
+              Ou continue com
+            </span>
+          </div>
+        </div>
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleGoogleSignup}
+          disabled={loading}
+          className="w-full"
+        >
+          {loading ? (
+            <Spinner size="sm" />
+          ) : (
+            <>
+              <IconBrandGoogle className="mr-2 h-4 w-4" />
+              Continuar com Google
+            </>
           )}
         </Button>
 
