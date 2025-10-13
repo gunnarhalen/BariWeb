@@ -12,8 +12,6 @@ export function SiteHeader() {
   // Função para determinar o título baseado na rota
   const getPageTitle = () => {
     switch (pathname) {
-      case "/dashboard":
-        return "Dashboard Nutricional";
       case "/patients":
         return "Pacientes";
       case "/reports":
@@ -26,7 +24,7 @@ export function SiteHeader() {
         if (pathname.startsWith("/patients/")) {
           return "Detalhes do Paciente";
         }
-        return "Dashboard Nutricional";
+        return "Pacientes";
     }
   };
 

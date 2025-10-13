@@ -3,7 +3,6 @@
 import * as React from "react";
 import { useMemo } from "react";
 import {
-  IconLayoutDashboardFilled,
   IconHelp,
   IconSettings,
   IconUsers,
@@ -58,11 +57,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navigationWithNotifications = useMemo(
     () => ({
       navMain: [
-        {
-          title: "Dashboard",
-          url: "/dashboard",
-          icon: IconLayoutDashboardFilled,
-        },
         {
           title: "Pacientes",
           url: "/patients",

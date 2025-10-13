@@ -4,7 +4,13 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
 import {
@@ -33,7 +39,7 @@ export default function LandingPage() {
   useEffect(() => {
     if (!loading) {
       if (user && isNutritionist) {
-        router.push("/dashboard");
+        router.push("/patients");
       }
     }
   }, [user, isNutritionist, loading, router]);
@@ -57,25 +63,29 @@ export default function LandingPage() {
     {
       icon: IconDeviceMobile,
       title: "App Intuitivo",
-      description: "Interface simples e fácil de usar para acompanhar sua alimentação diária.",
+      description:
+        "Interface simples e fácil de usar para acompanhar sua alimentação diária.",
       color: "from-blue-500 to-cyan-500",
     },
     {
       icon: IconChartBar,
       title: "Insights Personalizados",
-      description: "Receba análises automáticas dos seus hábitos alimentares e sugestões.",
+      description:
+        "Receba análises automáticas dos seus hábitos alimentares e sugestões.",
       color: "from-emerald-500 to-teal-500",
     },
     {
       icon: IconHeart,
       title: "Saúde em Primeiro",
-      description: "Foque no seu bem-estar com acompanhamento nutricional completo.",
+      description:
+        "Foque no seu bem-estar com acompanhamento nutricional completo.",
       color: "from-pink-500 to-rose-500",
     },
     {
       icon: IconShield,
       title: "Privacidade Total",
-      description: "Seus dados são seus. Controle total sobre suas informações pessoais.",
+      description:
+        "Seus dados são seus. Controle total sobre suas informações pessoais.",
       color: "from-purple-500 to-violet-500",
     },
   ];
@@ -84,7 +94,8 @@ export default function LandingPage() {
     {
       icon: IconUsers,
       title: "Gestão de Pacientes",
-      description: "Acompanhe todos os seus pacientes em uma plataforma centralizada.",
+      description:
+        "Acompanhe todos os seus pacientes em uma plataforma centralizada.",
       color: "from-blue-500 to-cyan-500",
     },
     {
@@ -125,14 +136,22 @@ export default function LandingPage() {
 
   const appStoreButtons = (
     <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start mb-16">
-      <Button variant="outline" size="lg" className="bg-black text-white hover:bg-gray-800 border-black px-6 py-3">
+      <Button
+        variant="outline"
+        size="lg"
+        className="bg-black text-white hover:bg-gray-800 border-black px-6 py-3"
+      >
         <IconBrandApple className="mr-2 h-6 w-6" />
         <div className="text-left">
           <div className="text-xs">Baixar na</div>
           <div className="text-sm font-semibold">App Store</div>
         </div>
       </Button>
-      <Button variant="outline" size="lg" className="bg-black text-white hover:bg-gray-800 border-black px-6 py-3">
+      <Button
+        variant="outline"
+        size="lg"
+        className="bg-black text-white hover:bg-gray-800 border-black px-6 py-3"
+      >
         <IconBrandGooglePlay className="mr-2 h-6 w-6" />
         <div className="text-left">
           <div className="text-xs">Disponível no</div>
@@ -144,14 +163,22 @@ export default function LandingPage() {
 
   const appStoreButtonsCentered = (
     <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-      <Button variant="outline" size="lg" className="bg-black text-white hover:bg-gray-800 border-black px-6 py-3">
+      <Button
+        variant="outline"
+        size="lg"
+        className="bg-black text-white hover:bg-gray-800 border-black px-6 py-3"
+      >
         <IconBrandApple className="mr-2 h-6 w-6" />
         <div className="text-left">
           <div className="text-xs">Baixar na</div>
           <div className="text-sm font-semibold">App Store</div>
         </div>
       </Button>
-      <Button variant="outline" size="lg" className="bg-black text-white hover:bg-gray-800 border-black px-6 py-3">
+      <Button
+        variant="outline"
+        size="lg"
+        className="bg-black text-white hover:bg-gray-800 border-black px-6 py-3"
+      >
         <IconBrandGooglePlay className="mr-2 h-6 w-6" />
         <div className="text-left">
           <div className="text-xs">Disponível no</div>
@@ -187,8 +214,9 @@ export default function LandingPage() {
             </h1>
 
             <p className="text-xl text-slate-600 mb-12 leading-relaxed">
-              O app mais completo para acompanhar sua alimentação e alcançar seus objetivos de saúde. Use sozinho ou
-              conecte-se com seu nutricionista.
+              O app mais completo para acompanhar sua alimentação e alcançar
+              seus objetivos de saúde. Use sozinho ou conecte-se com seu
+              nutricionista.
             </p>
 
             {/* App Store Buttons */}
@@ -197,9 +225,16 @@ export default function LandingPage() {
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {stats.map((stat, index) => (
-                <div key={index} className="flex flex-col items-center text-center">
-                  <div className="text-3xl font-bold text-slate-900 mb-2">{stat.number}</div>
-                  <div className="text-slate-600 font-light text-sm">{stat.label}</div>
+                <div
+                  key={index}
+                  className="flex flex-col items-center text-center"
+                >
+                  <div className="text-3xl font-bold text-slate-900 mb-2">
+                    {stat.number}
+                  </div>
+                  <div className="text-slate-600 font-light text-sm">
+                    {stat.label}
+                  </div>
                 </div>
               ))}
             </div>
@@ -229,8 +264,8 @@ export default function LandingPage() {
               </span>
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              Um app completo para registrar refeições, acompanhar metas e receber insights personalizados sobre sua
-              alimentação.
+              Um app completo para registrar refeições, acompanhar metas e
+              receber insights personalizados sobre sua alimentação.
             </p>
           </div>
 
@@ -262,7 +297,10 @@ export default function LandingPage() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-48 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/home-bg-01.jpg')" }}>
+      <section
+        className="py-48 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/home-bg-01.jpg')" }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
@@ -280,8 +318,9 @@ export default function LandingPage() {
               </h2>
 
               <p className="text-xl text-slate-600 mb-10 leading-relaxed">
-                Nosso app combina tecnologia avançada com simplicidade, oferecendo a melhor experiência para quem busca
-                uma vida mais saudável.
+                Nosso app combina tecnologia avançada com simplicidade,
+                oferecendo a melhor experiência para quem busca uma vida mais
+                saudável.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -290,7 +329,9 @@ export default function LandingPage() {
                     <div className="p-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full mt-1">
                       <IconCheck className="h-4 w-4 text-white" />
                     </div>
-                    <span className="text-slate-700 font-medium">{benefit}</span>
+                    <span className="text-slate-700 font-medium">
+                      {benefit}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -303,16 +344,21 @@ export default function LandingPage() {
                     <div className="p-4 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl w-fit mx-auto mb-6">
                       <IconTarget className="h-8 w-8 text-white" />
                     </div>
-                    <h3 className="text-3xl font-bold text-slate-900 mb-4">Pronto para começar?</h3>
+                    <h3 className="text-3xl font-bold text-slate-900 mb-4">
+                      Pronto para começar?
+                    </h3>
                     <p className="text-slate-600 text-lg leading-relaxed">
-                      Baixe o app gratuitamente e comece sua jornada para uma alimentação mais saudável hoje mesmo.
+                      Baixe o app gratuitamente e comece sua jornada para uma
+                      alimentação mais saudável hoje mesmo.
                     </p>
                   </div>
 
                   {/* App Store Buttons */}
                   {appStoreButtonsCentered}
 
-                  <p className="text-center text-sm text-slate-500 mt-4">✨ Sem custos ocultos • Sem compromisso</p>
+                  <p className="text-center text-sm text-slate-500 mt-4">
+                    ✨ Sem custos ocultos • Sem compromisso
+                  </p>
                 </CardContent>
               </Card>
             </div>
@@ -336,8 +382,8 @@ export default function LandingPage() {
               </span>
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              Gerencie seus pacientes, acompanhe progressos e gere relatórios profissionais com nossa plataforma web
-              especializada.
+              Gerencie seus pacientes, acompanhe progressos e gere relatórios
+              profissionais com nossa plataforma web especializada.
             </p>
           </div>
 
