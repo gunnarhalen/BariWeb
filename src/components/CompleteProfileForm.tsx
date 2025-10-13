@@ -188,7 +188,7 @@ export function CompleteProfileForm({
           <Label htmlFor="crnRegion">CRN - Conselho Regional de Nutrição</Label>
           <div className="flex gap-2">
             <Select value={crnRegion} onValueChange={setCrnRegion} required>
-              <SelectTrigger className="w-[140px]">
+              <SelectTrigger size="xl" className="w-[140px]">
                 <SelectValue placeholder="Região" />
               </SelectTrigger>
               <SelectContent>
@@ -227,7 +227,12 @@ export function CompleteProfileForm({
           </Alert>
         )}
 
-        <Button type="submit" className="w-full" disabled={loading}>
+        <Button
+          type="submit"
+          size="xl"
+          className="w-full cursor-pointer"
+          disabled={loading}
+        >
           {loading ? (
             <div className="flex items-center gap-2">
               <Spinner size="sm" />

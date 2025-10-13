@@ -15,8 +15,8 @@ import {
   IconAlertTriangle,
   IconCheck,
   IconStethoscope,
-  IconBrandGoogle,
 } from "@tabler/icons-react";
+import { GoogleIcon } from "@/components/ui/google-icon";
 
 interface RegisterFormProps extends React.ComponentProps<"form"> {
   className?: string;
@@ -229,7 +229,12 @@ export function RegisterForm({ className, ...props }: RegisterFormProps) {
           </Alert>
         )}
 
-        <Button type="submit" className="w-full" disabled={loading}>
+        <Button
+          type="submit"
+          size="xl"
+          className="w-full cursor-pointer"
+          disabled={loading}
+        >
           {loading ? (
             <div className="flex items-center gap-2">
               <Spinner size="sm" />
@@ -254,15 +259,16 @@ export function RegisterForm({ className, ...props }: RegisterFormProps) {
         <Button
           type="button"
           variant="outline"
+          size="xl"
           onClick={handleGoogleSignup}
           disabled={loading}
-          className="w-full"
+          className="w-full cursor-pointer"
         >
           {loading ? (
             <Spinner size="sm" />
           ) : (
             <>
-              <IconBrandGoogle className="mr-2 h-4 w-4" />
+              <GoogleIcon className="mr-2 h-4 w-4" />
               Continuar com Google
             </>
           )}

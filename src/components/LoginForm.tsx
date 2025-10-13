@@ -13,8 +13,8 @@ import {
   IconMail,
   IconArrowLeft,
   IconStethoscope,
-  IconBrandGoogle,
 } from "@tabler/icons-react";
+import { GoogleIcon } from "@/components/ui/google-icon";
 
 interface LoginFormProps extends React.ComponentProps<"form"> {
   className?: string;
@@ -107,6 +107,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
           <Button
             onClick={() => setIsEmailSent(false)}
             variant="outline"
+            size="xl"
             className="w-full"
           >
             Tentar Novamente
@@ -117,6 +118,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
               setIsForgotPassword(false);
             }}
             variant="ghost"
+            size="xl"
             className="w-full"
           >
             <IconArrowLeft className="w-4 h-4 mr-2" />
@@ -162,7 +164,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
             </Alert>
           )}
 
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button type="submit" size="xl" className="w-full" disabled={loading}>
             {loading ? (
               <div className="flex items-center gap-2">
                 <Spinner size="sm" />
@@ -250,7 +252,12 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
           </Alert>
         )}
 
-        <Button type="submit" className="w-full" disabled={loading}>
+        <Button
+          type="submit"
+          size="xl"
+          className="w-full cursor-pointer"
+          disabled={loading}
+        >
           {loading ? (
             <div className="flex items-center gap-2">
               <Spinner size="sm" />
@@ -275,15 +282,16 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
         <Button
           type="button"
           variant="outline"
+          size="xl"
           onClick={handleGoogleLogin}
           disabled={loading}
-          className="w-full"
+          className="w-full cursor-pointer"
         >
           {loading ? (
             <Spinner size="sm" />
           ) : (
             <>
-              <IconBrandGoogle className="mr-2 h-4 w-4" />
+              <GoogleIcon className="mr-2 h-4 w-4" />
               Continuar com Google
             </>
           )}
