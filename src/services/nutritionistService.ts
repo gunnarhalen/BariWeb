@@ -1,5 +1,14 @@
 import { db } from "../config/firebase";
-import { collection, query, getDocs, where, doc, getDoc, updateDoc, Timestamp } from "firebase/firestore";
+import {
+  collection,
+  query,
+  getDocs,
+  where,
+  doc,
+  getDoc,
+  updateDoc,
+  Timestamp,
+} from "firebase/firestore";
 
 // Interfaces
 export interface Nutritionist {
@@ -61,7 +70,10 @@ export const calculateAge = (birthDate: string): number => {
     let age = today.getFullYear() - birth.getFullYear();
     const monthDiff = today.getMonth() - birth.getMonth();
 
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birth.getDate())
+    ) {
       age--;
     }
 
@@ -91,14 +103,21 @@ export interface DailyWaterData {
 }
 
 // Buscar dados reais de água do paciente por período
-export const getPatientWaterData = async (patientId: string, days: number = 7): Promise<DailyWaterData[]> => {
+export const getPatientWaterData = async (
+  patientId: string,
+  days: number = 7
+): Promise<DailyWaterData[]> => {
   try {
-    console.log(`Buscando dados de água para paciente ${patientId} nos últimos ${days} dias`);
+    console.log(
+      `Buscando dados de água para paciente ${patientId} nos últimos ${days} dias`
+    );
 
     const waterRef = collection(db, "users", patientId, "water");
     const allDocsSnapshot = await getDocs(waterRef);
 
-    console.log(`Encontrados ${allDocsSnapshot.docs.length} documentos na coleção water`);
+    console.log(
+      `Encontrados ${allDocsSnapshot.docs.length} documentos na coleção water`
+    );
 
     if (allDocsSnapshot.empty) {
       console.log("Nenhum documento encontrado na coleção water");
@@ -136,7 +155,9 @@ export const getPatientWaterData = async (patientId: string, days: number = 7): 
         const docDate = new Date(docId);
 
         // Verificar se a data está dentro do período solicitado
-        const daysDiff = Math.floor((today.getTime() - docDate.getTime()) / (1000 * 60 * 60 * 24));
+        const daysDiff = Math.floor(
+          (today.getTime() - docDate.getTime()) / (1000 * 60 * 60 * 24)
+        );
 
         if (daysDiff >= days) {
           continue;
@@ -176,14 +197,21 @@ export const getPatientWaterData = async (patientId: string, days: number = 7): 
 };
 
 // Buscar dados reais de refeições do paciente por período
-export const getPatientMealData = async (patientId: string, days: number = 7): Promise<DailyMealData[]> => {
+export const getPatientMealData = async (
+  patientId: string,
+  days: number = 7
+): Promise<DailyMealData[]> => {
   try {
-    console.log(`Buscando dados de refeições para paciente ${patientId} nos últimos ${days} dias`);
+    console.log(
+      `Buscando dados de refeições para paciente ${patientId} nos últimos ${days} dias`
+    );
 
     const mealsRef = collection(db, "users", patientId, "meals");
     const allDocsSnapshot = await getDocs(mealsRef);
 
-    console.log(`Encontrados ${allDocsSnapshot.docs.length} documentos na coleção meals`);
+    console.log(
+      `Encontrados ${allDocsSnapshot.docs.length} documentos na coleção meals`
+    );
 
     if (allDocsSnapshot.empty) {
       console.log("Nenhum documento encontrado na coleção meals");
@@ -228,7 +256,9 @@ export const getPatientMealData = async (patientId: string, days: number = 7): P
         const docDate = new Date(docId);
 
         // Verificar se a data está dentro do período solicitado
-        const daysDiff = Math.floor((today.getTime() - docDate.getTime()) / (1000 * 60 * 60 * 24));
+        const daysDiff = Math.floor(
+          (today.getTime() - docDate.getTime()) / (1000 * 60 * 60 * 24)
+        );
 
         if (daysDiff >= days) {
           continue;
@@ -288,7 +318,9 @@ export const getPatientMealData = async (patientId: string, days: number = 7): P
 };
 
 // Função auxiliar para obter a data da última refeição
-export const getLastMealDate = async (patientId: string): Promise<string | undefined> => {
+export const getLastMealDate = async (
+  patientId: string
+): Promise<string | undefined> => {
   try {
     // Buscar documentos de data na subcoleção meals
     const mealsRef = collection(db, "users", patientId, "meals");
@@ -329,7 +361,11 @@ export const getLastMealDate = async (patientId: string): Promise<string | undef
     const dateDocData = latestDateDoc.data();
 
     // Verificar se tem campo 'meals' com array de refeições
-    if (!dateDocData.meals || !Array.isArray(dateDocData.meals) || dateDocData.meals.length === 0) {
+    if (
+      !dateDocData.meals ||
+      !Array.isArray(dateDocData.meals) ||
+      dateDocData.meals.length === 0
+    ) {
       return undefined;
     }
 
@@ -409,7 +445,9 @@ export const getNutritionistProfile = async (nutritionistId: string) => {
 };
 
 // Obter pacientes do nutricionista
-export const getNutritionistPatients = async (nutritionistId: string): Promise<Patient[]> => {
+export const getNutritionistPatients = async (
+  nutritionistId: string
+): Promise<Patient[]> => {
   try {
     // Buscar solicitações aceitas
     const requestsRef = collection(db, "nutritionist_requests");
@@ -437,7 +475,9 @@ export const getNutritionistPatients = async (nutritionistId: string): Promise<P
           const lastMealDate = await getLastMealDate(patientId);
 
           // Calcular idade a partir da data de nascimento
-          const calculatedAge = patientData.birthDate ? calculateAge(patientData.birthDate) : undefined;
+          const calculatedAge = patientData.birthDate
+            ? calculateAge(patientData.birthDate)
+            : undefined;
 
           patients.push({
             id: patientId,
@@ -485,14 +525,18 @@ interface PatientProfile {
 }
 
 // Obter perfil completo do paciente
-export const getPatientProfile = async (patientId: string): Promise<PatientProfile | null> => {
+export const getPatientProfile = async (
+  patientId: string
+): Promise<PatientProfile | null> => {
   try {
     const patientRef = doc(db, "users", patientId, "profile", "data");
     const patientDoc = await getDoc(patientRef);
 
     if (patientDoc.exists()) {
       const data = patientDoc.data();
-      const calculatedAge = data.birthDate ? calculateAge(data.birthDate) : undefined;
+      const calculatedAge = data.birthDate
+        ? calculateAge(data.birthDate)
+        : undefined;
 
       return {
         id: patientDoc.id,
@@ -637,14 +681,21 @@ export interface IndividualMeal {
 }
 
 // Buscar refeições individuais do paciente por período
-export const getPatientIndividualMeals = async (patientId: string, days: number = 30): Promise<IndividualMeal[]> => {
+export const getPatientIndividualMeals = async (
+  patientId: string,
+  days: number = 30
+): Promise<IndividualMeal[]> => {
   try {
-    console.log(`Buscando refeições individuais para paciente ${patientId} nos últimos ${days} dias`);
+    console.log(
+      `Buscando refeições individuais para paciente ${patientId} nos últimos ${days} dias`
+    );
 
     const mealsRef = collection(db, "users", patientId, "meals");
     const allDocsSnapshot = await getDocs(mealsRef);
 
-    console.log(`Encontrados ${allDocsSnapshot.docs.length} documentos na coleção meals`);
+    console.log(
+      `Encontrados ${allDocsSnapshot.docs.length} documentos na coleção meals`
+    );
 
     if (allDocsSnapshot.empty) {
       console.log("Nenhum documento encontrado na coleção meals");
@@ -669,11 +720,15 @@ export const getPatientIndividualMeals = async (patientId: string, days: number 
         const docDate = new Date(docId);
 
         // Verificar se a data está dentro do período solicitado
-        const daysDiff = Math.floor((today.getTime() - docDate.getTime()) / (1000 * 60 * 60 * 24));
+        const daysDiff = Math.floor(
+          (today.getTime() - docDate.getTime()) / (1000 * 60 * 60 * 24)
+        );
         console.log(`Data ${docId}: ${daysDiff} dias atrás`);
 
         if (daysDiff >= days) {
-          console.log(`Pulando documento ${docId} - muito antigo (${daysDiff} dias)`);
+          console.log(
+            `Pulando documento ${docId} - muito antigo (${daysDiff} dias)`
+          );
           continue;
         }
 
@@ -686,12 +741,16 @@ export const getPatientIndividualMeals = async (patientId: string, days: number 
         // Estrutura 1: dateData.meals
         if (dateData.meals && Array.isArray(dateData.meals)) {
           mealsArray = dateData.meals;
-          console.log(`Encontradas ${mealsArray.length} refeições no campo 'meals'`);
+          console.log(
+            `Encontradas ${mealsArray.length} refeições no campo 'meals'`
+          );
         }
         // Estrutura 2: dateData é diretamente um array
         else if (Array.isArray(dateData)) {
           mealsArray = dateData;
-          console.log(`Documento é diretamente um array com ${mealsArray.length} refeições`);
+          console.log(
+            `Documento é diretamente um array com ${mealsArray.length} refeições`
+          );
         }
         // Estrutura 3: procurar por outros campos possíveis
         else {
@@ -700,9 +759,17 @@ export const getPatientIndividualMeals = async (patientId: string, days: number 
             if (Array.isArray(value) && value.length > 0) {
               // Verificar se parece com dados de refeição
               const firstItem = value[0];
-              if (firstItem && (firstItem.type || firstItem.foods || firstItem.calories || firstItem.items)) {
+              if (
+                firstItem &&
+                (firstItem.type ||
+                  firstItem.foods ||
+                  firstItem.calories ||
+                  firstItem.items)
+              ) {
                 mealsArray = value;
-                console.log(`Encontradas ${mealsArray.length} refeições no campo '${key}'`);
+                console.log(
+                  `Encontradas ${mealsArray.length} refeições no campo '${key}'`
+                );
                 break;
               }
             }
@@ -720,10 +787,20 @@ export const getPatientIndividualMeals = async (patientId: string, days: number 
                 let mealDate: Date;
                 const createdAt = meal.createdAt;
 
-                if (createdAt && typeof createdAt === "object" && "toDate" in createdAt) {
+                if (
+                  createdAt &&
+                  typeof createdAt === "object" &&
+                  "toDate" in createdAt
+                ) {
                   mealDate = (createdAt as { toDate: () => Date }).toDate();
-                } else if (createdAt && typeof createdAt === "object" && "seconds" in createdAt) {
-                  mealDate = new Date((createdAt as { seconds: number }).seconds * 1000);
+                } else if (
+                  createdAt &&
+                  typeof createdAt === "object" &&
+                  "seconds" in createdAt
+                ) {
+                  mealDate = new Date(
+                    (createdAt as { seconds: number }).seconds * 1000
+                  );
                 } else if (typeof createdAt === "string") {
                   mealDate = new Date(createdAt);
                 } else {
@@ -750,8 +827,14 @@ export const getPatientIndividualMeals = async (patientId: string, days: number 
             }
 
             // Usar dados de total ou totals para valores nutricionais
-            const totalData = (meal.total || meal.totals || {}) as Record<string, unknown>;
-            console.log(`Dados nutricionais da refeição ${meal.id}:`, totalData);
+            const totalData = (meal.total || meal.totals || {}) as Record<
+              string,
+              unknown
+            >;
+            console.log(
+              `Dados nutricionais da refeição ${meal.id}:`,
+              totalData
+            );
 
             // CORREÇÃO: Extrair calorias do lugar correto baseado na estrutura real
             const calories =
@@ -761,8 +844,12 @@ export const getPatientIndividualMeals = async (patientId: string, days: number 
               (totalData.calories as number) ||
               0;
             const protein = (totalData.protein as number) || 0;
-            const carb = (totalData.carb as number) || (totalData.carbohydrates as number) || 0;
-            const fat = (totalData.fat as number) || (totalData.fats as number) || 0;
+            const carb =
+              (totalData.carb as number) ||
+              (totalData.carbohydrates as number) ||
+              0;
+            const fat =
+              (totalData.fat as number) || (totalData.fats as number) || 0;
 
             console.log(
               `Valores extraídos - Calorias: ${calories}, Proteína: ${protein}, Carb: ${carb}, Gordura: ${fat}`
@@ -794,10 +881,16 @@ export const getPatientIndividualMeals = async (patientId: string, days: number 
               carb: carb,
               fat: fat,
             });
-            console.log(`Adicionada refeição: ${mealType} às ${timeString} - ${foods.join(", ")}`);
+            console.log(
+              `Adicionada refeição: ${mealType} às ${timeString} - ${foods.join(
+                ", "
+              )}`
+            );
           });
         } else {
-          console.log(`Documento ${docId} não contém dados de refeições válidos`);
+          console.log(
+            `Documento ${docId} não contém dados de refeições válidos`
+          );
         }
       } catch (error) {
         console.error(`Erro ao processar documento ${docId}:`, error);

@@ -1,12 +1,46 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 import Logo from "@/components/Logo";
 import { RegisterForm } from "@/components/RegisterForm";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { user, isNutritionist, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading) {
+      if (user && isNutritionist) {
+        // Usuário já logado e é nutricionista - ir para área logada
+        router.push("/patients");
+      } else if (user && !isNutritionist) {
+        // Usuário já logado mas não é nutricionista - ir para completar perfil
+        router.push("/complete-profile");
+      }
+    }
+  }, [user, isNutritionist, loading, router]);
+
+  // Mostrar loading enquanto verifica autenticação
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
+
+  // Se usuário já estiver logado, não mostrar o formulário
+  if (user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
 
   return (
     <div className="grid min-h-svh lg:grid-cols-2">

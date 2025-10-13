@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import {
   User,
   signInWithEmailAndPassword,
@@ -41,24 +41,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     useState<NutritionistProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
 
       if (user) {
-        // Verificar se é nutricionista
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
         const isNutri = await isNutritionist(user.uid);
         setIsNutritionistUser(isNutri);
 
         if (isNutri) {
-          // Buscar perfil do nutricionista
           const profile = await getNutritionistProfile(user.uid);
           setNutritionistProfile(profile);
+          router.push("/patients");
         } else {
           setNutritionistProfile(null);
-          // Se o usuário está logado mas não é nutricionista, redirecionar
-          router.push("/unauthorized");
+          if (
+            pathname !== "/complete-profile" &&
+            pathname !== "/unauthorized"
+          ) {
+            router.push("/complete-profile");
+          }
         }
       } else {
         setIsNutritionistUser(false);
@@ -82,25 +88,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         password
       );
 
-      // Verificar se é nutricionista
-      const isNutri = await isNutritionist(userCredential.user.uid);
-
-      if (!isNutri) {
-        // Se não for nutricionista, fazer logout e retornar erro específico
-        await signOut(auth);
-        return {
-          success: false,
-          error: "Apenas nutricionistas podem acessar esta área",
-        };
-      }
-
-      // Se for nutricionista, redirecionar para a página de pacientes
-      router.push("/patients");
       return { success: true };
     } catch (error: unknown) {
-      console.error("Erro ao fazer login:", error);
-
-      // Tratar diferentes tipos de erro do Firebase
       if (error && typeof error === "object" && "code" in error) {
         switch ((error as { code: string }).code) {
           case "auth/invalid-credential":
