@@ -12,6 +12,7 @@ import {
   IconAlertTriangle,
   IconMail,
   IconArrowLeft,
+  IconStethoscope,
 } from "@tabler/icons-react";
 
 interface LoginFormProps extends React.ComponentProps<"form"> {
@@ -119,7 +120,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
       >
         <div className="flex flex-col items-center gap-2 text-center">
           <h1 className="text-2xl font-bold">Recuperar Senha</h1>
-          <p className="text-muted-foreground text-sm text-balance">
+          <p className="text-muted-foreground text-sm">
             Digite seu email para receber um link de recuperação
           </p>
         </div>
@@ -180,9 +181,12 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
       {...props}
     >
       <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Entrar na sua conta</h1>
-        <p className="text-muted-foreground text-sm text-balance">
-          Digite seu email abaixo para entrar na sua conta
+        <div className="p-3 bg-blue-100 rounded-full mb-2">
+          <IconStethoscope className="h-6 w-6 text-blue-600" />
+        </div>
+        <h1 className="text-2xl font-bold">Área do Nutricionista</h1>
+        <p className="text-muted-foreground text-sm">
+          Acesse sua conta para acompanhar seus pacientes
         </p>
       </div>
 

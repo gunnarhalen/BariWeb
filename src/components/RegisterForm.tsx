@@ -2,7 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+  signOut,
+} from "firebase/auth";
 import { auth } from "@/config/firebase";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -10,7 +14,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Spinner } from "@/components/ui/spinner";
-import { IconAlertTriangle, IconCheck } from "@tabler/icons-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  IconAlertTriangle,
+  IconCheck,
+  IconStethoscope,
+} from "@tabler/icons-react";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "@/config/firebase";
 
 interface RegisterFormProps extends React.ComponentProps<"form"> {
   className?: string;
@@ -21,6 +38,8 @@ export function RegisterForm({ className, ...props }: RegisterFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [crnRegion, setCrnRegion] = useState("");
+  const [crnNumber, setCrnNumber] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -45,6 +64,25 @@ export function RegisterForm({ className, ...props }: RegisterFormProps) {
       return;
     }
 
+    // Validar CRN
+    if (!crnRegion || !crnNumber) {
+      setError("Preencha região e número do CRN");
+      setLoading(false);
+      return;
+    }
+
+    // Validar número do CRN (aceita vários formatos)
+    // Formatos: 12345, 12345P, 12345S, T12345, T12345P, PJ12345
+    const crnNumberRegex = /^(T|PJ)?(\d{4,})([PS])?$/;
+    if (!crnNumberRegex.test(crnNumber)) {
+      setError("CRN inválido");
+      setLoading(false);
+      return;
+    }
+
+    // Montar CRN completo
+    const fullCrn = `CRN-${crnRegion}/${crnNumber}`;
+
     try {
       // Criar usuário no Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(
@@ -57,6 +95,29 @@ export function RegisterForm({ className, ...props }: RegisterFormProps) {
       await updateProfile(userCredential.user, {
         displayName: fullName,
       });
+
+      // Criar documento em nutritionists/
+      await setDoc(doc(db, "nutritionists", userCredential.user.uid), {
+        email: email,
+        fullName: fullName,
+        crn: fullCrn,
+        createdAt: new Date(),
+        verified: false,
+      });
+
+      // Criar perfil em users/{uid}/profile/data
+      await setDoc(
+        doc(db, "users", userCredential.user.uid, "profile", "data"),
+        {
+          email: email,
+          fullName: fullName,
+          crn: fullCrn,
+          isNutritionist: true,
+        }
+      );
+
+      // Fazer logout para evitar que o AuthContext redirecione antes dos dados estarem prontos
+      await signOut(auth);
 
       setSuccess(true);
 
@@ -82,6 +143,9 @@ export function RegisterForm({ className, ...props }: RegisterFormProps) {
           case "auth/weak-password":
             setError("Senha muito fraca. Use pelo menos 6 caracteres");
             break;
+          case "permission-denied":
+            setError("Erro ao salvar dados profissionais. Contate o suporte.");
+            break;
           default:
             setError("Erro ao criar conta. Tente novamente");
         }
@@ -102,13 +166,17 @@ export function RegisterForm({ className, ...props }: RegisterFormProps) {
             <IconCheck className="h-8 w-8 text-green-600" />
           </div>
           <h1 className="text-2xl font-bold">Conta criada com sucesso!</h1>
+          <p className="text-sm text-muted-foreground">
+            Bem-vindo(a) à plataforma Bari para nutricionistas
+          </p>
         </div>
 
         <Alert className="border-green-200 bg-green-50">
           <IconCheck className="h-4 w-4 text-green-600" />
           <AlertDescription>
             <p className="text-green-800">
-              Sua conta foi criada. Você será redirecionado para fazer login.
+              Sua conta de nutricionista foi criada. Você será redirecionado
+              para fazer login e começar a gerenciar seus pacientes.
             </p>
           </AlertDescription>
         </Alert>
@@ -131,11 +199,24 @@ export function RegisterForm({ className, ...props }: RegisterFormProps) {
       {...props}
     >
       <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Criar conta</h1>
-        <p className="text-muted-foreground text-sm text-balance">
-          Preencha os dados abaixo para criar sua conta
+        <div className="p-3 bg-blue-100 rounded-full mb-2">
+          <IconStethoscope className="h-6 w-6 text-blue-600" />
+        </div>
+        <h1 className="text-2xl font-bold">Criar Conta de Nutricionista</h1>
+        <p className="text-muted-foreground text-sm">
+          Cadastre-se para gerenciar seus pacientes e acompanhamentos
         </p>
       </div>
+
+      <Alert className="border-blue-200 bg-blue-50">
+        <IconStethoscope className="h-4 w-4 text-blue-600" />
+        <AlertDescription>
+          <p className="text-blue-800 text-sm">
+            <strong>Área exclusiva para profissionais.</strong> Esta plataforma
+            é destinada a nutricionistas para gestão de pacientes.
+          </p>
+        </AlertDescription>
+      </Alert>
 
       <div className="grid gap-6">
         <div className="grid gap-3">
@@ -143,7 +224,7 @@ export function RegisterForm({ className, ...props }: RegisterFormProps) {
           <Input
             id="fullName"
             type="text"
-            placeholder="Seu nome completo"
+            placeholder="Dr(a). Seu nome completo"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             required
@@ -151,15 +232,48 @@ export function RegisterForm({ className, ...props }: RegisterFormProps) {
         </div>
 
         <div className="grid gap-3">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">Email profissional</Label>
           <Input
             id="email"
             type="email"
-            placeholder="seu@email.com"
+            placeholder="seu.email@profissional.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
+        </div>
+
+        <div className="grid gap-3">
+          <Label htmlFor="crnRegion">CRN - Conselho Regional de Nutrição</Label>
+          <div className="flex gap-2">
+            <Select value={crnRegion} onValueChange={setCrnRegion} required>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="Região" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1">CRN-1</SelectItem>
+                <SelectItem value="2">CRN-2</SelectItem>
+                <SelectItem value="3">CRN-3</SelectItem>
+                <SelectItem value="4">CRN-4</SelectItem>
+                <SelectItem value="5">CRN-5</SelectItem>
+                <SelectItem value="6">CRN-6</SelectItem>
+                <SelectItem value="7">CRN-7</SelectItem>
+                <SelectItem value="8">CRN-8</SelectItem>
+                <SelectItem value="9">CRN-9</SelectItem>
+                <SelectItem value="10">CRN-10</SelectItem>
+                <SelectItem value="11">CRN-11</SelectItem>
+              </SelectContent>
+            </Select>
+            <Input
+              id="crnNumber"
+              type="text"
+              placeholder="Ex: 12345, T12345, PJ12345"
+              value={crnNumber}
+              onChange={(e) => setCrnNumber(e.target.value.toUpperCase())}
+              className="flex-1"
+              required
+            />
+          </div>
         </div>
 
         <div className="grid gap-3">
