@@ -164,7 +164,12 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
             </Alert>
           )}
 
-          <Button type="submit" size="xl" className="w-full" disabled={loading}>
+          <Button
+            type="submit"
+            size="xl"
+            className="w-full cursor-pointer"
+            disabled={loading}
+          >
             {loading ? (
               <div className="flex items-center gap-2">
                 <Spinner size="sm" />

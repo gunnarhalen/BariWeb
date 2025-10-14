@@ -22,7 +22,6 @@ import {
   IconHeart,
   IconTarget,
   IconSparkles,
-  IconBolt,
   IconBrandApple,
   IconBrandGooglePlay,
   IconDeviceMobile,
@@ -252,10 +251,6 @@ export default function LandingPage() {
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-20">
-            <Badge className="mb-4 bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-700 border-emerald-200">
-              <IconBolt className="w-4 h-4 mr-2" />
-              Para Você
-            </Badge>
             <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
               Tudo que você precisa para
               <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
@@ -304,11 +299,6 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <Badge className="mb-6 bg-gradient-to-r from-purple-100 to-violet-100 text-purple-700 border-purple-200">
-                <IconHeart className="w-4 h-4 mr-2" />
-                Por que escolher o Bari?
-              </Badge>
-
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-8 leading-tight">
                 Desenvolvido para
                 <span className="bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">
@@ -370,10 +360,6 @@ export default function LandingPage() {
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-20">
-            <Badge className="mb-4 bg-gradient-to-r from-orange-100 to-red-100 text-orange-700 border-orange-200">
-              <IconUserCheck className="w-4 h-4 mr-2" />
-              Para Nutricionistas
-            </Badge>
             <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
               Plataforma profissional para
               <span className="bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
