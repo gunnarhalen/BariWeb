@@ -27,17 +27,17 @@ export default function PricingPage() {
   const plans = [
     {
       name: "Iniciante",
-      description: "Perfeito para estudantes e profissionais que querem começar a usar a plataforma",
+      description: "Comece sua jornada clínica gratuitamente — ideal para estudantes e profissionais que estão começando",
       price: { monthly: 0, annual: 0 },
       icon: IconRocket,
       color: "from-blue-500 to-cyan-500",
       popular: false,
       features: [
         { name: "Até 3 pacientes", included: true },
-        { name: "Dashboard básico", included: true },
+        { name: "Dashboard essencial", included: true },
         { name: "Visualização de refeições", included: true },
-        { name: "Dados básicos do paciente", included: true },
-        { name: "Suporte por email", included: true },
+        { name: "Dados essenciais do paciente", included: true },
+        { name: "Suporte via email", included: true },
         { name: "Análise de macros", included: false },
         { name: "Exportação de dados", included: false },
         { name: "Suporte prioritário", included: false },
@@ -47,7 +47,7 @@ export default function PricingPage() {
     },
     {
       name: "Profissional",
-      description: "Ideal para nutricionistas estabelecidos com um número razoável de pacientes",
+      description: "Aumente sua eficiência e atenda mais pacientes com ferramentas completas para sua prática",
       price: { monthly: 29, annual: 290 },
       icon: IconStar,
       color: "from-emerald-500 to-teal-500",
@@ -55,19 +55,19 @@ export default function PricingPage() {
       features: [
         { name: "Até 20 pacientes", included: true },
         { name: "Dashboard completo", included: true },
-        { name: "Visualização completa de refeições", included: true },
+        { name: "Visualização detalhada de refeições", included: true },
         { name: "Dados completos do paciente", included: true },
         { name: "Análise de macros", included: true },
-        { name: "Histórico de progresso", included: true },
+        { name: "Histórico completo de progresso", included: true },
         { name: "Suporte prioritário", included: true },
         { name: "Exportação de dados", included: true },
       ],
-      cta: "Quero este plano",
+      cta: "Assinar Profissional",
       ctaVariant: "default" as const,
     },
     {
       name: "Premium",
-      description: "Para nutricionistas com um grande volume de pacientes e que precisam de mais recursos",
+      description: "Maximize sua produtividade com recursos avançados para clínicas de maior volume",
       price: { monthly: 59, annual: 590 },
       icon: IconCrown,
       color: "from-purple-500 to-violet-500",
@@ -82,7 +82,7 @@ export default function PricingPage() {
         { name: "Suporte prioritário", included: true },
         { name: "Exportação avançada", included: true },
       ],
-      cta: "Quero este plano",
+      cta: "Assinar Premium",
       ctaVariant: "default" as const,
     },
   ];
@@ -91,22 +91,22 @@ export default function PricingPage() {
     {
       icon: IconUsers,
       title: "Gestão de Pacientes",
-      description: "Organize e acompanhe todos os seus pacientes em uma plataforma centralizada",
+      description: "Organize e acompanhe todos os seus pacientes em uma plataforma centralizada, economizando tempo com administração",
     },
     {
       icon: IconChartBar,
       title: "Análise Avançada",
-      description: "Insights inteligentes sobre hábitos alimentares e progresso nutricional",
+      description: "Insights inteligentes sobre hábitos alimentares e progresso nutricional para tomar melhores decisões clínicas",
     },
     {
       icon: IconFileAnalytics,
       title: "Relatórios Profissionais",
-      description: "Gere relatórios personalizados para documentação clínica",
+      description: "Gere relatórios personalizados e prontos para documentação clínica, com aparência profissional",
     },
     {
       icon: IconShield,
       title: "Segurança Total",
-      description: "Dados protegidos com criptografia e conformidade LGPD",
+      description: "Dados protegidos com criptografia de nível bancário e total conformidade com a LGPD",
     },
   ];
 
@@ -114,20 +114,20 @@ export default function PricingPage() {
     {
       question: "Posso mudar de plano a qualquer momento?",
       answer:
-        "Sim! Você pode fazer upgrade ou downgrade do seu plano a qualquer momento. As mudanças são aplicadas imediatamente.",
+        "Sim! Você pode fazer upgrade ou downgrade do seu plano a qualquer momento. As mudanças são aplicadas imediatamente, sem burocracia.",
     },
     {
       question: "Há período de teste gratuito?",
-      answer: "Sim! Todos os planos pagos incluem 14 dias de teste gratuito. Não é necessário cartão de crédito.",
+      answer: "Sim! Todos os planos pagos incluem 14 dias de teste gratuito. Não é necessário informar cartão de crédito.",
     },
     {
       question: "Meus dados estão seguros?",
       answer:
-        "Absolutamente! Utilizamos criptografia de nível bancário e seguimos todas as normas de proteção de dados.",
+        "Absolutamente! Utilizamos criptografia de nível bancário e seguimos todas as normas de proteção de dados, incluindo a LGPD.",
     },
     {
       question: "Posso cancelar quando quiser?",
-      answer: "Sim! Não há fidelidade. Você pode cancelar sua assinatura a qualquer momento sem taxas.",
+      answer: "Sim! Não há fidelidade. Você pode cancelar sua assinatura a qualquer momento, sem taxas ou complicações.",
     },
   ];
 
@@ -146,7 +146,7 @@ export default function PricingPage() {
               </span>
             </h1>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-8">
-              Planos flexíveis que crescem com seu consultório. Comece grátis e evolua conforme sua necessidade.
+              Planos flexíveis que crescem com seu consultório. Comece grátis e evolua conforme sua necessidade — sem surpresas.
             </p>
           </div>
         </div>
@@ -261,8 +261,7 @@ export default function PricingPage() {
               </span>
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              Recursos profissionais desenvolvidos especificamente para nutricionistas, com tecnologia de ponta e
-              interface intuitiva.
+              Recursos profissionais desenvolvidos exclusivamente para nutricionistas, com tecnologia de ponta e interface intuitiva.
             </p>
           </div>
 
