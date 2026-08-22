@@ -26,8 +26,8 @@ export default function PricingPage() {
 
   const plans = [
     {
-      name: "Iniciante",
-      description: "Comece sua jornada digital sem compromisso. Perfeito para estudantes e nutricionistas que estão começando.",
+      name: "Gratuito",
+      description: "Experimente a plataforma sem custos. Ideal para quem está começando e quer conhecer nossas funcionalidades básicas.",
       price: { monthly: 0, annual: 0 },
       icon: IconRocket,
       color: "from-blue-500 to-cyan-500",
