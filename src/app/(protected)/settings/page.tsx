@@ -84,7 +84,7 @@ export default function SettingsPage() {
     plan: "professional",
     status: "active",
     nextBilling: "2024-02-15",
-    amount: 99.9,
+    amount: 109.89,
     paymentMethod: "cartão_visa_****1234",
   });
 

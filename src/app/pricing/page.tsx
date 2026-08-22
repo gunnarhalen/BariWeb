@@ -48,7 +48,7 @@ export default function PricingPage() {
     {
       name: "Profissional",
       description: "Aumente sua eficiência e atenda mais pacientes com ferramentas completas para sua prática",
-      price: { monthly: 29, annual: 290 },
+      price: { monthly: 31.9, annual: 319 },
       icon: IconStar,
       color: "from-emerald-500 to-teal-500",
       popular: true,
@@ -68,7 +68,7 @@ export default function PricingPage() {
     {
       name: "Premium",
       description: "Maximize sua produtividade com recursos avançados para clínicas de maior volume",
-      price: { monthly: 59, annual: 590 },
+      price: { monthly: 64.9, annual: 649 },
       icon: IconCrown,
       color: "from-purple-500 to-violet-500",
       popular: false,
