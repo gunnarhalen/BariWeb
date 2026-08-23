@@ -48,6 +48,13 @@ yarn dev
 yarn build
 ```
 
+### 5. Executar testes
+
+```bash
+yarn test
+```
+
+
 ## 🔐 Segurança
 
 - As chaves do Firebase são configuradas via variáveis de ambiente

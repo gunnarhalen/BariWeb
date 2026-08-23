@@ -94,3 +94,6 @@ export interface NutritionistRequest {
   rejectedAt?: Timestamp;
   revokedAt?: Timestamp;
 }
+
+export * from "./health";
+
