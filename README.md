@@ -48,6 +48,44 @@ yarn dev
 yarn build
 ```
 
+### 5. Executar testes
+
+```bash
+yarn test
+```
+
+## 🏥 Healthcheck & Monitoramento
+
+A aplicação possui um endpoint de diagnóstico e verificação de saúde disponível em `/healthcheck`:
+
+- **Método**: `GET`
+- **Caminho**: `/healthcheck`
+- **Cache**: Desabilitado (`no-store, no-cache, must-revalidate`)
+- **Status Codes**:
+  - `200 OK`: Todas as variáveis e serviços essenciais estão configurados e saudáveis.
+  - `503 Service Unavailable`: Falta de configuração crítica ou falha na inicialização dos serviços.
+
+### Exemplo de Resposta (JSON):
+
+```json
+{
+  "status": "healthy",
+  "timestamp": "2026-08-23T12:00:00.000Z",
+  "uptime": 124.5,
+  "environment": "production",
+  "checks": {
+    "environmentVariables": {
+      "status": "ok"
+    },
+    "firebase": {
+      "status": "ok",
+      "appName": "[DEFAULT]",
+      "databaseReady": true
+    }
+  }
+}
+```
+
 ## 🔐 Segurança
 
 - As chaves do Firebase são configuradas via variáveis de ambiente
@@ -113,8 +151,9 @@ yarn build
 - **Shadcn/ui** - Sistema de design
 - **TanStack Table** - Tabelas avançadas
 
-### **Ferramentas**
+### **Ferramentas & Testes**
 
+- **Vitest** - Suíte de testes automatizados
 - **ESLint** - Linting
 - **PostCSS** - Processamento CSS
 - **Turbopack** - Build otimizado
