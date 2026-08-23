@@ -36,6 +36,10 @@ export default function LandingPage() {
   const router = useRouter();
 
   useEffect(() => {
+    console.log("BariWeb está rodando!");
+  }, []);
+
+  useEffect(() => {
     if (!loading) {
       if (user && isNutritionist) {
         router.push("/patients");
