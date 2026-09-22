@@ -7,3 +7,7 @@ export function slugify(text: string): string {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
 }
+
+export function slugifyMany(textos: string[]): string[] {
+  return textos.map((texto) => slugify(texto)).filter((slug) => slug !== "")
+}

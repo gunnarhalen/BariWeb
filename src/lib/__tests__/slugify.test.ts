@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { slugify } from "../slugify"
+import { slugify, slugifyMany } from "../slugify"
 
 describe("slugify", () => {
   it("removes accents", () => {
@@ -25,5 +25,27 @@ describe("slugify", () => {
   it("returns an empty string for empty or symbol-only input", () => {
     expect(slugify("")).toBe("")
     expect(slugify("!!!")).toBe("")
+  })
+})
+
+describe("slugifyMany", () => {
+  it("returns an empty array for an empty list", () => {
+    expect(slugifyMany([])).toEqual([])
+  })
+
+  it("ignores empty or symbol-only items", () => {
+    expect(slugifyMany(["", "!!!", "Olá"])).toEqual(["ola"])
+  })
+
+  it("keeps duplicate slugs", () => {
+    expect(slugifyMany(["Olá", "olá", "Coração"])).toEqual([
+      "ola",
+      "ola",
+      "coracao",
+    ])
+  })
+
+  it("applies slugify to each item", () => {
+    expect(slugifyMany(["  A  B  ", "", "foo@bar"])).toEqual(["a-b", "foo-bar"])
   })
 })
