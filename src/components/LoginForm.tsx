@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
+import { validate, type ValidationErrors } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,6 +26,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<ValidationErrors>({});
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
 
@@ -32,8 +34,23 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
+
+    const validationErrors = validate(
+      { email, password },
+      {
+        email: ["required", "email"],
+        password: ["required"],
+      }
+    );
+
+    if (Object.keys(validationErrors).length > 0) {
+      setFieldErrors(validationErrors);
+      return;
+    }
+
+    setFieldErrors({});
+    setLoading(true);
 
     try {
       const result = await signIn(email, password);
@@ -67,8 +84,20 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
+
+    const validationErrors = validate(
+      { email },
+      { email: ["required", "email"] }
+    );
+
+    if (Object.keys(validationErrors).length > 0) {
+      setFieldErrors(validationErrors);
+      return;
+    }
+
+    setFieldErrors({});
+    setLoading(true);
 
     try {
       // Simular envio de email
@@ -153,8 +182,12 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
               placeholder="seu@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              aria-invalid={Boolean(fieldErrors.email)}
               required
             />
+            {fieldErrors.email && (
+              <p className="text-xs text-destructive">{fieldErrors.email}</p>
+            )}
           </div>
 
           {error && (
@@ -222,21 +255,29 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
             type="email"
             placeholder="seu@email.com"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
+              onChange={(e) => setEmail(e.target.value)}
+              aria-invalid={Boolean(fieldErrors.email)}
+              required
+            />
+            {fieldErrors.email && (
+              <p className="text-xs text-destructive">{fieldErrors.email}</p>
+            )}
+          </div>
 
-        <div className="grid gap-3">
-          <Label htmlFor="password">Senha</Label>
+          <div className="grid gap-3">
+            <Label htmlFor="password">Senha</Label>
           <Input
             id="password"
             type="password"
             placeholder="Sua senha"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            aria-invalid={Boolean(fieldErrors.password)}
             required
           />
+          {fieldErrors.password && (
+            <p className="text-xs text-destructive">{fieldErrors.password}</p>
+          )}
           <div className="text-center">
             <Button
               type="button"

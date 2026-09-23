@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { validate, type RuleName, type ValidationErrors } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -50,6 +51,7 @@ import {
 export default function SettingsPage() {
   const { user, logout } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<ValidationErrors>({});
   const [activeTab, setActiveTab] = useState("profile");
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
 
@@ -89,6 +91,30 @@ export default function SettingsPage() {
   });
 
   const handleSave = async () => {
+    const rules: Record<string, RuleName[]> = {
+      name: ["required"],
+      email: ["required", "email"],
+    };
+
+    if (profileData.phone.trim()) {
+      rules.phone = ["phone"];
+    }
+
+    const validationErrors = validate(
+      {
+        name: profileData.name,
+        email: profileData.email,
+        phone: profileData.phone,
+      },
+      rules
+    );
+
+    if (Object.keys(validationErrors).length > 0) {
+      setFieldErrors(validationErrors);
+      return;
+    }
+
+    setFieldErrors({});
     setIsLoading(true);
     try {
       // Simular salvamento
@@ -225,7 +251,13 @@ export default function SettingsPage() {
                               })
                             }
                             placeholder="Seu nome completo"
+                            aria-invalid={Boolean(fieldErrors.name)}
                           />
+                          {fieldErrors.name && (
+                            <p className="text-xs text-destructive">
+                              {fieldErrors.name}
+                            </p>
+                          )}
                         </div>
                         <div>
                           <Label htmlFor="email">Email</Label>
@@ -240,7 +272,13 @@ export default function SettingsPage() {
                               })
                             }
                             placeholder="seu@email.com"
+                            aria-invalid={Boolean(fieldErrors.email)}
                           />
+                          {fieldErrors.email && (
+                            <p className="text-xs text-destructive">
+                              {fieldErrors.email}
+                            </p>
+                          )}
                         </div>
                         <div>
                           <Label htmlFor="phone">Telefone</Label>
@@ -254,7 +292,13 @@ export default function SettingsPage() {
                               })
                             }
                             placeholder="(11) 99999-9999"
+                            aria-invalid={Boolean(fieldErrors.phone)}
                           />
+                          {fieldErrors.phone && (
+                            <p className="text-xs text-destructive">
+                              {fieldErrors.phone}
+                            </p>
+                          )}
                         </div>
                         <div>
                           <Label htmlFor="crn">CRN</Label>

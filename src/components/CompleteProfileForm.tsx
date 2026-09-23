@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { auth } from "@/config/firebase";
 import { signOut } from "firebase/auth";
 import { cn } from "@/lib/utils";
+import { validate, type ValidationErrors } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -37,6 +38,7 @@ export function CompleteProfileForm({
   const [crnNumber, setCrnNumber] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<ValidationErrors>({});
   const [success, setSuccess] = useState(false);
 
   const router = useRouter();
@@ -52,21 +54,28 @@ export function CompleteProfileForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
 
-    if (!crnRegion || !crnNumber) {
-      setError("Preencha região e número do CRN");
-      setLoading(false);
+    const validationErrors = validate(
+      { crnRegion, crnNumber },
+      {
+        crnRegion: ["required"],
+        crnNumber: ["required"],
+      }
+    );
+
+    const crnNumberRegex = /^(T|PJ)?(\d{4,})([PS])?$/;
+    if (!validationErrors.crnNumber && !crnNumberRegex.test(crnNumber)) {
+      validationErrors.crnNumber = "CRN inválido";
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      setFieldErrors(validationErrors);
       return;
     }
 
-    const crnNumberRegex = /^(T|PJ)?(\d{4,})([PS])?$/;
-    if (!crnNumberRegex.test(crnNumber)) {
-      setError("CRN inválido");
-      setLoading(false);
-      return;
-    }
+    setFieldErrors({});
+    setLoading(true);
 
     const fullCrn = `CRN-${crnRegion}/${crnNumber}`;
 
@@ -211,10 +220,17 @@ export function CompleteProfileForm({
               placeholder="Ex: 12345, T12345, PJ12345"
               value={crnNumber}
               onChange={(e) => setCrnNumber(e.target.value.toUpperCase())}
+              aria-invalid={Boolean(fieldErrors.crnNumber)}
               className="flex-1"
               required
             />
           </div>
+          {fieldErrors.crnRegion && (
+            <p className="text-xs text-destructive">{fieldErrors.crnRegion}</p>
+          )}
+          {fieldErrors.crnNumber && (
+            <p className="text-xs text-destructive">{fieldErrors.crnNumber}</p>
+          )}
           <p className="text-xs text-muted-foreground">
             Exemplos: 12345, 12345P, T12345, PJ12345
           </p>

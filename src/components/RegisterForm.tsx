@@ -6,6 +6,7 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "@/config/firebase";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
+import { validate, type ValidationErrors } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,6 +30,7 @@ export function RegisterForm({ className, ...props }: RegisterFormProps) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<ValidationErrors>({});
   const [success, setSuccess] = useState(false);
 
   const router = useRouter();
@@ -52,20 +54,29 @@ export function RegisterForm({ className, ...props }: RegisterFormProps) {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
 
-    if (password !== confirmPassword) {
-      setError("As senhas não coincidem");
-      setLoading(false);
+    const validationErrors = validate(
+      { fullName, email, password, confirmPassword },
+      {
+        fullName: ["required"],
+        email: ["required", "email"],
+        password: ["required", "strongPassword"],
+        confirmPassword: ["required"],
+      }
+    );
+
+    if (password && confirmPassword && password !== confirmPassword) {
+      validationErrors.confirmPassword = "As senhas não coincidem";
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      setFieldErrors(validationErrors);
       return;
     }
 
-    if (password.length < 6) {
-      setError("A senha deve ter pelo menos 6 caracteres");
-      setLoading(false);
-      return;
-    }
+    setFieldErrors({});
+    setLoading(true);
 
     try {
       const userCredential = await createUserWithEmailAndPassword(
@@ -95,7 +106,7 @@ export function RegisterForm({ className, ...props }: RegisterFormProps) {
             setError("Operação não permitida");
             break;
           case "auth/weak-password":
-            setError("Senha muito fraca. Use pelo menos 6 caracteres");
+            setError("Senha muito fraca. Use pelo menos 8 caracteres");
             break;
           case "permission-denied":
             setError("Erro ao salvar dados profissionais. Contate o suporte.");
@@ -180,8 +191,12 @@ export function RegisterForm({ className, ...props }: RegisterFormProps) {
             placeholder="Dr(a). Seu nome completo"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
+            aria-invalid={Boolean(fieldErrors.fullName)}
             required
           />
+          {fieldErrors.fullName && (
+            <p className="text-xs text-destructive">{fieldErrors.fullName}</p>
+          )}
         </div>
 
         <div className="grid gap-3">
@@ -192,8 +207,12 @@ export function RegisterForm({ className, ...props }: RegisterFormProps) {
             placeholder="seu@email.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            aria-invalid={Boolean(fieldErrors.email)}
             required
           />
+          {fieldErrors.email && (
+            <p className="text-xs text-destructive">{fieldErrors.email}</p>
+          )}
         </div>
 
         <div className="grid gap-3">
@@ -201,12 +220,16 @@ export function RegisterForm({ className, ...props }: RegisterFormProps) {
           <Input
             id="password"
             type="password"
-            placeholder="Mínimo 6 caracteres"
+            placeholder="Mín. 8: maiúscula, minúscula, número e símbolo"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            aria-invalid={Boolean(fieldErrors.password)}
             required
-            minLength={6}
+            minLength={8}
           />
+          {fieldErrors.password && (
+            <p className="text-xs text-destructive">{fieldErrors.password}</p>
+          )}
         </div>
 
         <div className="grid gap-3">
@@ -217,9 +240,15 @@ export function RegisterForm({ className, ...props }: RegisterFormProps) {
             placeholder="Digite a senha novamente"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
+            aria-invalid={Boolean(fieldErrors.confirmPassword)}
             required
-            minLength={6}
+            minLength={8}
           />
+          {fieldErrors.confirmPassword && (
+            <p className="text-xs text-destructive">
+              {fieldErrors.confirmPassword}
+            </p>
+          )}
         </div>
 
         {error && (
