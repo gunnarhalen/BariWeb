@@ -2,7 +2,7 @@
 
 Central de Acompanhamento para Nutricionistas - Plataforma web para gerenciamento de pacientes e acompanhamento nutricional.
 
-## 🚀 Configuração
+## 🚀 Setup
 
 ### 1. Instalar dependências
 
@@ -12,17 +12,7 @@ yarn install
 
 ### 2. Configurar variáveis de ambiente
 
-**OBRIGATÓRIO**: Crie um arquivo `.env.local` na raiz do projeto com as seguintes variáveis:
-
-```env
-# Firebase Configuration
-NEXT_PUBLIC_FIREBASE_API_KEY=sua_api_key_aqui
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=seu_projeto.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=seu_projeto_id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=seu_projeto.firebasestorage.app
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=seu_sender_id
-NEXT_PUBLIC_FIREBASE_APP_ID=seu_app_id
-```
+**OBRIGATÓRIO**: Copie `.env.example` para `.env.local` na raiz do projeto e substitua os placeholders pelos valores do seu Firebase:
 
 **Para produção no Vercel:**
 
@@ -53,6 +43,44 @@ yarn build
 - As chaves do Firebase são configuradas via variáveis de ambiente
 - O arquivo `.env.local` está no `.gitignore` para não ser commitado
 - Use sempre variáveis de ambiente para dados sensíveis
+
+## 📝 Exemplo de Uso
+
+### Início do Projeto Local
+
+```bash
+yarn dev
+```
+
+Acesse o painel em `http://localhost:3000`.
+
+### Fluxo de Autenticação
+
+1. Acesse a página de login (`/login`).
+2. Insira suas credenciais de Firebase (email e senha) para fazer login.
+3. Após o login bem-sucedido, você será redirecionado para o dashboard protegido.
+
+### Gestão de Pacientes
+
+1. Clique no link "Pacientes" no menu lateral.
+2. Crie um novo paciente clicando no botão "+ Novo Paciente".
+3. Preencha os campos (nome, idade, peso, IMC, metas nutricionais).
+4. Salve o paciente e veja-o aparecer na lista principal.
+
+### Visualização de Relatórios
+
+1. No dashboard, clique em "Relatórios".
+2. Escolha o período desejado (ex.: últimos 30 dias).
+3. Visualize os gráficos de calorias, proteínas, carboidratos e gorduras.
+4. Use os filtros para focar em pacientes específicos.
+
+### Build para Produção
+
+```bash
+yarn build
+```
+
+Este comando gera a versão otimizada do aplicativo, pronto para deployment no Vercel.
 
 ## 📱 Funcionalidades
 
