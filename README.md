@@ -2,15 +2,22 @@
 
 Central de Acompanhamento para Nutricionistas - Plataforma web para gerenciamento de pacientes e acompanhamento nutricional.
 
-## 🚀 Configuração
+## 📦 Instalação
 
-### 1. Instalar dependências
+### 1. Clone o repositório
+
+```bash
+git clone <url-do-repositorio>
+cd bari-web
+```
+
+### 2. Instale as dependências
 
 ```bash
 yarn install
 ```
 
-### 2. Configurar variáveis de ambiente
+### 3. Configure as variáveis de ambiente
 
 **OBRIGATÓRIO**: Crie um arquivo `.env.local` na raiz do projeto com as seguintes variáveis:
 
@@ -30,29 +37,29 @@ NEXT_PUBLIC_FIREBASE_APP_ID=seu_app_id
 2. Adicione todas as 6 variáveis acima
 3. Use os valores reais do seu projeto Firebase
 
-**⚠️ IMPORTANTE**:
-
-- Nunca commite o arquivo `.env.local` com suas chaves reais
-- As chaves do Firebase são públicas por design e seguras para exposição
-- A segurança real está nas regras do Firestore, não nas chaves
-
-### 3. Executar em desenvolvimento
-
-```bash
-yarn dev
-```
+> ⚠️ **Segurança**: Nunca commite o `.env.local` — ele já está no `.gitignore`. As chaves do Firebase são públicas por design; a segurança real está nas regras do Firestore.
 
 ### 4. Build para produção
 
 ```bash
 yarn build
+yarn start
 ```
 
-## 🔐 Segurança
+## ▶️ Como Rodar
 
-- As chaves do Firebase são configuradas via variáveis de ambiente
-- O arquivo `.env.local` está no `.gitignore` para não ser commitado
-- Use sempre variáveis de ambiente para dados sensíveis
+| Comando | Descrição |
+|---------|-----------|
+| `yarn dev` | Inicia o servidor de desenvolvimento (Next.js 15 + Turbopack) em `http://localhost:3000` |
+| `yarn build` | Compila a aplicação para produção |
+| `yarn start` | Executa a build de produção localmente |
+| `yarn lint` | Executa o linter ESLint |
+
+## 💡 Exemplo de Uso
+
+1. **Acesse `/login`** e autentique com sua conta Firebase.
+2. **Navegue até `/patients`** — visualize a lista completa de pacientes com filtros por status e busca por nome/email.
+3. **Clique em um paciente** (`/patients/[id]`) — veja gráficos de evolução de calorias, macros e metas com períodos personalizáveis (7, 15, 30 dias).
 
 ## 📱 Funcionalidades
 
@@ -176,13 +183,6 @@ src/
 - Tabelas com ordenação e filtros
 - Componentes reutilizáveis
 - Performance otimizada
-
-### **Build Local**
-
-```bash
-yarn build
-yarn start
-```
 
 ## 📊 Status do Projeto
 
