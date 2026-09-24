@@ -2,15 +2,28 @@
 
 Central de Acompanhamento para Nutricionistas - Plataforma web para gerenciamento de pacientes e acompanhamento nutricional.
 
-## 🚀 Configuração
+## 📋 Requisitos Mínimos
 
-### 1. Instalar dependências
+- **Node.js** 18 ou superior
+- **Git** (para clonar o repositório)
+- **Conta no Firebase Console** (para obter as credenciais)
+
+## 🚀 Instalação
+
+### 1. Clonar o Repositório
 
 ```bash
-yarn install
+# Clone o repositório
+ git clone https://github.com/gunnarhalen/BariWeb.git
+
+# Acesse a pasta do projeto
+cd BariWeb
+
+# Instale as dependências
+ yarn install
 ```
 
-### 2. Configurar variáveis de ambiente
+### 2. Configurar Variáveis de Ambiente
 
 **OBRIGATÓRIO**: Crie um arquivo `.env.local` na raiz do projeto com as seguintes variáveis:
 
@@ -36,17 +49,96 @@ NEXT_PUBLIC_FIREBASE_APP_ID=seu_app_id
 - As chaves do Firebase são públicas por design e seguras para exposição
 - A segurança real está nas regras do Firestore, não nas chaves
 
-### 3. Executar em desenvolvimento
+### 3. Executar em Desenvolvimento
 
 ```bash
+# Inicie o servidor de desenvolvimento
 yarn dev
+
+# Acesse em http://localhost:3000
 ```
 
-### 4. Build para produção
+### 4. Build para Produção
 
 ```bash
+# Build para produção local
 yarn build
+
+# Inicie o servidor estático
+yarn start
 ```
+
+## 💡 Como Usar
+
+### Exemplo: Acessando o Dashboard de Nutricionistas
+
+Após a instalação e configuração das variáveis de ambiente:
+
+1. **Inicie o aplicativo**:
+   ```bash
+   yarn dev
+   ```
+
+2. **Acesse em seu navegador**:
+   - URL: `http://localhost:3000`
+   - Credenciais: Use suas credenciais do Firebase (ou faça login com Google)
+
+3. **Primeira vez?** Se for a primeira vez que acessa, pode ser necessário completar seu perfil:
+   - URL: `http://localhost:3000/complete-profile`
+   - Preencha suas informações profissionais (nome, CRM, especialidades)
+
+4. **Navegue no dashboard**:
+   - **Visão Geral**: Acompanhe estatísticas importantes de pacientes
+   - **Pacientes**: Lista de pacientes com filtros e busca
+   - **Detalhes**: Análise detalhada de dados nutricionais por paciente
+   - **Relatórios**: Gere relatórios e análises
+
+5. **Recursos principais do dia a dia**:
+   - **Gerenciar pacientes**: Ver, filtrar e adicionar pacientes à sua lista
+   - **Monitorar progresso**: Acompanhe as refeições e métricas nutricionais
+   - **Configurações**: Gerencie suas preferências e segurança
+   - **Solicitações**: Gerencie solicitações de pacientes para sua equipe
+
+### Fluxo de Trabalho Típico
+
+1. Nutricionista faz login usando autenticação Firebase
+2. Acessa o dashboard principal com visão geral dos pacientes
+3. Usa os filtros para encontrar pacientes específicos ou filtrar por status
+4. Clica em um paciente para ver dados detalhados, gráficos e histórico
+5. Verifica alertas e notas sobre cada paciente
+6. Gera relatórios para compartilhar com os pacientes
+
+## 📝 Contribuição
+
+### Como Contribuir
+
+Este projeto segue um fluxo de contribuição básico:
+
+1. **Abra um issue** para relatar bugs, solicitar recursos ou discutir melhorias
+2. **Fork** o repositório e crie uma branch para seu trabalho
+3. **Faça commits** com mensagens descritivas e referências às issues
+4. **Abra um Pull Request** para revisão da equipe
+
+### Diretrizes de Código
+
+- Mantenha o estilo TypeScript limpo e consistente
+- Use componentes reutilizáveis sempre que possível
+- Adicione comentários apenas quando necessário (explique o porquê)
+- Escreva testes quando aplicável (ver scripts de teste no package.json)
+
+### Contribuição de Arquivo README
+
+Este arquivo README está em constante evolução. Sinta-se à vontade para:
+
+- Adicionar exemplos de uso que ajudem novos contribuidores
+- Atualizar as instruções de instalação quando necessário
+- Compartilhar atalhos ou dicas úteis
+- Melhorar a organização e clareza do conteúdo
+
+### Para Detalhes Técnicas Específicas
+
+Para informações mais detalhadas sobre contribuição, consulte o arquivo:
+- [CONTRIBUTING.md](/CONTRIBUTING.md) (em desenvolvimento)
 
 ## 🔐 Segurança
 
@@ -96,9 +188,9 @@ yarn build
 
 ### **Frontend**
 
-- **Next.js 15** - Framework React
+- **Next.js 15** - Framework React com App Router
 - **TypeScript** - Tipagem estática
-- **Tailwind CSS** - Estilização
+- **Tailwind CSS** - Estilização utilitário
 - **Tabler Icons** - Biblioteca de ícones
 
 ### **Backend & Dados**
@@ -109,7 +201,7 @@ yarn build
 
 ### **UI Components**
 
-- **Radix UI** - Componentes primitivos
+- **Radix UI** - Componentes primitivos acessíveis
 - **Shadcn/ui** - Sistema de design
 - **TanStack Table** - Tabelas avançadas
 
